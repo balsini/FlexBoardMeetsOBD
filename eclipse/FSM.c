@@ -1,6 +1,8 @@
 #include "FSM.h"
 
 Status status_;
+char blink_counter = 0;
+char blink = 0;
 
 Signal FSM_getSignals()
 {
@@ -26,43 +28,52 @@ void FSM_tran_(Status dest)
 	status_ = dest;
 }
 
-void BT_init()
-{
-	LCD_append_row("BT init...");
-
-	// Init UART
-	//EE_UART2_Init(38400, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE);
-
-	//Bluetooth initialization
-	if (EE_bluetooth_init(2, 115200, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE) == 0) {
-		LCD_append("[Done]");
-	} else {
-		LCD_append("[Fail]");
-	}
-}
-
 void FSM_dispatch()
 {
 	Signal s = FSM_getSignals();
 	switch (status_) {
 	case WELCOME:
-		LCD_writeC(0,0,126);
-		FSM_tran_(INIT);
-		break;
-	case INIT:
 		switch (s) {
-		case B1:
-			BT_init();
+		case ABSENT:
+			if (blink_counter++ == 3) {
+				blink_counter = 0;
+				if (blink++ == 1) {
+					blink = 0;
+					LCD_writeR(1, " Press any key!");
+				} else {
+					LCD_writeR(1, "    WELCOME!");
+				}
+			}
 			break;
-		case B4:			////////// TO DO
-			FSM_tran_(WAIT);
+		default:
+			FSM_tran_(BT_INIT);
 			break;
-		default: break;
 		}
+		break;
+	case BT_INIT:
+		LCD_append_row("BT Init...");
+		// Bluetooth initialization
+		if (EE_bluetooth_init(9600, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE)) {
+			LCD_append("[Done]");
+			LCD_append_row("Go Mstr...");
+			// Switch to Master mode
+			if (EE_bluetooth_set_master())
+				LCD_append("[Done]");
+			else
+				LCD_append("[Fail]");
+		} else {
+			LCD_append("[Fail]");
+			LCD_append_row("Reboot BT device");
+		}
+		FSM_tran_(DEAD);
 		break;
 	case WAIT:
 		LCD_append_row("WAITING 4E");
+		FSM_tran_(DEAD);
+		return;
 		break;
-	default: break;
+	default:
+		break;
 	}
 }
+
