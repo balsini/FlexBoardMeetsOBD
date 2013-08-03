@@ -4,7 +4,7 @@
 #include "ee_bluetooth.h"
 #include "buttons.h"
 
-typedef enum Status_ {WELCOME, BT_INIT, WAIT, DEAD} Status;
+typedef enum Status_ {WELCOME, BT_INIT, BT_INQUIRY, BT_INQUIRY_SHOW, WAIT, DEAD} Status;
 typedef enum Signal_ {ABSENT, B1, B2, B3, B4} Signal;
 
 Signal FSM_getSignals();

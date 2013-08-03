@@ -7,6 +7,8 @@
 
 #include "ee_bluetooth.h"
 
+char command_mode_on;
+
 /*
  * Sending commands are like
  * <COMMAND>,<VALUE><'\r'>
@@ -16,12 +18,18 @@
 
 int EE_bluetooth_commandModeEnter()
 {
+	if (command_mode_on)
+		return 1;
+	command_mode_on = 1;
 	EE_bluetooth_sendS("$$$");
 	return EE_bluetooth_check_response("CMD");
 }
 
 int EE_bluetooth_commandModeLeave()
 {
+	if (!command_mode_on)
+		return 1;
+	command_mode_on = 0;
 	EE_bluetooth_sendS("---\r");
 	return EE_bluetooth_check_response("END");
 }
@@ -41,10 +49,21 @@ void EE_bluetooth_sendS(char * str)
 		EE_bluetooth_sendC(*(unsigned char *)str);
 }
 
+inline unsigned char EE_bluetooth_receive_no_timeout()
+{
+	static unsigned char RxBuff;
+#if BT_UART == 1
+	while(EE_UART1_Receive(&RxBuff) != 0) ;
+#else
+	while(EE_UART2_Receive(&RxBuff) != 0) ;
+#endif
+	return RxBuff;
+}
+
 inline unsigned char EE_bluetooth_receive()
 {
 	static unsigned int i;
-	static unsigned int limit = 50000;
+	static unsigned int limit = 0xFFFF;
 	static unsigned char RxBuff;
 	i = 0;
 #if BT_UART == 1
@@ -117,11 +136,11 @@ int EE_bluetooth_check_response(char * response)
 		return 0;
 	while ((value = EE_bluetooth_receive()) != 0x0D) {
 		if (value == 0xFF)
-				return 0;
+			return 0;
 	}
 	while ((value = EE_bluetooth_receive()) != 0x0A) {
 		if (value == 0xFF)
-				return 0;
+			return 0;
 	}
 	return correct;
 }
@@ -133,10 +152,55 @@ int EE_bluetooth_alive()
 	return 0;
 }
 
+int EE_bluetooth_inquiry(inquiry_result_t * inquiry_result)
+{
+	int i;
+	int j;
+	int num;
+	char val;
+
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("I");
+	EE_bluetooth_check_response("Inquiry, COD=0");
+	for (i=0; i<6; i++)	// Found <num>
+		EE_bluetooth_receive();
+
+	num = EE_bluetooth_receive_no_timeout()-'9';
+
+	for (i=0; i<num; i++) {
+		// Get address
+		j = 0;
+		while ((val = EE_bluetooth_receive_no_timeout()) != ',') {
+			inquiry_result[i].addr[j] = val;
+			j++;
+		}
+		inquiry_result[i].addr[j] = '\0';
+
+		// Get name
+		j = 0;
+		while ((val = EE_bluetooth_receive_no_timeout()) != ',') {
+			inquiry_result[i].name[j] = val;
+			j++;
+		}
+		inquiry_result[i].name[j] = '\0';
+
+		// Get cod
+		j = 0;
+		while ((val = EE_bluetooth_receive_no_timeout()) != ',') {
+			inquiry_result[i].cod[j] = val;
+			j++;
+		}
+		inquiry_result[i].cod[j] = '\0';
+	}
+	EE_bluetooth_commandModeLeave();
+	return num;
+}
+
 int EE_bluetooth_init(EE_UINT32 baud,
 		EE_UINT16 byteformat,
 		EE_UINT16 mode)
 {
+	command_mode_on = 0;
 #if BT_UART == 1
 	EE_UART1_Init(baud, byteformat, mode);
 #else

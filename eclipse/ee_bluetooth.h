@@ -13,6 +13,16 @@
 
 #include "LCD.h"
 
+// Inquiry result is a matrix of maximum 9 rows, where
+// each element is like:
+// <BT addr>,<BT name>,<COD>
+
+typedef struct inquiry_result_t_ {
+	char addr[13];
+	char name[17];
+	char cod[7];
+} inquiry_result_t;
+
 /*
  * Initializes the UART to make Bluetooth available.
  * baud defines the UART channel.
@@ -51,6 +61,16 @@ void EE_bluetooth_sendS(char * string);
  * Receives a char via Bluetooth
  */
 unsigned char EE_bluetooth_receive();
+unsigned char EE_bluetooth_receive_no_timeout();
+
+/*
+ * Makes a Bluetooth inquiry, scanning for
+ * other devices.
+ * Results of the inquiry are stored in
+ * dest container.
+ */
+
+int EE_bluetooth_inquiry(inquiry_result_t * dest);
 
 /*
  * Checks the correctness of a command's response value

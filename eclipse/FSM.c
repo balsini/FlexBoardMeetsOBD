@@ -4,6 +4,9 @@ Status status_;
 char blink_counter = 0;
 char blink = 0;
 
+inquiry_result_t inquiry_result[9];
+int inquiry_result_num;
+
 Signal FSM_getSignals()
 {
 	char b = buttons_get();
@@ -50,30 +53,46 @@ void FSM_dispatch()
 			break;
 		}
 		break;
-	case BT_INIT:
-		LCD_append_row("BT Init...");
-		// Bluetooth initialization
-		if (EE_bluetooth_init(9600, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE)) {
-			LCD_append("[Done]");
-			LCD_append_row("Go Mstr...");
-			// Switch to Master mode
-			if (EE_bluetooth_set_master())
+		case BT_INIT:
+			LCD_append_row("BT Init...");
+			// Bluetooth initialization
+			if (EE_bluetooth_init(9600, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE)) {
 				LCD_append("[Done]");
-			else
+				LCD_append_row("Go Mstr...");
+				// Switch to Master mode
+				if (EE_bluetooth_set_master())
+					LCD_append("[Done]");
+				else {
+					LCD_append("[Fail]");
+					FSM_tran_(DEAD);
+					return;
+				}
+			} else {
 				LCD_append("[Fail]");
-		} else {
-			LCD_append("[Fail]");
-			LCD_append_row("Reboot BT device");
-		}
-		FSM_tran_(DEAD);
-		break;
-	case WAIT:
-		LCD_append_row("WAITING 4E");
-		FSM_tran_(DEAD);
-		return;
-		break;
-	default:
-		break;
+				LCD_append_row("Reboot BT device");
+				FSM_tran_(DEAD);
+				return;
+			}
+			FSM_tran_(BT_INQUIRY);
+			break;
+		case BT_INQUIRY:
+			LCD_append_row("Inquiry...");
+			inquiry_result_num = EE_bluetooth_inquiry(inquiry_result);
+			LCD_append("[Done]");
+			FSM_tran_(BT_INQUIRY_SHOW);
+			break;
+		case BT_INQUIRY_SHOW:
+			LCD_append_row("Inquiry Results:");
+			LCD_append_row(inquiry_result[0].addr);
+			FSM_tran_(WAIT);
+			break;
+		case WAIT:
+			LCD_append_row("WAITING 4E");
+			FSM_tran_(DEAD);
+			return;
+			break;
+		default:
+			break;
 	}
 }
 
