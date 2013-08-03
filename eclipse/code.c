@@ -5,6 +5,8 @@
 #include "FSM.h"
 #include "buttons.h"
 
+#define BT_UART 2
+
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);
 // OSC2 Pin Function: OSC2 is Clock Output - Primary Oscillator Mode: XT Crystanl
@@ -59,7 +61,7 @@ int main(void)
 	CLKDIVbits.DOZEN   = 0;
 	CLKDIVbits.PLLPRE  = 0;
 	CLKDIVbits.PLLPOST = 0;
-	PLLFBDbits.PLLDIV  = 78;
+	PLLFBDbits.PLLDIV  = 78; // 78
 
 	/* Wait for PLL to lock */
 	while(OSCCONbits.LOCK!=1);
@@ -73,7 +75,7 @@ int main(void)
 	FSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(AlarmScan,  2000, 200);
+	SetRelAlarm(AlarmScan,  1500, 200);
 
 	//ActivateTask(TaskInit);
 
