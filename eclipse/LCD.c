@@ -30,17 +30,14 @@ void LCD_init()
 	LCD_append_row("  Flex2OBD 0.1");
 }
 
-void LCD_write(char line, char * str)
+void LCD_writeC(int x, int y, char c)
 {
-	unsigned int i;
-	EE_lcd_goto(0, line);
-	for (i=0; i<LCD_WIDTH; i++)
-		EE_lcd_putc(' ');
-	EE_lcd_goto(0, line);
-	while (*str != '\0') {
-		EE_lcd_putc((unsigned char)*str);
-		str++;
+	if (y == 0) {
+		LCD_ROW_0[x] = c;
+	} else {
+		LCD_ROW_1[x] = c;
 	}
+	LCD_update();
 }
 
 void LCD_append(char * str)
@@ -54,6 +51,14 @@ void LCD_append(char * str)
 	for (; i<LCD_WIDTH; i++)
 		LCD_ROW_1[i] = ' ';
 	LCD_update();
+}
+
+void LCD_appendC(char c)
+{
+	char str[2];
+	str[0] = c;
+	str[1] = '\0';
+	LCD_append(str);
 }
 
 void LCD_append_row(char * str)
@@ -70,5 +75,3 @@ void LCD_append_row(char * str)
 		LCD_ROW_1[i] = ' ';
 	LCD_update();
 }
-
-

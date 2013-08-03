@@ -18,7 +18,7 @@ Signal FSM_getSignals()
 
 void FSM_init()
 {
-	status_ = INIT;
+	status_ = WELCOME;
 }
 
 void FSM_tran_(Status dest)
@@ -28,7 +28,7 @@ void FSM_tran_(Status dest)
 
 void BT_init()
 {
-	LCD_append_row("BT Init...");
+	LCD_append_row("BT init...");
 
 	// Init UART
 	//EE_UART2_Init(38400, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE);
@@ -43,14 +43,15 @@ void BT_init()
 
 void FSM_dispatch()
 {
-	char a[3]={' ', 126, '\0'};
 	Signal s = FSM_getSignals();
 	switch (status_) {
+	case WELCOME:
+		LCD_writeC(0,0,126);
+		FSM_tran_(INIT);
+		break;
 	case INIT:
-		LCD_append(a);
 		switch (s) {
 		case B1:
-			LCD_append("B");
 			BT_init();
 			break;
 		case B4:			////////// TO DO

@@ -6,12 +6,13 @@
 
 void LCD_init();
 
+
 /*
- * Clears the lcd row line and writes the string
- * str in that row.
+ * Writes the character c to the defined position
+ * (x,y)
  */
 
-void LCD_write(char line, char * str);
+void LCD_writeC(int x, int y, char c);
 
 /*
  * Appends a new row to the lcd, shifting the previous
@@ -25,5 +26,6 @@ void LCD_append_row(char * str);
  */
 
 void LCD_append(char * str);
+void LCD_appendC(char);
 
 #endif /* LCD_H_ */
