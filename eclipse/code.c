@@ -1,8 +1,9 @@
 #include "ee.h"
 #include "ee_irq.h"
 #include "ee_bluetooth.h"
-
-#define LCD_WIDTH 16
+#include "LCD.h"
+#include "FSM.h"
+#include "buttons.h"
 
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);
@@ -45,43 +46,11 @@ ISR2(_T1Interrupt)
 	CounterTick(myCounter);
 }
 
-unsigned char lcd1[LCD_WIDTH];
-unsigned char lcd2[LCD_WIDTH];
-
 TASK(TaskScan)
 {
-	EE_lcd_putc('G');
-	EE_lcd_putc('O');
-	EE_lcd_putc(':');
-
-	while (1) {
-		EE_lcd_putc(EE_bluetooth_receive());
-	}
-}
-
-TASK(TaskInit)
-{
-	EE_lcd_puts("BT Init...");
-
-	// Init UART
-	//EE_UART2_Init(38400, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE);
-
-	//Bluetooth initialization
-
-	if (EE_bluetooth_init(2, 115200, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE) == 0) {
-		EE_lcd_puts("Done");
-		/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-		SetRelAlarm(AlarmScan,  2000, -1);
-	} else {
-		EE_lcd_puts("Fail");
-	}
-}
-
-void InitLCD(void)
-{
-	EE_lcd_init();
-	EE_lcd_clear();
-	EE_lcd_home();
+	FSM_dispatch();
+//	while (1)
+//		EE_lcd_putc(EE_bluetooth_receive());
 }
 
 int main(void)
@@ -98,13 +67,18 @@ int main(void)
 	/* Program Timer 1 to raise interrupts */
 	T1_program();
 
-	/* Init LCD */
-	InitLCD();
+	/* Init LCD, buttons and Finite State Machine */
+	LCD_init();
+	buttons_init();
+	FSM_init();
 
-	ActivateTask(TaskInit);
+	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
+	SetRelAlarm(AlarmScan,  2000, 200);
+
+	//ActivateTask(TaskInit);
 
 	/* Forever loop: background activities (if any) should go here */
-	for (;;);
+	for (;;) ;
 
 	return 0;
 }

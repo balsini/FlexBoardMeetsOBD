@@ -47,6 +47,9 @@ CPU mySystem {
 			APP_SRC = "code.c";
 			APP_SRC = "eeuart.c";
 			APP_SRC = "ee_bluetooth.c";
+			APP_SRC = "LCD.c";
+			APP_SRC = "FSM.c";
+			APP_SRC = "buttons.c";
 			MULTI_STACK = FALSE;
 			ICD2 = TRUE;
 		};
@@ -68,12 +71,6 @@ CPU mySystem {
 	};
 	
 	TASK TaskScan {
-		PRIORITY = 3;
-		STACK = SHARED;
-		SCHEDULE = FULL;
-	};
-	
-	TASK TaskInit {
 		PRIORITY = 3;
 		STACK = SHARED;
 		SCHEDULE = FULL;
