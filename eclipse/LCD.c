@@ -5,8 +5,8 @@
 char LCD_ROW_0[LCD_WIDTH];
 char LCD_ROW_1[LCD_WIDTH];
 char append_pos;	// Traces the length of the written string
-					// so that it will be possible to concatenate
-					// other characters to it.
+// so that it will be possible to concatenate
+// other characters to it.
 
 void LCD_update()
 {
@@ -26,8 +26,8 @@ void LCD_init()
 	EE_lcd_clear();
 	for (i=0; i<LCD_WIDTH; i++)
 		LCD_ROW_0[i] = LCD_ROW_1[i] = ' ';
-	LCD_append_row("    WELCOME!");
 	LCD_append_row("  Flex2OBD 0.1");
+	LCD_append_row("    WELCOME!");
 }
 
 void LCD_writeC(int x, int y, char c)
@@ -39,6 +39,29 @@ void LCD_writeC(int x, int y, char c)
 	}
 	LCD_update();
 }
+
+
+void LCD_writeR(int row, char * str)
+{
+	int i;
+	if (row == 0) {
+		for (i=0; *str != '\0' && i<LCD_WIDTH; i++) {
+			LCD_ROW_0[i] = *str;
+			str++;
+		}
+		for (; i<LCD_WIDTH; i++)
+			LCD_ROW_0[i] = ' ';
+	} else {
+		for (i=0; *str != '\0' && i<LCD_WIDTH; i++) {
+			LCD_ROW_1[i] = *str;
+			str++;
+		}
+		for (; i<LCD_WIDTH; i++)
+			LCD_ROW_1[i] = ' ';
+	}
+	LCD_update();
+}
+
 
 void LCD_append(char * str)
 {

@@ -6,6 +6,11 @@
 
 void LCD_init();
 
+/*
+ * Writes the string str row
+ */
+
+void LCD_writeR(int row, char * str);
 
 /*
  * Writes the character c to the defined position
@@ -26,6 +31,6 @@ void LCD_append_row(char * str);
  */
 
 void LCD_append(char * str);
-void LCD_appendC(char);
+void LCD_appendC(char c);
 
 #endif /* LCD_H_ */
