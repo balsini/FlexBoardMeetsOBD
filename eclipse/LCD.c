@@ -1,3 +1,11 @@
+/*
+ * LCD.c
+ *
+ *  Created on: 26/mar/2013
+ *      Author: Alessio
+ */
+
+
 #include "LCD.h"
 
 #define LCD_WIDTH 16

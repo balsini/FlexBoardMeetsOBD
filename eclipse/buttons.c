@@ -1,3 +1,10 @@
+/*
+ * buttons.c
+ *
+ *  Created on: 26/mar/2013
+ *      Author: Alessio
+ */
+
 #include "buttons.h"
 
 char buttons_pressed;

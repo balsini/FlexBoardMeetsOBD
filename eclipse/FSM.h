@@ -1,3 +1,10 @@
+/*
+ * FSM.h
+ *
+ *  Created on: 26/mar/2013
+ *      Author: Alessio
+ */
+
 #ifndef FSM_H_
 #define FSM_H_
 

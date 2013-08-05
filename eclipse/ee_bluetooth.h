@@ -60,8 +60,9 @@ void EE_bluetooth_sendS(char * string);
 /*
  * Receives a char via Bluetooth
  */
-unsigned char EE_bluetooth_receive();
-unsigned char EE_bluetooth_receive_no_timeout();
+
+inline unsigned char EE_bluetooth_receive();
+inline unsigned char EE_bluetooth_receive_no_timeout();
 
 /*
  * Makes a Bluetooth inquiry, scanning for
@@ -73,9 +74,9 @@ unsigned char EE_bluetooth_receive_no_timeout();
 int EE_bluetooth_inquiry(inquiry_result_t * dest);
 
 /*
- * Checks the correctness of a command's response value
+ * Functions for mutual exclusion on the BT resource
  */
-
-int EE_bluetooth_check_response(char * response);
+void EE_bluetooth_acquire();
+void EE_bluetooth_release();
 
 #endif /* EE_BLUETOOTH_H_ */

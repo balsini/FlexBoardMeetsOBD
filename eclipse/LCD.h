@@ -1,3 +1,10 @@
+/*
+ * LCD.h
+ *
+ *  Created on: 26/mar/2013
+ *      Author: Alessio
+ */
+
 #ifndef LCD_H_
 #define LCD_H_
 

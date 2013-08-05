@@ -1,3 +1,10 @@
+/*
+ * FSM.c
+ *
+ *  Created on: 26/mar/2013
+ *      Author: Alessio
+ */
+
 #include "FSM.h"
 
 Status status_;
@@ -56,6 +63,7 @@ void FSM_dispatch()
 		}
 		break;
 		case BT_INIT:
+			EE_bluetooth_acquire();
 			LCD_appendR("BT Init...");
 			// Bluetooth initialization
 			if (EE_bluetooth_init(BT_BAUD_RATE, BT_PARAM, BT_CONG_CTRL)) {
@@ -166,6 +174,7 @@ void FSM_dispatch()
 			return;
 			break;
 		default:
+			EE_bluetooth_release();
 			break;
 	}
 }

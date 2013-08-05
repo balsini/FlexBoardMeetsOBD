@@ -16,6 +16,59 @@ char command_mode_on;
  * <RESPONSE><"\r\n">
  */
 
+/*
+ * Checks the correctness of a command's response value
+ *
+ * 0 is returned if the response is wrong,
+ * 1 otherwise
+ */
+
+int EE_bluetooth_check_response(char * response)
+{
+	int correct = 1;
+	unsigned char value = 0;
+	for (; *response != '\0'; response++) {
+		if (*response != (value = EE_bluetooth_receive())) {
+			correct = 0;
+			break;
+		}
+	}
+	if (value == 0xFF)
+		return 0;
+	while ((value = EE_bluetooth_receive()) != 0x0D) {
+		if (value == 0xFF)
+			return 0;
+	}
+	while ((value = EE_bluetooth_receive()) != 0x0A) {
+		if (value == 0xFF)
+			return 0;
+	}
+	return correct;
+}
+
+int EE_bluetooth_check_response_no_timeout(char * response)
+{
+	int correct = 1;
+	unsigned char value = 0;
+	for (; *response != '\0'; response++) {
+		if (*response != (value = EE_bluetooth_receive_no_timeout())) {
+			correct = 0;
+			break;
+		}
+	}
+	if (value == 0xFF)
+		return 0;
+	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0D) {
+		if (value == 0xFF)
+			return 0;
+	}
+	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0A) {
+		if (value == 0xFF)
+			return 0;
+	}
+	return correct;
+}
+
 int EE_bluetooth_commandModeEnter()
 {
 	if (command_mode_on)
@@ -117,57 +170,6 @@ int EE_bluetooth_set_master()
 	return ret;
 }
 
-/*
- * 0 is returned if the response is wrong,
- * 1 otherwise
- */
-
-int EE_bluetooth_check_response(char * response)
-{
-	int correct = 1;
-	unsigned char value = 0;
-	for (; *response != '\0'; response++) {
-		if (*response != (value = EE_bluetooth_receive())) {
-			correct = 0;
-			break;
-		}
-	}
-	if (value == 0xFF)
-		return 0;
-	while ((value = EE_bluetooth_receive()) != 0x0D) {
-		if (value == 0xFF)
-			return 0;
-	}
-	while ((value = EE_bluetooth_receive()) != 0x0A) {
-		if (value == 0xFF)
-			return 0;
-	}
-	return correct;
-}
-
-int EE_bluetooth_check_response_no_timeout(char * response)
-{
-	int correct = 1;
-	unsigned char value = 0;
-	for (; *response != '\0'; response++) {
-		if (*response != (value = EE_bluetooth_receive_no_timeout())) {
-			correct = 0;
-			break;
-		}
-	}
-	if (value == 0xFF)
-		return 0;
-	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0D) {
-		if (value == 0xFF)
-			return 0;
-	}
-	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0A) {
-		if (value == 0xFF)
-			return 0;
-	}
-	return correct;
-}
-
 int EE_bluetooth_alive()
 {
 	if (EE_bluetooth_commandModeEnter())
@@ -234,4 +236,14 @@ int EE_bluetooth_init(EE_UINT32 baud,
 #endif
 
 	return EE_bluetooth_alive();
+}
+
+void EE_bluetooth_acquire()
+{
+	GetResource(BT_MUTEX);
+}
+
+void EE_bluetooth_release()
+{
+	ReleaseResource(BT_MUTEX);
 }
