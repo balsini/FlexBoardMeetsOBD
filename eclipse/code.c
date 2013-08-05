@@ -5,7 +5,6 @@
  *      Author: Alessio
  */
 
-
 #include "ee.h"
 #include "ee_irq.h"
 #include "ee_bluetooth.h"
@@ -59,8 +58,6 @@ ISR2(_T1Interrupt)
 TASK(TaskScan)
 {
 	FSM_dispatch();
-//	while (1)
-//		EE_lcd_putc(EE_bluetooth_receive());
 }
 
 int main(void)
@@ -85,7 +82,7 @@ int main(void)
 	FSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(AlarmScan,  1500, 200);
+	SetRelAlarm(TaskScan, 1000, 200);
 
 	//ActivateTask(TaskInit);
 

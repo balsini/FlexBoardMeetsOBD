@@ -70,22 +70,26 @@ inline int EE_bluetooth_check_response_no_timeout(char * response)
 	return correct;
 }
 
-inline int EE_bluetooth_commandModeEnter()
+int EE_bluetooth_commandModeEnter()
 {
 	if (command_mode_on)
 		return 1;
-	command_mode_on = 1;
 	EE_bluetooth_sendS("$$$");
-	return EE_bluetooth_check_response("CMD");
+	if (!EE_bluetooth_check_response("CMD"))
+		return 0;
+	command_mode_on = 1;
+	return 1;
 }
 
-inline int EE_bluetooth_commandModeLeave()
+int EE_bluetooth_commandModeLeave()
 {
 	if (!command_mode_on)
 		return 1;
-	command_mode_on = 0;
 	EE_bluetooth_sendS("---\r");
-	return EE_bluetooth_check_response("END");
+	if (!EE_bluetooth_check_response("END"))
+		return 0;
+	command_mode_on = 0;
+	return 1;
 }
 
 inline void EE_bluetooth_sendC(unsigned char c)
@@ -117,7 +121,7 @@ inline unsigned char EE_bluetooth_receive_no_timeout()
 inline unsigned char EE_bluetooth_receive()
 {
 	static unsigned int i;
-	static unsigned int limit = 0xFFFF;
+	static unsigned int limit = 0xFFF0;
 	static unsigned char RxBuff;
 	i = 0;
 #if BT_UART == 1
@@ -238,7 +242,8 @@ int EE_bluetooth_init(EE_UINT32 baud,
 	EE_UART2_Init(baud, byteformat, mode);
 #endif
 
-	return EE_bluetooth_alive();
+	EE_bluetooth_commandModeLeave();
+	return EE_bluetooth_reboot();
 }
 
 int EE_bluetooth_reboot()
@@ -246,9 +251,12 @@ int EE_bluetooth_reboot()
 	int i;
 	EE_bluetooth_commandModeEnter();
 	EE_bluetooth_sendS("R,1\r");
-	for (i=0; i<7; i++) // Reboot!
+	for (i=0; i<6; i++) // Reboot
 		EE_bluetooth_receive_no_timeout();
 	command_mode_on = 0;
+	while (!EE_bluetooth_commandModeEnter()) ;
+	EE_bluetooth_receive();
+	EE_bluetooth_commandModeLeave();
 	return 1;
 }
 
