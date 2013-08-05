@@ -7,7 +7,7 @@
 void LCD_init();
 
 /*
- * Writes the string str row
+ * Writes the string str to selected row
  */
 
 void LCD_writeR(int row, char * str);
@@ -24,13 +24,18 @@ void LCD_writeC(int x, int y, char c);
  * above.
  */
 
-void LCD_append_row(char * str);
+void LCD_appendR(char * str);
 
 /*
- * Appends the string str to the last row.
+ * Appends the string str to the last written row.
  */
 
-void LCD_append(char * str);
+void LCD_appendS(char * str);
+
+/*
+ * Appends the char c to the last written row.
+ */
+
 void LCD_appendC(char c);
 
 #endif /* LCD_H_ */

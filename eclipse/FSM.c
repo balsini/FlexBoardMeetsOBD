@@ -56,39 +56,39 @@ void FSM_dispatch()
 		}
 		break;
 		case BT_INIT:
-			LCD_append_row("BT Init...");
+			LCD_appendR("BT Init...");
 			// Bluetooth initialization
-			if (EE_bluetooth_init(9600, BIT8_NO | BIT_STOP_1, CTRL_SIMPLE)) {
-				LCD_append("[Done]");
-				LCD_append_row("Go Mstr...");
+			if (EE_bluetooth_init(BT_BAUD_RATE, BT_PARAM, BT_CONG_CTRL)) {
+				LCD_appendS("[Done]");
+				LCD_appendR("Go Mstr...");
 				// Switch to Master mode
 				if (EE_bluetooth_set_master())
-					LCD_append("[Done]");
+					LCD_appendS("[Done]");
 				else {
-					LCD_append("[Fail]");
+					LCD_appendS("[Fail]");
 					FSM_tran_(DEAD);
 					return;
 				}
 			} else {
-				LCD_append("[Fail]");
-				LCD_append_row("Reboot BT device");
+				LCD_appendS("[Fail]");
+				LCD_appendR("Reboot BT device");
 				FSM_tran_(DEAD);
 				return;
 			}
 			FSM_tran_(BT_INQUIRY);
 			break;
 		case BT_INQUIRY:
-			LCD_append_row("Inquiry...");
+			LCD_appendR("Inquiry...");
 			inquiry_result_num = EE_bluetooth_inquiry(inquiry_result);
-			LCD_append("[Done]");
+			LCD_appendS("[Done]");
 			inquiry_selector[0] = inquiry_selector[1] = 0;
-			LCD_append_row("Devices found: ");
+			LCD_appendR("Devices found: ");
 			LCD_appendC(inquiry_result_num + '0');
 			if (inquiry_result_num == 0) {
-				LCD_append_row("Push to rescan");
+				LCD_appendR("Push to rescan");
 				FSM_tran_(BT_INQUIRY_RESCAN);
 			} else {
-				LCD_append_row("");
+				LCD_appendR("");
 				lcd_changed = 1;
 				FSM_tran_(BT_INQUIRY_SHOW);
 			}
@@ -140,7 +140,7 @@ void FSM_dispatch()
 				switch (inquiry_selector[0]) {
 				case 0:
 					LCD_writeR(2,"@ ");
-					LCD_append(inquiry_result[inquiry_selector[1]].name);
+					LCD_appendS(inquiry_result[inquiry_selector[1]].name);
 					break;
 				case 1:
 					LCD_writeR(2,inquiry_result[inquiry_selector[1]].addr);
@@ -155,13 +155,13 @@ void FSM_dispatch()
 			}
 			break;
 		case BT_CONNECT:
-			LCD_append_row("Connecting...");
+			LCD_appendR("Connecting...");
 			FSM_tran_(DEAD);
 			break;
 		case BT_INQUIRY_SHOW_MOVE:
 			break;
 		case WAIT:
-			LCD_append_row("WAITING 4E");
+			LCD_appendR("WAITING 4E");
 			FSM_tran_(DEAD);
 			return;
 			break;

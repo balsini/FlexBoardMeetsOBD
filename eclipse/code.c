@@ -71,6 +71,8 @@ int main(void)
 
 	/* Init LCD, buttons and Finite State Machine */
 	LCD_init();
+	LCD_appendR("  Flex2OBD 0.1");
+	LCD_appendR("    WELCOME!");
 	buttons_init();
 	FSM_init();
 

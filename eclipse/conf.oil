@@ -74,13 +74,25 @@ CPU mySystem {
 		PRIORITY = 3;
 		STACK = SHARED;
 		SCHEDULE = FULL;
+		RESOURCE = BT_MUTEX;
+		RESOURCE = LCD_MUTEX;
 	};
 	
 	COUNTER myCounter;
 
 	ALARM AlarmScan {
 		COUNTER = myCounter;
-		ACTION = ACTIVATETASK { TASK = TaskScan; };
+		ACTION = ACTIVATETASK {
+			TASK = TaskScan;
+		};
+	};
+	
+	RESOURCE BT_MUTEX {
+		RESOURCEPROPERTY = STANDARD;
+	};
+	
+	RESOURCE LCD_MUTEX {
+		RESOURCEPROPERTY = STANDARD;
 	};
 
 };

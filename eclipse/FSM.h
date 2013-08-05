@@ -3,6 +3,7 @@
 
 #include "ee_bluetooth.h"
 #include "buttons.h"
+#include "constants.h"
 
 typedef enum Status_ {
 	WELCOME, BT_INIT,
