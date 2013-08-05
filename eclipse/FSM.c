@@ -70,8 +70,14 @@ void FSM_dispatch()
 				LCD_appendS("[Done]");
 				LCD_appendR("Go Mstr...");
 				// Switch to Master mode
-				if (EE_bluetooth_set_master())
+				if (EE_bluetooth_set_master()) {
 					LCD_appendS("[Done]");
+					// Forces pin authentication
+					EE_bluetooth_set_authentication(4);
+					EE_bluetooth_set_pin("0123");
+					EE_bluetooth_set_name("Flex_RN42");
+					EE_bluetooth_reboot();
+				}
 				else {
 					LCD_appendS("[Fail]");
 					FSM_tran_(DEAD);
@@ -87,6 +93,7 @@ void FSM_dispatch()
 			break;
 		case BT_INQUIRY:
 			LCD_appendR("Inquiry...");
+			// Inquiry request
 			inquiry_result_num = EE_bluetooth_inquiry(inquiry_result);
 			LCD_appendS("[Done]");
 			inquiry_selector[0] = inquiry_selector[1] = 0;
@@ -163,7 +170,12 @@ void FSM_dispatch()
 			}
 			break;
 		case BT_CONNECT:
-			LCD_appendR("Connecting...");
+			LCD_appendR("Connect...");
+			if (EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr))
+				LCD_appendS("[Done]");
+			else
+				LCD_appendS("[Fail]");
+
 			FSM_tran_(DEAD);
 			break;
 		case BT_INQUIRY_SHOW_MOVE:

@@ -8,6 +8,7 @@
 #include "ee_bluetooth.h"
 
 char command_mode_on;
+char bt_auth;
 
 /*
  * Sending commands are like
@@ -23,7 +24,7 @@ char command_mode_on;
  * 1 otherwise
  */
 
-int EE_bluetooth_check_response(char * response)
+inline int EE_bluetooth_check_response(char * response)
 {
 	int correct = 1;
 	unsigned char value = 0;
@@ -46,7 +47,7 @@ int EE_bluetooth_check_response(char * response)
 	return correct;
 }
 
-int EE_bluetooth_check_response_no_timeout(char * response)
+inline int EE_bluetooth_check_response_no_timeout(char * response)
 {
 	int correct = 1;
 	unsigned char value = 0;
@@ -69,7 +70,7 @@ int EE_bluetooth_check_response_no_timeout(char * response)
 	return correct;
 }
 
-int EE_bluetooth_commandModeEnter()
+inline int EE_bluetooth_commandModeEnter()
 {
 	if (command_mode_on)
 		return 1;
@@ -78,7 +79,7 @@ int EE_bluetooth_commandModeEnter()
 	return EE_bluetooth_check_response("CMD");
 }
 
-int EE_bluetooth_commandModeLeave()
+inline int EE_bluetooth_commandModeLeave()
 {
 	if (!command_mode_on)
 		return 1;
@@ -87,7 +88,7 @@ int EE_bluetooth_commandModeLeave()
 	return EE_bluetooth_check_response("END");
 }
 
-void EE_bluetooth_sendC(unsigned char c)
+inline void EE_bluetooth_sendC(unsigned char c)
 {
 #if BT_UART == 1
 	EE_UART1_Send(c);
@@ -96,7 +97,7 @@ void EE_bluetooth_sendC(unsigned char c)
 #endif
 }
 
-void EE_bluetooth_sendS(char * str)
+inline void EE_bluetooth_sendS(char * str)
 {
 	for (; *str != '\0'; str++)
 		EE_bluetooth_sendC(*(unsigned char *)str);
@@ -215,6 +216,7 @@ int EE_bluetooth_inquiry(inquiry_result_t * inquiry_result)
 			EE_bluetooth_receive_no_timeout(); // 0x0A
 			inquiry_result[i].cod[j] = '\0';
 		}
+		EE_bluetooth_check_response("Inquiry Done");
 		EE_bluetooth_commandModeLeave();
 		return num;
 		break;
@@ -229,6 +231,7 @@ int EE_bluetooth_init(EE_UINT32 baud,
 		EE_UINT16 mode)
 {
 	command_mode_on = 0;
+
 #if BT_UART == 1
 	EE_UART1_Init(baud, byteformat, mode);
 #else
@@ -236,6 +239,86 @@ int EE_bluetooth_init(EE_UINT32 baud,
 #endif
 
 	return EE_bluetooth_alive();
+}
+
+int EE_bluetooth_reboot()
+{
+	int i;
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("R,1\r");
+	for (i=0; i<7; i++) // Reboot!
+		EE_bluetooth_receive_no_timeout();
+	command_mode_on = 0;
+	return 1;
+}
+
+int EE_bluetooth_connect(char * addr)
+{
+	int i;
+	int ret = 0;
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("C,");
+	EE_bluetooth_sendS(addr);
+	EE_bluetooth_sendC('\r');
+	EE_bluetooth_check_response_no_timeout("TRYING");
+
+	LCD_appendC('T');
+
+	if (bt_auth == 4) {
+		for (;;)
+			EE_bluetooth_receive_no_timeout();
+	} else {
+		// TO DO, I don't have hardware to test
+		// this functionalities
+		for (i=0; i<7; i++) // CONNECT response
+			EE_bluetooth_receive_no_timeout();
+		switch (EE_bluetooth_receive_no_timeout()) {
+		case ' ':
+			EE_bluetooth_check_response("FAILED");
+			break;
+		case ',':
+			ret = 1;
+			break;
+		default:
+			break;
+		}
+	}
+	EE_bluetooth_commandModeLeave();
+	return ret;
+}
+
+int EE_bluetooth_set_pin(char * pin)
+{
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("SP,");
+	EE_bluetooth_sendS(pin);
+	EE_bluetooth_sendC('\r');
+	EE_bluetooth_check_response_no_timeout("AOK");
+	EE_bluetooth_commandModeLeave();
+	return 1;
+}
+
+int EE_bluetooth_set_name(char * name)
+{
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("SN,");
+	EE_bluetooth_sendS(name);
+	EE_bluetooth_sendC('\r');
+	EE_bluetooth_check_response_no_timeout("AOK");
+	EE_bluetooth_commandModeLeave();
+	return 1;
+}
+
+int EE_bluetooth_set_authentication(unsigned char value)
+{
+	bt_auth = value;
+	EE_bluetooth_commandModeEnter();
+	EE_bluetooth_sendS("SA,");
+	EE_bluetooth_sendC(value + '0');
+	EE_bluetooth_sendC('\r');
+	EE_bluetooth_check_response_no_timeout("AOK");
+	EE_bluetooth_commandModeLeave();
+	return 1;
 }
 
 void EE_bluetooth_acquire()
