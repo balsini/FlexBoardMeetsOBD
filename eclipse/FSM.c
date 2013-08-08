@@ -13,8 +13,8 @@
 #include "ee_elm327.h"
 
 Status status_;
-char blink_counter = 0;
-char blink = 0;
+char blink_counter;
+char blink;
 char lcd_changed;
 
 inquiry_result_t inquiry_result[9];
@@ -24,19 +24,17 @@ int inquiry_selector[2]; // Pointer for row and column
 Signal FSM_getSignals()
 {
 	char b = buttons_get();
-	if ((b & 1) != 0)
-		return B1;
-	if ((b & 2) != 0)
-		return B2;
-	if ((b & 4) != 0)
-		return B3;
-	if ((b & 8) != 0)
-		return B4;
+	if (b & 1) return B1;
+	if (b & 2) return B2;
+	if (b & 4) return B3;
+	if (b & 8) return B4;
 	return ABSENT;
 }
 
 void FSM_init()
 {
+	blink_counter = 0;
+	blink = 0;
 	status_ = WELCOME;
 }
 
@@ -52,7 +50,7 @@ void FSM_dispatch()
 	case WELCOME:
 		switch (s) {
 		case ABSENT:
-			if (blink_counter++ == 3) {
+			if (blink_counter++ == 4) {
 				blink_counter = 0;
 				if (blink++ == 1) {
 					blink = 0;
