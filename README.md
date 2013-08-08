@@ -1,4 +1,4 @@
 FlexBoardMeetsOBD
 =================
 
-Flexboard driver for communication with a bluetooth elm328 through Roving Networks RN42.
+FlexBoard application for vehicle diagnostics with Bluetooth Elm327 through Roving Networks RN42
