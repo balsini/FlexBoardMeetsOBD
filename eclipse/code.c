@@ -82,7 +82,7 @@ int main(void)
 	FSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(TaskScan, 1000, 200);
+	SetRelAlarm(TaskScan, 1000, 150);
 
 	//ActivateTask(TaskInit);
 

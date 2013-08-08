@@ -49,21 +49,21 @@ inline int EE_bluetooth_check_response(char * response)
 
 inline int EE_bluetooth_check_response_no_timeout(char * response)
 {
-	int correct = 1;
-	unsigned char value = 0;
+	static int correct;
+	static unsigned char value = 0;
+
+	correct = 1;
 	for (; *response != '\0'; response++) {
 		if (*response != (value = EE_bluetooth_receive_no_timeout())) {
 			correct = 0;
 			break;
 		}
 	}
-	if (value == 0xFF)
-		return 0;
-	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0D) {
+	while ((value = EE_bluetooth_receive()) != 0x0D) {
 		if (value == 0xFF)
 			return 0;
 	}
-	while ((value = EE_bluetooth_receive_no_timeout()) != 0x0A) {
+	while ((value = EE_bluetooth_receive()) != 0x0A) {
 		if (value == 0xFF)
 			return 0;
 	}
@@ -86,7 +86,7 @@ int EE_bluetooth_commandModeLeave()
 	if (!command_mode_on)
 		return 1;
 	EE_bluetooth_sendS("---\r");
-	if (!EE_bluetooth_check_response("END"))
+	if (!EE_bluetooth_check_response_no_timeout("END"))
 		return 0;
 	command_mode_on = 0;
 	return 1;
@@ -101,13 +101,13 @@ inline void EE_bluetooth_sendC(unsigned char c)
 #endif
 }
 
-inline void EE_bluetooth_sendS(char * str)
+void EE_bluetooth_sendS(char * str)
 {
 	for (; *str != '\0'; str++)
 		EE_bluetooth_sendC(*(unsigned char *)str);
 }
 
-inline unsigned char EE_bluetooth_receive_no_timeout()
+unsigned char EE_bluetooth_receive_no_timeout()
 {
 	static unsigned char RxBuff;
 #if BT_UART == 1
@@ -118,10 +118,10 @@ inline unsigned char EE_bluetooth_receive_no_timeout()
 	return RxBuff;
 }
 
-inline unsigned char EE_bluetooth_receive()
+unsigned char EE_bluetooth_receive()
 {
-	static unsigned int i;
-	static unsigned int limit = 0xFFF0;
+	volatile static unsigned int i;
+	volatile static unsigned int limit = 0xFFFD;
 	static unsigned char RxBuff;
 	i = 0;
 #if BT_UART == 1
@@ -146,7 +146,7 @@ int EE_bluetooth_set_slave()
 
 	// Forces the Master mode
 	EE_bluetooth_sendS("SM,0\r");
-	EE_bluetooth_check_response("AOK");
+	EE_bluetooth_check_response_no_timeout("AOK");
 
 	// Checks if changes took effect
 	EE_bluetooth_sendS("GM\r");
@@ -166,11 +166,31 @@ int EE_bluetooth_set_master()
 
 	// Forces the Master mode
 	EE_bluetooth_sendS("SM,1\r");
-	EE_bluetooth_check_response("AOK");
+	EE_bluetooth_check_response_no_timeout("AOK");
 
 	// Checks if changes took effect
 	EE_bluetooth_sendS("GM\r");
 	ret = EE_bluetooth_check_response("Mstr");
+	EE_bluetooth_commandModeLeave();
+	return ret;
+}
+
+int EE_bluetooth_set_pairing()
+{
+	int ret;
+	EE_bluetooth_commandModeEnter();
+	// Check if already in Master mode
+	EE_bluetooth_sendS("GM\r");
+	if (EE_bluetooth_check_response("Manu"))
+		return 1;	// Already in Master mode
+
+	// Forces the Master mode
+	EE_bluetooth_sendS("SM,6\r");
+	EE_bluetooth_check_response_no_timeout("AOK");
+
+	// Checks if changes took effect
+	EE_bluetooth_sendS("GM\r");
+	ret = EE_bluetooth_check_response("Manu");
 	EE_bluetooth_commandModeLeave();
 	return ret;
 }
@@ -262,19 +282,22 @@ int EE_bluetooth_reboot()
 
 int EE_bluetooth_connect(char * addr)
 {
-	int i;
-	int ret = 0;
 	EE_bluetooth_commandModeEnter();
+
 	EE_bluetooth_sendS("C,");
 	EE_bluetooth_sendS(addr);
 	EE_bluetooth_sendC('\r');
-	EE_bluetooth_check_response_no_timeout("TRYING");
 
-	LCD_appendC('T');
+	if (!EE_bluetooth_check_response_no_timeout("TRYING"))
+		return 0;
 
-	if (bt_auth == 4) {
-		for (;;)
-			EE_bluetooth_receive_no_timeout();
+	return 1;
+
+	/*
+	for (;;)
+		EE_bluetooth_receive_no_timeout();
+
+	if (bt_auth == 1) {
 	} else {
 		// TO DO, I don't have hardware to test
 		// this functionalities
@@ -293,6 +316,7 @@ int EE_bluetooth_connect(char * addr)
 	}
 	EE_bluetooth_commandModeLeave();
 	return ret;
+	*/
 }
 
 int EE_bluetooth_set_pin(char * pin)

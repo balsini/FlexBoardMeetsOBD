@@ -45,8 +45,13 @@ int EE_bluetooth_set_master();
 int EE_bluetooth_set_slave();
 
 /*
- * Returns 1 if Bluetooth module returns values
- * in command mode, 0 otherwise
+ * Brings Bluetooth module to Pairing mode
+ */
+
+int EE_bluetooth_set_pairing();
+
+/*
+ * Returns 1 if Bluetooth module is alive
  */
 
 int EE_bluetooth_alive();
@@ -113,14 +118,14 @@ int EE_bluetooth_set_pin(char * pin);
  * Sends a string via Bluetooth
  */
 
-inline void EE_bluetooth_sendS(char * string);
+void EE_bluetooth_sendS(char * string);
 
 /*
  * Receives a char via Bluetooth
  */
 
-inline unsigned char EE_bluetooth_receive();
-inline unsigned char EE_bluetooth_receive_no_timeout();
+unsigned char EE_bluetooth_receive();
+unsigned char EE_bluetooth_receive_no_timeout();
 
 /*
  * Resets the device.

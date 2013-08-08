@@ -7,6 +7,11 @@
 
 #include "FSM.h"
 
+#include "constants.h"
+#include "buttons.h"
+#include "ee_bluetooth.h"
+#include "ee_elm327.h"
+
 Status status_;
 char blink_counter = 0;
 char blink = 0;
@@ -68,13 +73,13 @@ void FSM_dispatch()
 			// Bluetooth initialization
 			if (EE_bluetooth_init(BT_BAUD_RATE, BT_PARAM, BT_CONG_CTRL)) {
 				LCD_appendS("[Done]");
-				LCD_appendR("Go Mstr...");
+				LCD_appendR("SetMode...");
 				// Switch to Master mode
-				if (EE_bluetooth_set_master()) {
+				if (EE_bluetooth_set_pairing()) {
 					LCD_appendS("[Done]");
 					// Forces pin authentication
-					EE_bluetooth_set_authentication(4);
-					EE_bluetooth_set_pin("0123");
+					EE_bluetooth_set_authentication(1);
+					EE_bluetooth_set_pin("6789");
 					EE_bluetooth_set_name("Flex_RN42");
 					EE_bluetooth_reboot();
 				}
@@ -170,15 +175,32 @@ void FSM_dispatch()
 			}
 			break;
 		case BT_CONNECT:
-			LCD_appendR("Connect...");
-			if (EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr))
-				LCD_appendS("[Done]");
-			else
-				LCD_appendS("[Fail]");
-
-			FSM_tran_(DEAD);
+			LCD_appendR("Estabilish Conn.");
+			EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr);
+			LCD_appendR("Comm|RConn|RScan");
+			FSM_tran_(BT_CONNECT_VERIFY);
 			break;
-		case BT_INQUIRY_SHOW_MOVE:
+		case BT_CONNECT_VERIFY:
+			switch (s) {
+			case ABSENT:
+				break;
+			case B1:
+				FSM_tran_(BT_COMMUNICATE);
+				break;
+			case B2:
+			case B3:
+				FSM_tran_(BT_CONNECT);
+				break;
+			case B4:
+				FSM_tran_(BT_INQUIRY);
+				break;
+			}
+			break;
+		case BT_COMMUNICATE:
+			ee_elm327_init();
+			LCD_appendR("Elm v.");
+			LCD_appendS(ee_elm327_get_version());
+			FSM_tran_(DEAD);
 			break;
 		case WAIT:
 			LCD_appendR("WAITING 4E");
