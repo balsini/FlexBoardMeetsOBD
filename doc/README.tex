@@ -99,11 +99,25 @@
 
 \section{Introduction}
 
-\lettrine[nindent=0em,lines=2.5]{N} owadays almost all the vehicles adopt the OBDII standard. It allows the user not only to retrieve diagnostic data, but also to program the control units and modify vehicle's parameters in real time.
+\lettrine[nindent=0em,lines=2.5]{N} owadays almost all the vehicles adopt, by law, a standard way of communicating diagnostic information.
+
+The OBDII standard is actually the most common protocol. It allows the user not only to retrieve diagnostic data, but also to program the control units and modify vehicle's parameters in real time.
 
 %------------------------------------------------
 
 \section{Hardware}
+
+Many interfaces for transfering vehicle diagnostics are not directly available in commond PCs or PDAs.
+
+As bridge between OBDII and Bluetooth it is possible to use Elm 327 modules.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2in]{img/elm_327_presentation}
+  \caption{\textit{Elm 327} Bluetooth/OBDII module}
+\end{figure}
+
+By default, our module is discovered with the Bluetooth name "CHX" and requires the password "6789" for pairing.
 
 \subsection{Connectors and Wirings}
 
