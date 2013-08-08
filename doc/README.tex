@@ -87,7 +87,7 @@
 \begin{abstract}
 
 %\noindent \lipsum[1] % Dummy abstract text
-\noindent The aim of the project is the development of a bridge made of a Flex Board, a Bluetooth/UART module and an Elm327 device. The bridge gathers information from a standard OBD vehicle and makes them available to other platforms.
+\noindent The aim of the project is the development of a bridge made of a Flex Demo Board, a Bluetooth/UART module and an Elm327 device. The bridge gathers information from a standard OBDII vehicle and makes it available to other platforms.
 
 \end{abstract}
 
@@ -99,34 +99,84 @@
 
 \section{Introduction}
 
-\lettrine[nindent=0em,lines=3]{N} owadays almost all the vehicles adopt the OBD standard. It allows the user not only to retrieve diagnostic data, but also to program the control units and modify vehicle's parameters in real time.
-%\lipsum[2-3] % Dummy text
+\lettrine[nindent=0em,lines=2.5]{N} owadays almost all the vehicles adopt the OBDII standard. It allows the user not only to retrieve diagnostic data, but also to program the control units and modify vehicle's parameters in real time.
 
 %------------------------------------------------
 
 \section{Hardware}
 
-\subsection{Connectors}
+\subsection{Connectors and Wirings}
 
-The OBD connector...
+The Flex Demo Board pins involved in the project are the following:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=2in]{img/J1962_female}
+  \includegraphics[width=2in]{img/flex_demo_board_pinout}
+  \caption{\textit{Flex Demo Board} pinout}
+\end{figure}
+
+\begin{compactitem}
+\item pin 1: 5 V;
+\item pin 2: TX-O, UART output;
+\item pin 3: SCK, Serial ClocK;
+\item pin 4: RX-I, UART input;
+\item pin 5: i.e. Vout;
+\item pin 6: i.e. GND.
+\end{compactitem}
+
+The Bluetooth device uses has the following pinout:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/bluesmirf_pinout}
+  \caption{\textit{Bluesmirf} (Bluetooth/UART module) pinout}
+\end{figure}
+
+\begin{compactitem}
+\item pin 1: CTS-I, Clear to Send (handshake pin);
+\item pin 2: VCC (from 3.3V to 6V);
+\item pin 3: GND;
+\item pin 4: TX-O, UART output;
+\item pin 5: RX-I, UART input;
+\item pin 6: RTS-O, Request to Send (handshake pin).
+\end{compactitem}
+
+The Bluesmirf module has been connected to the Flex Demo Board with the following wiring:
+
+\begin{compactitem}
+\item Flex RX-I <-> Bt TX-O;
+\item Flex TX-O <-> Bt RX-I;
+\item Flex 5 V <-> Bt Vcc;
+\item Flex GND <-> Bt GND.
+\end{compactitem}
+
+The standard OBDII female connector has the following pinout:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.5in]{img/J1962_female_pinout}
   \caption{OBD female connector pinout}
 \end{figure}
 
-Maecenas sed ultricies felis. Sed imperdiet dictum arcu a egestas. 
 \begin{compactitem}
-\item Donec dolor arcu, rutrum id molestie in, viverra sed diam
-\item Curabitur feugiat
-\item turpis sed auctor facilisis
-\item arcu eros accumsan lorem, at posuere mi diam sit amet tortor
-\item Fusce fermentum, mi sit amet euismod rutrum
-\item sem lorem molestie diam, iaculis aliquet sapien tortor non nisi
-\item Pellentesque bibendum pretium aliquet
+\item pin 1: NC;
+\item pin 2: Bus+ (J1850);
+\item pin 3: NC;
+\item pin 4: GND (chassis);
+\item pin 5: GND (signal);
+\item pin 6: CAN High (J-2284);
+\item pin 7: K-Line (ISO9141-2);
+\item pin 8: NC;
+\item pin 9: NC;
+\item pin 10: Bus (J1850);
+\item pin 11: NC;
+\item pin 12: NC;
+\item pin 13: NC;
+\item pin 14: CAN Low (J-2284);
+\item pin 15: L-Line (ISO9141-2);
+\item pin 16: Board Power (12 V).
 \end{compactitem}
-\lipsum[4] % Dummy text
+
 
 %------------------------------------------------
 
