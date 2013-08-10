@@ -196,6 +196,23 @@ The standard OBDII female connector has the following pinout:
 
 \section{Software}
 
+\subsection{Linux/BlueZ}
+
+It is necessary to add a new entry to
+
+\emph{/var/lib/bluetooth/xx:xx:xx:xx:xx:xx/pincodes}
+
+containing the value
+
+\emph{yy:yy:yy:yy:yy:yy zzzz}
+
+where:
+\begin{compactitem}
+\item xx:xx:xx:xx:xx:xx is the address of the Bluetooth device connected to PC;
+\item yy:yy:yy:yy:yy:yy is the address of the remote Bluetooth device (in our case, the Elm327 interface);
+\item zzzz is the pin code used by the remote Bluetooth device.
+\end{compactitem}
+
 \begin{table}[H]
 \caption{Example table}
 \centering
