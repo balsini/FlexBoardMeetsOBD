@@ -11,8 +11,7 @@
 #include "LCD.h"
 #include "FSM.h"
 #include "buttons.h"
-
-#define BT_UART 2
+#include "constants.h"
 
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);

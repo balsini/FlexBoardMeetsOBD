@@ -14,6 +14,8 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
+#include "../FLEX-OBD/ee_elm327.h"
+
 int main(int argc, char **argv)
 {
 	inquiry_info *ii = NULL;
