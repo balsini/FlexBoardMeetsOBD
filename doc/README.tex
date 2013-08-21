@@ -279,9 +279,17 @@ where \emph{VALUE} has different fixed sizes for different data.
 \emph{VALUE}'s length is \emph{n}-byte, each one separated by a space symbol.
 
 \begin{lstlisting}[language=bash]
+MODE 00
+\end{lstlisting}
+
+Requests the list of pids available for the \emph{MM} mode.
+
+The value returned is a bit map, where each bit is associated to a pid and has value 1 if available or 0 if not available.
+
+\begin{lstlisting}[language=bash]
 01 01
 \end{lstlisting}
-Request the list of error codes (\emph{DTCs}, \emph{Diagnostic Trouble Codes}).
+Requests the list of error codes (\emph{DTCs}, \emph{Diagnostic Trouble Codes}).
 This returns a 4 byte response, like
 \begin{lstlisting}[language=bash]
 41 01 AA BB CC DD
