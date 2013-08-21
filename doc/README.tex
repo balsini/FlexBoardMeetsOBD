@@ -21,6 +21,14 @@
 \documentclass[twoside]{article}
 
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
 
 \usepackage{lipsum} % Package to generate dummy text throughout this template
 
@@ -196,21 +204,110 @@ The standard OBDII female connector has the following pinout:
 
 \section{Software}
 
+\subsection{Elm327 Communication Basics}
+
+Elm327 accepts basically two types of input:
+\begin{compactitem}
+  \item commands: all prefixed with "AT", allowing various kind of operations on device;
+  \item data requests: allowing to retrieve data from the vehicle;
+  
+\end{compactitem}
+
+\subsubsection{Basic Commands}
+
+\begin{compactitem}
+  \item general commands;
+  \item OBD commands;
+  \item protocols specific commands;
+  \item miscellaneous commands.
+\end{compactitem}
+
+\begin{lstlisting}[language=bash]
+AT Z
+\end{lstlisting}
+
+Resets the module, as if a power reset happened.
+It brings back all the settings to their default values.
+
+\begin{lstlisting}[language=bash]
+AT SP x
+\end{lstlisting}
+
+Sets the protocol to \emph{x}, in particular, by default:
+\begin{compactitem}
+  \item 0 automatic;
+  \item 1 SAE J1850 PWM (41.6 Kbaud);
+  \item 2 SAE J1850 VPW (10.4 Kbaud);
+  \item 3 ISO 9141-2 (5 baud init, 10.4 Kbaud);
+  \item 4 ISO 14230-4 KWP (5 baud init, 10.4 Kbaud);
+  \item 5 ISO 14230-4 KWP (fast init, 10.4 Kbaud);
+  \item 6 ISO 15765-4 CAN (11 bit ID, 500 Kbaud);
+  \item 7 ISO 15765-4 CAN (29 bit ID, 500 Kbaud);
+  \item 8 ISO 15765-4 CAN (11 bit ID, 250 Kbaud);
+  \item 9 ISO 15765-4 CAN (29 bit ID, 250 Kbaud);
+  \item A SAE J1939 CAN (29 bit ID, 250* Kbaud);
+  \item B USER1 CAN (11* bit ID, 125* Kbaud);
+  \item C USER2 CAN (11* bit ID, 50* Kbaud).
+\end{compactitem}
+
+
+\subsubsection{Basic Data}
+
+Each data request has three parameters associated:
+\begin{compactitem}
+  \item mode: hexadecimal 2 byte identifier;
+  \item pid: hexadecimal 2 byte identifier;
+  \item response length.
+\end{compactitem}
+
+Each request has the following syntax
+\begin{lstlisting}[language=bash]
+MODE PID
+\end{lstlisting}
+and each response has the syntax
+\begin{lstlisting}[language=bash]
+MODE PID VALUE
+\end{lstlisting}
+where \emph{VALUE} has different fixed sizes for different data.
+\emph{VALUE}'s length is \emph{n}-byte, each one separated by a space symbol.
+
+\subsubsection{Communication Example}
+We will use a fake Elm327 with a v1.5 firmware.
+When connected, it is possible to launch the command
+\begin{lstlisting}[language=bash]
+AT Z
+\end{lstlisting}
+
+This command will reboot the module and print out the device name and firmware version
+\begin{lstlisting}[language=bash]
+ELM327 v1.5
+\end{lstlisting}
+
+It is now possible, for example, to request the list of error codes (\emph{DTCs}, \emph{Diagnostic Trouble Codes}), by typing
+\begin{lstlisting}[language=bash]
+01 01
+\end{lstlisting}
+This command returns a 4 byte response, like
+\begin{lstlisting}[language=bash]
+01 01 BE 1F A8 13
+\end{lstlisting}
+
+
 \subsection{Linux/BlueZ}
 
-It is necessary to add a new entry to
-
-\emph{/var/lib/bluetooth/xx:xx:xx:xx:xx:xx/pincodes}
-
-containing the value
-
-\emph{yy:yy:yy:yy:yy:yy zzzz}
-
+It is necessary to add a new entry with the following format
+\begin{lstlisting}[language=bash]
+REMOTE PIN
+\end{lstlisting}
+to
+\begin{lstlisting}[language=bash]
+/var/lib/bluetooth/LOCAL/pincodes
+\end{lstlisting}
 where:
 \begin{compactitem}
-\item xx:xx:xx:xx:xx:xx is the address of the Bluetooth device connected to PC;
-\item yy:yy:yy:yy:yy:yy is the address of the remote Bluetooth device (in our case, the Elm327 interface);
-\item zzzz is the pin code used by the remote Bluetooth device.
+\item \emph{LOCAL} is the address of the Bluetooth device connected to PC;
+\item \emph{REMOTE} is the address of the remote Bluetooth device (in our case, the Elm327 interface);
+\item \emph{PIN} is the pin code used by the remote Bluetooth device for pairing.
 \end{compactitem}
 
 \begin{table}[H]
@@ -264,7 +361,10 @@ Software starts with a welcome message...
 \bibitem{}
   \emph{Bluetooth Data Module Command Reference \& Advanced Information User's Guide},
   Roving Networks (2013)
-
+  
+\bibitem{}
+  \emph{ELM327 - OBD to RS232 Interpreter},
+  Elm Electronics
  
 \end{thebibliography}
 
