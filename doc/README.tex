@@ -21,6 +21,14 @@
 \documentclass[twoside]{article}
 
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
 
 \usepackage{lipsum} % Package to generate dummy text throughout this template
 
@@ -196,21 +204,191 @@ The standard OBDII female connector has the following pinout:
 
 \section{Software}
 
-\subsection{Linux/BlueZ}
+\subsection{Elm327 Communication Basics}
 
-It is necessary to add a new entry to
+Elm327 accepts basically two types of input:
+\begin{compactitem}
+  \item commands: allow various kind of operations on device;
+  \item data requests: allow to retrieve data from the vehicle.
+\end{compactitem}
 
-\emph{/var/lib/bluetooth/xx:xx:xx:xx:xx:xx/pincodes}
+Elm327 is case-insensitive and does not care about spacing symbols (tabs or white spaces).
+Nevertheless, in this document will be used uppercases and a correct amount of spacing, with the aim of improving readability.
 
-containing the value
+\subsubsection{Basic Commands}
 
-\emph{yy:yy:yy:yy:yy:yy zzzz}
+All commands are prefixed with "AT". It is possible to distinguish between four classes of commands:
+\begin{compactitem}
+  \item general commands;
+  \item OBD commands;
+  \item protocols specific commands;
+  \item miscellaneous commands.
+\end{compactitem}
 
+The syntax for commands is, usally
+\begin{lstlisting}[language=bash]
+AT CMD [param]
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash]
+AT Z
+\end{lstlisting}
+
+Resets the module, as if a power reset happened.
+It brings back all the settings to their default values.
+
+\begin{lstlisting}[language=bash]
+AT SP x
+\end{lstlisting}
+
+Sets the protocol to \emph{x}, in particular, by default:
+\begin{compactitem}
+  \item 0 automatic;
+  \item 1 SAE J1850 PWM (41.6 Kbaud);
+  \item 2 SAE J1850 VPW (10.4 Kbaud);
+  \item 3 ISO 9141-2 (5 baud init, 10.4 Kbaud);
+  \item 4 ISO 14230-4 KWP (5 baud init, 10.4 Kbaud);
+  \item 5 ISO 14230-4 KWP (fast init, 10.4 Kbaud);
+  \item 6 ISO 15765-4 CAN (11 bit ID, 500 Kbaud);
+  \item 7 ISO 15765-4 CAN (29 bit ID, 500 Kbaud);
+  \item 8 ISO 15765-4 CAN (11 bit ID, 250 Kbaud);
+  \item 9 ISO 15765-4 CAN (29 bit ID, 250 Kbaud);
+  \item A SAE J1939 CAN (29 bit ID, 250* Kbaud);
+  \item B USER1 CAN (11* bit ID, 125* Kbaud);
+  \item C USER2 CAN (11* bit ID, 50* Kbaud).
+\end{compactitem}
+
+\subsubsection{Basic Data}
+
+Each data request has three parameters associated:
+\begin{compactitem}
+  \item mode: hexadecimal 2 byte identifier;
+  \item pid: hexadecimal 2 byte identifier;
+  \item response length.
+\end{compactitem}
+
+Each request has the following syntax
+\begin{lstlisting}[language=bash]
+MODE PID
+\end{lstlisting}
+and each response has the syntax
+\begin{lstlisting}[language=bash]
+MODE PID VALUE
+\end{lstlisting}
+where \emph{VALUE} has different fixed sizes for different data.
+\emph{VALUE}'s length is \emph{n}-byte, each one separated by a space symbol.
+
+\begin{lstlisting}[language=bash]
+MODE 00
+\end{lstlisting}
+
+Requests the list of pids available for the \emph{MM} mode.
+
+The value returned is a bit map, where each bit is associated to a pid and has value 1 if available or 0 if not available.
+
+\begin{lstlisting}[language=bash]
+01 01
+\end{lstlisting}
+Requests the list of error codes (\emph{DTCs}, \emph{Diagnostic Trouble Codes}).
+This returns a 4 byte response, like
+\begin{lstlisting}[language=bash]
+41 01 AA BB CC DD
+\end{lstlisting}
 where:
 \begin{compactitem}
-\item xx:xx:xx:xx:xx:xx is the address of the Bluetooth device connected to PC;
-\item yy:yy:yy:yy:yy:yy is the address of the remote Bluetooth device (in our case, the Elm327 interface);
-\item zzzz is the pin code used by the remote Bluetooth device.
+  \item \emph{41 01}: represents the response to the request;
+  \item \emph{AA}: is the number of trouble codes:
+  \begin{compactitem}
+    \item most significant bit: Multifunction Indicator Lamp (MIL, aka Check Engine Light) has been turned on;
+    \item remaining bits: number of stored trouble codes, flagged in the ECU (Engine Control Unit);
+  \end{compactitem}
+  \item \emph{BB CC DD}: information about the availability and completeness of certain on-board tests, with different interpretations in case of spark or compression ignition engines. More details on SAE J1979 documentation.
+\end{compactitem}
+
+So, with the \emph{AA} value set to \emph{81} hex (\emph{10000001} bin) it is possible to recognize that there is one trouble code stored which turned on the Check Engine Light.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llr}
+\multicolumn{3}{c}{BB} \\
+\toprule
+Test & Available & Incomplete \\
+\midrule
+Misfire & B0 & B4 \\          
+Fuel System & B1 & B5 \\
+Components & B2 & B6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llr}
+\multicolumn{3}{c}{CC, DD Spark Ignition} \\
+\toprule
+Test & Avail. & Incompl. \\
+\midrule
+Catalyst & C0 & D0 \\
+Heated Catalyst & C1 & D1 \\
+Evaporative System & C2 & D2 \\
+Secondary Air System & C3 & D3 \\
+A/C Refrigerant & C4 & D4 \\
+Oxygen Sensor & C5 & D5 \\
+Oxygen Sensor Heater & C6 & D6 \\
+EGR System & C7 & D7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llr}
+\multicolumn{3}{c}{CC, DD Compression Ignition} \\
+\toprule
+Test & Avail. & Incompl. \\
+\midrule
+NMHC Cat & C0 & D0 \\
+NOx/SCR Monitor & C1 & D1 \\
+Boost Pressure & C3 & D3 \\
+Exhaust Gas Sensor & C5 & D5 \\
+PM filter monitoring & C6 & D6 \\
+EGR and/or VVT System & C7 & D7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+Response should be interpreted as a bit map.
+
+\subsubsection{Communication Example}
+We will use a fake Elm327 with a v1.5 firmware.
+When connected, it is possible to launch the command
+\begin{lstlisting}[language=bash]
+AT Z
+\end{lstlisting}
+
+This command will reboot the module and print out the device name and firmware version
+\begin{lstlisting}[language=bash]
+ELM327 v1.5
+\end{lstlisting}
+
+\subsection{Linux/BlueZ}
+
+It is necessary to add a new entry with the following format
+\begin{lstlisting}[language=bash]
+REMOTE PIN
+\end{lstlisting}
+to
+\begin{lstlisting}[language=bash]
+/var/lib/bluetooth/LOCAL/pincodes
+\end{lstlisting}
+where:
+\begin{compactitem}
+\item \emph{LOCAL} is the address of the Bluetooth device connected to PC;
+\item \emph{REMOTE} is the address of the remote Bluetooth device (in our case, the Elm327 interface);
+\item \emph{PIN} is the pin code used by the remote Bluetooth device for pairing.
 \end{compactitem}
 
 \begin{table}[H]
@@ -264,7 +442,10 @@ Software starts with a welcome message...
 \bibitem{}
   \emph{Bluetooth Data Module Command Reference \& Advanced Information User's Guide},
   Roving Networks (2013)
-
+  
+\bibitem{}
+  \emph{ELM327 - OBD to RS232 Interpreter},
+  Elm Electronics
  
 \end{thebibliography}
 
