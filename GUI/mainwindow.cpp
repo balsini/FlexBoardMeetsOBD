@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("FlexBoardMeetsOBD");
     createMenus();
     createToolBars();
+    serialConfig = new SerialConfiguration(this, Qt::Window);
 }
 
 MainWindow::~MainWindow() {}
@@ -18,9 +19,14 @@ void MainWindow::createMenus()
     aboutAct = new QAction(this);
     aboutAct->setText(tr("&About"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(aboutSlot()));
+    serialConfigAct = new QAction(this);
+    serialConfigAct->setText(tr("&Serial Config"));
+    connect(serialConfigAct, SIGNAL(triggered()), this, SLOT(serialConfigSlot()));
 
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAct);
+    settingsMenu = menuBar()->addMenu(tr("&Configure"));
+    settingsMenu->addAction(serialConfigAct);
     questionsMenu = menuBar()->addMenu(tr("&?"));
     questionsMenu ->addAction(aboutAct);
 }
@@ -28,15 +34,14 @@ void MainWindow::createMenus()
 void MainWindow::createToolBars()
 {
     newMonitorAct = new QAction(this);
-    newMonitorAct->setText("&New Monitor");
+    newMonitorAct->setText(tr("&New Monitor"));
     connect(newMonitorAct, SIGNAL(triggered()), this, SLOT(newMonitorSlot()));
     deleteMonitorAct = new QAction(this);
-    deleteMonitorAct->setText("&Delete Monitor");
+    deleteMonitorAct->setText(tr("&Delete Monitor"));
     connect(deleteMonitorAct, SIGNAL(triggered()), this, SLOT(deleteMonitorSlot()));
     editMonitorAct = new QAction(this);
-    editMonitorAct->setText("&Edit Monitor");
+    editMonitorAct->setText(tr("&Edit Monitor"));
     connect(editMonitorAct, SIGNAL(triggered()), this, SLOT(editMonitorSlot()));
-
 
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::RightToolBarArea, monitorToolBar);
@@ -69,8 +74,7 @@ void MainWindow::aboutSlot()
     QLabel * aboutDigia;
     QWidget * aboutWidget = new QWidget(this, Qt::Window);
 
-
-    aboutWidget->setWindowTitle("About");
+    aboutWidget->setWindowTitle(tr("About"));
     aboutWidget->setMinimumWidth(450);
     aboutWidget->setMaximumWidth(450);
     aboutWidget->setMinimumHeight(250);
@@ -84,10 +88,10 @@ void MainWindow::aboutSlot()
     //aboutDigia->setMinimumSize(200,200);
     aboutDigia->setPixmap(QPixmap(":/images/qt/digia_logo.png").scaledToHeight(65));
 
-    aboutAuthorsTitle = new QLabel("Authors", aboutWidget);
+    aboutAuthorsTitle = new QLabel(tr("Authors"), aboutWidget);
     aboutAuthorsTitle->setFont(QFont("Fantasy", 20, QFont::Bold));
-    aboutAuthors[0] = new QLabel("Alessio Balsini", aboutWidget);
-    aboutAuthors[1] = new QLabel("David Librera", aboutWidget);
+    aboutAuthors[0] = new QLabel(tr("Alessio Balsini"), aboutWidget);
+    aboutAuthors[1] = new QLabel(tr("David Librera"), aboutWidget);
     for (unsigned int i=0; i<aboutAuthorsNum; i++)
         aboutAuthors[i]->setFont(QFont("Monospace", 14));
 
@@ -110,4 +114,9 @@ void MainWindow::aboutSlot()
 
     aboutWidget->move(QApplication::desktop()->screen()->rect().center() - aboutWidget->rect().center());
     aboutWidget->show();
+}
+
+void MainWindow::serialConfigSlot()
+{
+    serialConfig->show();
 }
