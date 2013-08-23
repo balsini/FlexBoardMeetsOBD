@@ -9,6 +9,8 @@ SerialConfiguration::SerialConfiguration(QWidget *parent, Qt::WindowFlags f)
     mainLayout->addLayout(selectionLayout);
     mainLayout->addLayout(buttonsLayout);
     setLayout(mainLayout);
+
+    this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
 }
 
 void SerialConfiguration::createWidget()
@@ -34,8 +36,17 @@ void SerialConfiguration::createWidget()
     serialDeviceLayout->addSpacerItem(serialSpacer);
 
     baudRateLabel->setText(tr("Baud Rate"));
+    baudRate->addItem(tr("300"));
+    baudRate->addItem(tr("600"));
+    baudRate->addItem(tr("1200"));
+    baudRate->addItem(tr("2400"));
+    baudRate->addItem(tr("4800"));
     baudRate->addItem(tr("9600"));
+    baudRate->addItem(tr("19200"));
+    baudRate->addItem(tr("38400"));
+    baudRate->addItem(tr("57600"));
     baudRate->addItem(tr("115200"));
+    baudRate->setCurrentIndex(5);
 
     baudRateLayout->addWidget(baudRateLabel);
     baudRateLayout->addWidget(baudRate);
@@ -69,6 +80,9 @@ void SerialConfiguration::createWidget()
     stopBitsLayout->addSpacerItem(stopBitsSpacer);
 
     buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttons, SIGNAL(accepted()), this, SLOT(okSlot()));
+    connect(buttons, SIGNAL(rejected()), this, SLOT(cancelSlot()));
+
 
     selectionLayout->addLayout(serialDeviceLayout);
     selectionLayout->addLayout(baudRateLayout);
@@ -119,5 +133,25 @@ void SerialConfiguration::refreshDevicesSlot()
     ttyFilesList = serial.getDevices();
     while (!ttyFilesList.isEmpty())
         serialDevice->addItem(ttyFilesList.takeFirst());
+}
+
+void SerialConfiguration::okSlot()
+{
+    Serial_t config;
+
+    config.baud_rate = baudRate->currentText().toUInt();
+    config.bits = bits->currentText().toUInt();
+    config.device = serialDevice->currentText().toStdString();
+    config.parity = parity->currentText().toUInt();
+    config.stop_bits = stopBits->currentText().toUInt();
+
+    serial.setConfig(config);
+
+    this->hide();
+}
+
+void SerialConfiguration::cancelSlot()
+{
+    this->hide();
 }
 

@@ -64,9 +64,11 @@ class SerialConfiguration : public QWidget
 
 private slots:
     void refreshDevicesSlot();
+    void okSlot();
+    void cancelSlot();
 
 public:
-    SerialConfiguration(QWidget *parent = 0, Qt::WindowFlags f = 0 );
+    SerialConfiguration(QWidget *parent = 0, Qt::WindowFlags f = 0);
 };
 
 #endif // SERIALCONFIGURATION_H

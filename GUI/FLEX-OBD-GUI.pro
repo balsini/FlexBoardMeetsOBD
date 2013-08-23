@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp\
         serial.cpp \
-    serialconfiguration.cpp
+    serialconfiguration.cpp \
+    monitor.cpp \
+    about.cpp
 
 HEADERS  += mainwindow.h\
         serial.h \
-    serialconfiguration.h
+    serialconfiguration.h \
+    monitor.h \
+    about.h
 
 RESOURCES += \
     images.qrc

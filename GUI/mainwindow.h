@@ -21,12 +21,15 @@
 #include <QDir>
 
 #include "serialconfiguration.h"
+#include "monitor.h"
+#include "about.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
     SerialConfiguration * serialConfig;
+    About * about;
 
     QToolBar * monitorToolBar;
     QMenu * fileMenu;
@@ -37,7 +40,6 @@ class MainWindow : public QMainWindow
     QAction * serialConfigAct;
     QAction * newMonitorAct;
     QAction * editMonitorAct;
-    QAction * deleteMonitorAct;
 
     void createMenus();
     void createToolBars();
