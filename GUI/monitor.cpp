@@ -3,11 +3,10 @@
 #define MONITOR_WIDTH 150
 #define MONITOR_HEIGHT 150
 
-Monitor::Monitor(const QString &title, QWidget *parent)
-    : QDockWidget(title, parent)
+Monitor::Monitor(const QString &title, QWidget * parent, Qt::WindowFlags f)
+    : QWidget(parent, f)
 {
-    this->setMinimumWidth(MONITOR_HEIGHT);
-    this->setMaximumWidth(MONITOR_HEIGHT);
-    this->setMinimumHeight(MONITOR_HEIGHT);
-    this->setMaximumHeight(MONITOR_HEIGHT);
+    this->setWindowTitle(title);
+    this->setMaximumSize(MONITOR_WIDTH, MONITOR_HEIGHT);
+    this->setMinimumSize(MONITOR_WIDTH, MONITOR_HEIGHT);
 }

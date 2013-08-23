@@ -6,7 +6,10 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QToolBar>
-#include <QDockWidget>
+//#include <QDockWidget>
+
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include <QAction>
 #include <QLayout>
@@ -30,6 +33,8 @@ class MainWindow : public QMainWindow
 
     SerialConfiguration * serialConfig;
     About * about;
+
+    QMdiArea * mainWidget;
 
     QToolBar * monitorToolBar;
     QMenu * fileMenu;

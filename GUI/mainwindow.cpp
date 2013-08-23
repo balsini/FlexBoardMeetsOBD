@@ -6,6 +6,10 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("FlexBoardMeetsOBD");
     createMenus();
     createToolBars();
+
+    mainWidget = new QMdiArea(this);
+    this->setCentralWidget(mainWidget);
+
     serialConfig = new SerialConfiguration(this, Qt::Window);
     about = new About(this, Qt::Window);
 }
@@ -42,11 +46,11 @@ void MainWindow::createToolBars()
     connect(editMonitorAct, SIGNAL(triggered()), this, SLOT(editMonitorSlot()));
 
     monitorToolBar = new QToolBar(tr("File"));
-    addToolBar(Qt::RightToolBarArea, monitorToolBar);
+    addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(newMonitorAct);
     monitorToolBar->addAction(editMonitorAct);
     monitorToolBar->setOrientation(Qt::Vertical);
-    monitorToolBar->setAllowedAreas(Qt::RightToolBarArea);
+    monitorToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 }
 
 void MainWindow::exitSlot()
@@ -54,9 +58,21 @@ void MainWindow::exitSlot()
     this->close();
 }
 
-void MainWindow::newMonitorSlot() {
-    Monitor * monitorWidget = new Monitor(tr("Monitor"), this);
-    addDockWidget(Qt::TopDockWidgetArea, monitorWidget);
+void MainWindow::newMonitorSlot()
+{
+    static unsigned int i = 0;
+    QString name;
+
+    name = tr("Monitor ");
+    name.append(QString::number(i));
+    Monitor * monitorWidget = new Monitor(name);
+    QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
+    subWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    subWindow->show();
+
+    mainWidget->tileSubWindows();
+    i++;
 }
 
 void MainWindow::aboutSlot()

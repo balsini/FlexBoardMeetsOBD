@@ -6,21 +6,23 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = GUI
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp\
-        serial.cpp \
+SOURCES += \
+    main.cpp\
+    mainwindow.cpp\
+    serial.cpp \
     serialconfiguration.cpp \
     monitor.cpp \
     about.cpp
 
-HEADERS  += mainwindow.h\
-        serial.h \
+HEADERS  += \
+    mainwindow.h\
+    serial.h \
     serialconfiguration.h \
     monitor.h \
     about.h
