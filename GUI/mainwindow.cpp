@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainWidget = new QMdiArea(this);
     this->setCentralWidget(mainWidget);
 
-    serialConfig = new SerialConfiguration(this, Qt::Window);
+    serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
 }
 
@@ -41,14 +41,21 @@ void MainWindow::createToolBars()
     newMonitorAct = new QAction(this);
     newMonitorAct->setText(tr("&New Monitor"));
     connect(newMonitorAct, SIGNAL(triggered()), this, SLOT(newMonitorSlot()));
+
     editMonitorAct = new QAction(this);
     editMonitorAct->setText(tr("&Edit Monitors"));
     connect(editMonitorAct, SIGNAL(triggered()), this, SLOT(editMonitorSlot()));
+
+    serialConnectAct = new QAction(this);
+    serialConnectAct->setText(tr("&Serial Connect"));
+    connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
 
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(newMonitorAct);
     monitorToolBar->addAction(editMonitorAct);
+    monitorToolBar->addSeparator();
+    monitorToolBar->addAction(serialConnectAct);
     monitorToolBar->setOrientation(Qt::Vertical);
     monitorToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 }
@@ -83,4 +90,10 @@ void MainWindow::aboutSlot()
 void MainWindow::serialConfigSlot()
 {
     serialConfig->show();
+}
+
+void MainWindow::serialConnectSlot()
+{
+    serial.connect();
+    serial.writeS("Hello World!", 12);
 }

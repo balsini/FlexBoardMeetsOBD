@@ -7,6 +7,7 @@ class Monitor : public QWidget
 {
     Q_OBJECT
 
+
 public:
     Monitor(const QString & title, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };

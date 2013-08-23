@@ -45,6 +45,9 @@ class MainWindow : public QMainWindow
     QAction * serialConfigAct;
     QAction * newMonitorAct;
     QAction * editMonitorAct;
+    QAction * serialConnectAct;
+
+    Serial serial;
 
     void createMenus();
     void createToolBars();
@@ -54,6 +57,7 @@ private slots:
     void aboutSlot();
     void newMonitorSlot();
     void serialConfigSlot();
+    void serialConnectSlot();
 
 public:
     MainWindow(QWidget *parent = 0);

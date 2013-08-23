@@ -1,8 +1,10 @@
 #include "serialconfiguration.h"
 
-SerialConfiguration::SerialConfiguration(QWidget *parent, Qt::WindowFlags f)
+SerialConfiguration::SerialConfiguration(Serial * serial, QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f)
 {
+    this->serial = serial;
+
     initVariables();
     createWidget();
 
@@ -130,7 +132,7 @@ void SerialConfiguration::initVariables()
 void SerialConfiguration::refreshDevicesSlot()
 {
     serialDevice->clear();
-    ttyFilesList = serial.getDevices();
+    ttyFilesList = serial->getDevices();
     while (!ttyFilesList.isEmpty())
         serialDevice->addItem(ttyFilesList.takeFirst());
 }
@@ -145,7 +147,7 @@ void SerialConfiguration::okSlot()
     config.parity = parity->currentText().toUInt();
     config.stop_bits = stopBits->currentText().toUInt();
 
-    serial.setConfig(config);
+    serial->setConfig(config);
 
     this->hide();
 }

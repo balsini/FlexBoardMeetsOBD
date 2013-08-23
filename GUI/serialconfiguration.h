@@ -23,8 +23,6 @@ class SerialConfiguration : public QWidget
 {
     Q_OBJECT
 
-    Serial serial;
-
     QStringList ttyFilesList;
     QWidget * serialConfigWidget;
 
@@ -59,6 +57,8 @@ class SerialConfiguration : public QWidget
     QDialogButtonBox * buttons;
     QPushButton * serialDeviceRefreshButton;
 
+    Serial * serial;
+
     void initVariables();
     void createWidget();
 
@@ -68,7 +68,7 @@ private slots:
     void cancelSlot();
 
 public:
-    SerialConfiguration(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    SerialConfiguration(Serial * serial, QWidget *parent = 0, Qt::WindowFlags f = 0);
 };
 
 #endif // SERIALCONFIGURATION_H
