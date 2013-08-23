@@ -13,9 +13,20 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp\
+        serial.cpp \
+    serialconfiguration.cpp \
+    monitor.cpp \
+    about.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h\
+        serial.h \
+    serialconfiguration.h \
+    monitor.h \
+    about.h
 
 RESOURCES += \
     images.qrc
+
+FORMS += \
+    form.ui
