@@ -4,6 +4,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     this->setWindowTitle("FlexBoardMeetsOBD");
+    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     createMenus();
     createToolBars();
 
@@ -12,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
+    monitorSelection = new MonitorSelection(this, Qt::Window);
+
+    this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
 }
 
 MainWindow::~MainWindow() {}
@@ -50,9 +54,9 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    newMonitorAct = new QAction(this);
-    newMonitorAct->setText(tr("&New Monitor"));
-    connect(newMonitorAct, SIGNAL(triggered()), this, SLOT(newMonitorSlot()));
+    selectMonitorAct = new QAction(this);
+    selectMonitorAct->setText(tr("&Add Monitors"));
+    connect(selectMonitorAct, SIGNAL(triggered()), this, SLOT(selectMonitorSlot()));
 
     editMonitorAct = new QAction(this);
     editMonitorAct->setText(tr("&Edit Monitors"));
@@ -64,7 +68,7 @@ void MainWindow::createToolBars()
 
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
-    monitorToolBar->addAction(newMonitorAct);
+    monitorToolBar->addAction(selectMonitorAct);
     monitorToolBar->addAction(editMonitorAct);
     monitorToolBar->addAction(alignMonitorAct);
     monitorToolBar->addSeparator();
@@ -78,6 +82,11 @@ void MainWindow::exitSlot()
     this->close();
 }
 
+void MainWindow::selectMonitorSlot()
+{
+    monitorSelection->show();
+}
+
 void MainWindow::newMonitorSlot()
 {
     static unsigned int i = 0;
@@ -86,7 +95,7 @@ void MainWindow::newMonitorSlot()
     name = tr("Monitor ");
     name.append(QString::number(i));
     Monitor * monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
-    monitorWidget->setValue(50);
+    monitorWidget->setValue(70);
     QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 

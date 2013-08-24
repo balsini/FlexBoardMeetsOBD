@@ -18,14 +18,16 @@ SOURCES += \
     serial.cpp \
     serialconfiguration.cpp \
     monitor.cpp \
-    about.cpp
+    about.cpp \
+    monitorselection.cpp
 
 HEADERS  += \
     mainwindow.h\
     serial.h \
     serialconfiguration.h \
     monitor.h \
-    about.h
+    about.h \
+    monitorselection.h
 
 RESOURCES += \
     images.qrc

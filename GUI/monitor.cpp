@@ -1,10 +1,10 @@
 #include "monitor.h"
 
 unsigned int MONITOR_WIDTH = 300;
-unsigned int MONITOR_HEIGHT = 300;
+unsigned int MONITOR_HEIGHT = 200;
 
 unsigned int GRAPHICS_WIDTH = MONITOR_WIDTH*3/5;
-unsigned int GRAPHICS_HEIGHT = MONITOR_HEIGHT*3/5;
+unsigned int GRAPHICS_HEIGHT = GRAPHICS_WIDTH;
 
 Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::WindowFlags f)
     : QWidget(parent, f)

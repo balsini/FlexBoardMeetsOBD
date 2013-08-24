@@ -26,6 +26,7 @@
 #include "serialconfiguration.h"
 #include "monitor.h"
 #include "about.h"
+#include "monitorselection.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,6 +34,7 @@ class MainWindow : public QMainWindow
 
     SerialConfiguration * serialConfig;
     About * about;
+    MonitorSelection * monitorSelection;
 
     QMdiArea * mainWidget;
 
@@ -46,7 +48,7 @@ class MainWindow : public QMainWindow
     QAction * exitAct;
     QAction * aboutAct;
     QAction * serialConfigAct;
-    QAction * newMonitorAct;
+    QAction * selectMonitorAct;
     QAction * editMonitorAct;
     QAction * serialConnectAct;
     QAction * alignMonitorAct;
@@ -60,6 +62,7 @@ private slots:
     void exitSlot();
     void aboutSlot();
     void newMonitorSlot();
+    void selectMonitorSlot();
     void editMonitorSlot() {}
     void serialConfigSlot();
     void serialConnectSlot();
