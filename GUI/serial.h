@@ -31,7 +31,7 @@ class Serial
 public:
     Serial();
     ~Serial();
-    int writeS(char * string, unsigned int length);
+    int writeS(char * str, unsigned int len);
     int writeC(char c);
     int readS(void * buffer, unsigned int nbytes);
     char readC();
