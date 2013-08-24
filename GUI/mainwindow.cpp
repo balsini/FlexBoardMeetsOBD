@@ -21,17 +21,29 @@ void MainWindow::createMenus()
     exitAct = new QAction(this);
     exitAct->setText(tr("E&xit"));
     connect(exitAct, SIGNAL(triggered()), this, SLOT(exitSlot()));
+
     aboutAct = new QAction(this);
     aboutAct->setText(tr("&About"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(aboutSlot()));
+
     serialConfigAct = new QAction(this);
     serialConfigAct->setText(tr("&Serial Configuration"));
     connect(serialConfigAct, SIGNAL(triggered()), this, SLOT(serialConfigSlot()));
 
+    alignMonitorAct = new QAction(this);
+    alignMonitorAct->setText(tr("&Tile Monitors"));
+    connect(alignMonitorAct, SIGNAL(triggered()), this, SLOT(alignMonitorSlot()));
+
+
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAct);
+
     settingsMenu = menuBar()->addMenu(tr("&Configure"));
     settingsMenu->addAction(serialConfigAct);
+
+    viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(alignMonitorAct);
+
     questionsMenu = menuBar()->addMenu(tr("&?"));
     questionsMenu ->addAction(aboutAct);
 }
@@ -54,6 +66,7 @@ void MainWindow::createToolBars()
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(newMonitorAct);
     monitorToolBar->addAction(editMonitorAct);
+    monitorToolBar->addAction(alignMonitorAct);
     monitorToolBar->addSeparator();
     monitorToolBar->addAction(serialConnectAct);
     monitorToolBar->setOrientation(Qt::Vertical);
@@ -72,7 +85,8 @@ void MainWindow::newMonitorSlot()
 
     name = tr("Monitor ");
     name.append(QString::number(i));
-    Monitor * monitorWidget = new Monitor(name);
+    Monitor * monitorWidget = new Monitor(name, FUEL);
+    monitorWidget->setValue(0);
     QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -80,6 +94,11 @@ void MainWindow::newMonitorSlot()
 
     mainWidget->tileSubWindows();
     i++;
+}
+
+void MainWindow::alignMonitorSlot()
+{
+    mainWidget->tileSubWindows();
 }
 
 void MainWindow::aboutSlot()

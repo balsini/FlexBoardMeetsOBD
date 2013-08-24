@@ -37,15 +37,19 @@ class MainWindow : public QMainWindow
     QMdiArea * mainWidget;
 
     QToolBar * monitorToolBar;
+
     QMenu * fileMenu;
     QMenu * questionsMenu;
     QMenu * settingsMenu;
+    QMenu * viewMenu;
+
     QAction * exitAct;
     QAction * aboutAct;
     QAction * serialConfigAct;
     QAction * newMonitorAct;
     QAction * editMonitorAct;
     QAction * serialConnectAct;
+    QAction * alignMonitorAct;
 
     Serial serial;
 
@@ -58,6 +62,7 @@ private slots:
     void newMonitorSlot();
     void serialConfigSlot();
     void serialConnectSlot();
+    void alignMonitorSlot();
 
 public:
     MainWindow(QWidget *parent = 0);

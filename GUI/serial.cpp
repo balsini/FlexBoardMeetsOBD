@@ -146,9 +146,9 @@ int Serial::connect()
     return tty_fd;
 }
 
-int Serial::writeS(char * string, unsigned int length)
+int Serial::writeS(char * str, unsigned int len)
 {
-    return write(tty_fd, string, length);
+    return write(tty_fd, str, len);
 }
 
 int Serial::writeC(char c)

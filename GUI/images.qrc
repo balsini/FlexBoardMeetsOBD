@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>images/qt/qt_logo.png</file>
         <file>images/qt/digia_logo.png</file>
+        <file>images/gauges/fuel/arrow.png</file>
+        <file>images/gauges/fuel/bg.png</file>
     </qresource>
 </RCC>
