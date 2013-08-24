@@ -13,7 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
-    monitorSelection = new MonitorSelection(this, Qt::Window);
+
+    vehicle = new Vehicle(&serial);
+    monitorSelection = new MonitorSelection(vehicle, this, Qt::Window);
 
     this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
 }
@@ -55,7 +57,7 @@ void MainWindow::createMenus()
 void MainWindow::createToolBars()
 {
     selectMonitorAct = new QAction(this);
-    selectMonitorAct->setText(tr("&Add Monitors"));
+    selectMonitorAct->setText(tr("&Select Monitors"));
     connect(selectMonitorAct, SIGNAL(triggered()), this, SLOT(selectMonitorSlot()));
 
     editMonitorAct = new QAction(this);
@@ -82,27 +84,57 @@ void MainWindow::exitSlot()
     this->close();
 }
 
+void MainWindow::updateMonitorsSlot()
+{
+    QList<unsigned int> bitList;
+    QList<QMdiSubWindow *> subWindowList;
+    bitList.clear();
+    subWindowList.clear();
+    subWindowList = mainWidget->subWindowList();
+
+    while (!subWindowList.isEmpty())
+        subWindowList.takeFirst()->close();
+
+    vehicle->getBitmaskBits(&bitList);
+    while (!bitList.isEmpty())
+        newMonitor(bitList.takeFirst());
+}
+
 void MainWindow::selectMonitorSlot()
 {
     monitorSelection->show();
 }
 
-void MainWindow::newMonitorSlot()
+void MainWindow::newMonitor(unsigned int identifier)
 {
-    static unsigned int i = 0;
     QString name;
+    Monitor * monitorWidget;
 
-    name = tr("Monitor ");
-    name.append(QString::number(i));
-    Monitor * monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
-    monitorWidget->setValue(70);
+    switch (identifier) {
+    case 0: // RPM
+        name = tr("RPM");
+        monitorWidget = new Monitor(name, RPM, this, Qt::SubWindow);
+        break;
+    case 1: // SPEED
+        name = tr("Speed");
+        monitorWidget = new Monitor(name, SPEED, this, Qt::SubWindow);
+        break;
+    case 2: // FUEL
+        name = tr("Fuel");
+        monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
+        break;
+    default:
+        return;
+        break;
+    }
+
+    monitorWidget->setValue(0);
     QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     subWindow->show();
 
     mainWidget->tileSubWindows();
-    i++;
 }
 
 void MainWindow::alignMonitorSlot()

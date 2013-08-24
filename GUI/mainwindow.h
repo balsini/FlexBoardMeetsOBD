@@ -27,6 +27,7 @@
 #include "monitor.h"
 #include "about.h"
 #include "monitorselection.h"
+#include "vehicle.h"
 
 class MainWindow : public QMainWindow
 {
@@ -54,19 +55,23 @@ class MainWindow : public QMainWindow
     QAction * alignMonitorAct;
 
     Serial serial;
+    Vehicle * vehicle;
 
     void createMenus();
     void createToolBars();
+    void newMonitor(unsigned int identifier);
 
 private slots:
     void exitSlot();
     void aboutSlot();
-    void newMonitorSlot();
     void selectMonitorSlot();
     void editMonitorSlot() {}
     void serialConfigSlot();
     void serialConnectSlot();
     void alignMonitorSlot();
+
+public slots:
+    void updateMonitorsSlot();
 
 public:
     MainWindow(QWidget *parent = 0);

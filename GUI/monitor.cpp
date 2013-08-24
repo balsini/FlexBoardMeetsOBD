@@ -1,7 +1,7 @@
 #include "monitor.h"
 
-unsigned int MONITOR_WIDTH = 300;
-unsigned int MONITOR_HEIGHT = 200;
+unsigned int MONITOR_WIDTH = 350;
+unsigned int MONITOR_HEIGHT = 250;
 
 unsigned int GRAPHICS_WIDTH = MONITOR_WIDTH*3/5;
 unsigned int GRAPHICS_HEIGHT = GRAPHICS_WIDTH;
@@ -36,6 +36,14 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     case RPM:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/rpm/bg.png").scaledToWidth(GRAPHICS_WIDTH));
         arrow = mainScene->addPixmap(QPixmap(":/images/gauges/rpm/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
+        minAngle = -101;
+        maxAngle = 145;
+        maxValue = 17000;
+        minValue = 0;
+        break;
+    case SPEED:
+        bg = mainScene->addPixmap(QPixmap(":/images/gauges/speed/bg.png").scaledToWidth(GRAPHICS_WIDTH));
+        arrow = mainScene->addPixmap(QPixmap(":/images/gauges/speed/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
         minAngle = -101;
         maxAngle = 145;
         maxValue = 17000;

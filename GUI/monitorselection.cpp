@@ -1,9 +1,13 @@
 #include "monitorselection.h"
+#include "mainwindow.h"
 
-MonitorSelection::MonitorSelection(QWidget * parent, Qt::WindowFlags f)
+MonitorSelection::MonitorSelection(Vehicle * vehicle, QWidget * parent, Qt::WindowFlags f)
     : QWidget(parent, f)
 {
     QCheckBox * checkBox;
+
+    this->vehicle = vehicle;
+
     this->setWindowTitle("Monitor Selection");
 
     this->setLayout(&hLayout);
@@ -36,7 +40,16 @@ MonitorSelection::MonitorSelection(QWidget * parent, Qt::WindowFlags f)
 
 void MonitorSelection::okSlot()
 {
+    QList<QAbstractButton *> buttonList = buttonGroup.buttons();
 
+    vehicle->clearBitmask();
+    for (unsigned int i=0; !buttonList.isEmpty(); i++) {
+        if (buttonList.takeFirst()->isChecked())
+            vehicle->setBitmaskBit(i);
+    }
+
+    this->hide();
+    ((MainWindow *)this->parent())->updateMonitorsSlot();
 }
 
 void MonitorSelection::cancelSlot()

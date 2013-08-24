@@ -19,7 +19,8 @@ SOURCES += \
     serialconfiguration.cpp \
     monitor.cpp \
     about.cpp \
-    monitorselection.cpp
+    monitorselection.cpp \
+    vehicle.cpp
 
 HEADERS  += \
     mainwindow.h\
@@ -27,7 +28,8 @@ HEADERS  += \
     serialconfiguration.h \
     monitor.h \
     about.h \
-    monitorselection.h
+    monitorselection.h \
+    vehicle.h
 
 RESOURCES += \
     images.qrc

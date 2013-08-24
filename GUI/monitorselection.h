@@ -10,6 +10,8 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
+#include "vehicle.h"
+
 class MonitorSelection : public QWidget
 {
     Q_OBJECT
@@ -20,12 +22,14 @@ class MonitorSelection : public QWidget
 
     QDialogButtonBox buttons;
 
+    Vehicle * vehicle;
+
 private slots:
     void okSlot();
     void cancelSlot();
 
 public:
-    MonitorSelection(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    MonitorSelection(Vehicle * vehicle, QWidget *parent = 0, Qt::WindowFlags f = 0);
 };
 
 #endif // MONITORSELECTION_H
