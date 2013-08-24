@@ -29,7 +29,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/bg.png").scaledToWidth(GRAPHICS_WIDTH));
         arrow = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
         minAngle = -31;
-        maxAngle = 180 - minAngle;
+        maxAngle = 149;
         maxValue = 100;
         minValue = 0;
         break;
@@ -44,9 +44,9 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     case SPEED:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/speed/bg.png").scaledToWidth(GRAPHICS_WIDTH));
         arrow = mainScene->addPixmap(QPixmap(":/images/gauges/speed/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
-        minAngle = -101;
-        maxAngle = 145;
-        maxValue = 17000;
+        minAngle = -45;
+        maxAngle = 180+45;
+        maxValue = 160;
         minValue = 0;
         break;
     default: break;
