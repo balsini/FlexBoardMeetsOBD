@@ -4,6 +4,11 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
+#include <QLCDNumber>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QSpacerItem>
+#include <QLabel>
 
 typedef enum GaugeType_ {
     FUEL, SPEED, RPM
@@ -15,10 +20,20 @@ class Monitor : public QWidget
 
     GaugeType type;
 
+    QHBoxLayout * layout;
     QGraphicsView * mainView;
     QGraphicsScene * mainScene;
     QGraphicsPixmapItem * bg;
     QGraphicsPixmapItem * arrow;
+
+    QLCDNumber actualLcd;
+    QLCDNumber maximumLcd;
+    QLCDNumber minimumLcd;
+    QLabel actualValueLabel;
+    QLabel maximumValueLabel;
+    QLabel minimumValueLabel;
+    QSpacerItem * spacer;
+    QVBoxLayout vLayout;
 
     float minAngle;
     float maxAngle;
@@ -27,6 +42,8 @@ class Monitor : public QWidget
 
     float angle;
     float value;
+    float minimum;
+    float maximum;
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void setValue(float value);

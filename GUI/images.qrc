@@ -4,5 +4,7 @@
         <file>images/qt/digia_logo.png</file>
         <file>images/gauges/fuel/arrow.png</file>
         <file>images/gauges/fuel/bg.png</file>
+        <file>images/gauges/rpm/bg.png</file>
+        <file>images/gauges/rpm/arrow.png</file>
     </qresource>
 </RCC>

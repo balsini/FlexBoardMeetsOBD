@@ -60,6 +60,7 @@ private slots:
     void exitSlot();
     void aboutSlot();
     void newMonitorSlot();
+    void editMonitorSlot() {}
     void serialConfigSlot();
     void serialConnectSlot();
     void alignMonitorSlot();

@@ -85,8 +85,8 @@ void MainWindow::newMonitorSlot()
 
     name = tr("Monitor ");
     name.append(QString::number(i));
-    Monitor * monitorWidget = new Monitor(name, FUEL);
-    monitorWidget->setValue(0);
+    Monitor * monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
+    monitorWidget->setValue(50);
     QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 
