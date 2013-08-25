@@ -26,7 +26,8 @@ void Worker::sendDatagram(Datagram * datagram)
     serial->writeC(datagram->type);
     serial->writeC(datagram->id);
     serial->writeC(datagram->size);
-    serial->writeS(datagram->data, datagram->size);
+    if (datagram->size > 0)
+        serial->writeS(datagram->data, datagram->size);
 }
 
 void Worker::receiveDatagram(Datagram * datagram)
@@ -34,8 +35,12 @@ void Worker::receiveDatagram(Datagram * datagram)
     datagram->type = serial->readC();
     datagram->id = serial->readC();
     datagram->size = serial->readC();
-    datagram->data = new unsigned char[datagram->size];
-    serial->readS(datagram->data, datagram->size);
+    if (datagram->size > 0) {
+        datagram->data = new unsigned char[datagram->size];
+        serial->readS(datagram->data, datagram->size);
+    } else {
+        datagram->data = 0;
+    }
 }
 
 int Worker::initialization()

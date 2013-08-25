@@ -26,6 +26,7 @@ class Serial
     Serial_t serialConfig;  // Temporary configuration
     struct termios attribs; // Real configuration
 
+    fd_set select_set;
     int tty_fd;
 
 public:

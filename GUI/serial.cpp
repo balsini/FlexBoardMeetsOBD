@@ -45,12 +45,7 @@ int Serial::connect()
     std::string device;
     device = "/dev/" + serialConfig.device;
 
-    attribs.c_iflag = 0;
-    attribs.c_oflag = 0;
-    attribs.c_cflag = 0;
-    attribs.c_lflag = 0;
-    attribs.c_cc[VMIN] = 0;
-    attribs.c_cc[VTIME] = 0;
+    memset(&attribs, 0, sizeof(attribs));
 
     // Baud Rate
 
@@ -136,12 +131,27 @@ int Serial::connect()
     default: break;
     }
 
+    attribs.c_iflag &= ~IGNBRK; // ignore break signal
+    attribs.c_lflag = 0;        // no signaling chars, no echo,
+    // no canonical processing
+
+    attribs.c_oflag = 0;    // no remapping, no delays
+    attribs.c_cc[VMIN]  = 1;    // read does block
+    attribs.c_cc[VTIME] = 10;    // 0 seconds read timeout
+
+    attribs.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
+
     if (tty_fd != -1)
         close(tty_fd);
 
-    tty_fd = open(device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-
     tcsetattr(tty_fd, TCSANOW, &attribs);
+
+    tty_fd = open(device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_SYNC);
+
+    tcflush(tty_fd, TCIFLUSH);
+
+    FD_ZERO(&select_set);
+    FD_SET(tty_fd, &select_set);
 
     return tty_fd;
 }
@@ -158,12 +168,18 @@ int Serial::writeC(unsigned char c)
 
 int Serial::readS(void * buffer, unsigned int nbytes)
 {
+    if (nbytes <= 0)
+        return 0;
+    select(tty_fd+1, &select_set, NULL, NULL, NULL);
+    FD_SET(tty_fd, &select_set);
     return read(tty_fd, buffer, nbytes);
 }
 
 char Serial::readC()
 {
-    char c;
+    static char c;
+    select(tty_fd+1, &select_set, NULL, NULL, NULL);
+    FD_SET(tty_fd, &select_set);
     read(tty_fd, &c, 1);
     return c;
 }
