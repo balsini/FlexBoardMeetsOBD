@@ -146,12 +146,12 @@ int Serial::connect()
     return tty_fd;
 }
 
-int Serial::writeS(char * str, unsigned int len)
+int Serial::writeS(unsigned char * str, unsigned int len)
 {
     return write(tty_fd, str, len);
 }
 
-int Serial::writeC(char c)
+int Serial::writeC(unsigned char c)
 {
     return write(tty_fd, &c, 1);
 }

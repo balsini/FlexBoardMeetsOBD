@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     about = new About(this, Qt::Window);
     plots = new Plots(this, Qt::Window);
 
-    vehicle = new Vehicle(&serial);
+    vehicle = new Vehicle(&serial, this);
     monitorSelection = new MonitorSelection(vehicle, this, Qt::Window);
 
     this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
@@ -171,8 +171,17 @@ void MainWindow::serialConfigSlot()
 
 void MainWindow::serialConnectSlot()
 {
-    if (serial.connect() != -1)
+    if (serial.connect() != -1) {
         statusBar->serialConnectionEstabilished();
+        vehicle->start();
+    }
     else
         statusBar->serialConnectionLost();
 }
+
+void MainWindow::flexOnlineSlot()
+{
+    statusBar->flexConnectionEstabilished();
+}
+
+

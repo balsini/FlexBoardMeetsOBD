@@ -76,6 +76,7 @@ private slots:
 
 public slots:
     void updateMonitorsSlot();
+    void flexOnlineSlot();
 
 public:
     MainWindow(QWidget *parent = 0);

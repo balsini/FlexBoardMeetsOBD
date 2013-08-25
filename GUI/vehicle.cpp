@@ -1,14 +1,15 @@
 #include "vehicle.h"
+#include "mainwindow.h"
 
-Vehicle::Vehicle(Serial * serial)
+Vehicle::Vehicle(Serial * serial, QWidget * parent)
 {
+    this->parent = parent;
     this->serial = serial;
     clearBitmask();
 
-    Worker * worker = new Worker(serial);
+    worker = new Worker(serial, parent);
     worker->moveToThread(&workerThread);
-    connect(worker, SIGNAL(resultReady(Datagram)), this, SLOT(handleDatagram(Datagram)));
-    workerThread.start();
+    //connect(worker, SIGNAL(resultReady(Datagram)), this, SLOT(handleDatagram(Datagram)));
 }
 
 void Vehicle::clearBitmask()
@@ -31,4 +32,12 @@ void Vehicle::getBitmaskBits(QList<unsigned int> * bitList)
 }
 
 void Vehicle::handleDatagram(Datagram datagram)
-{}
+{
+    qDebug("Received datagram to be hadled");
+    qDebug() << datagram.data;
+}
+
+void Vehicle::start()
+{
+    worker->start();
+}

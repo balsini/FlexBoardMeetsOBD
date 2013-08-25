@@ -31,8 +31,8 @@ class Serial
 public:
     Serial();
     ~Serial();
-    int writeS(char * str, unsigned int len);
-    int writeC(char c);
+    int writeS(unsigned char * str, unsigned int len);
+    int writeC(unsigned char c);
     int readS(void * buffer, unsigned int nbytes);
     char readC();
     QStringList getDevices();

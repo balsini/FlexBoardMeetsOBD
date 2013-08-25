@@ -8,32 +8,32 @@ StatusBar::StatusBar(QWidget * parent)
     flexStatusText.setText("Flex:");
     flexConnectionLost();
 
-    this->addPermanentWidget(&serialStatusText);
-    this->addPermanentWidget(&serialStatusImg);
-    this->addPermanentWidget(&flexStatusText);
-    this->addPermanentWidget(&flexStatusImg);
+    addPermanentWidget(&serialStatusText);
+    addPermanentWidget(&serialStatusImg);
+    addPermanentWidget(&flexStatusText);
+    addPermanentWidget(&flexStatusImg);
 }
 
 void StatusBar::serialConnectionEstabilished()
 {
-    this->showMessage(tr("Serial Connection: ESTABILISHED"));
+    showMessage(tr("Serial Connection: ESTABILISHED"));
     serialStatusImg.setPixmap(QPixmap(":/images/symbols/greendot.png").scaledToHeight(20));
 }
 
 void StatusBar::serialConnectionLost()
 {
-    this->showMessage(tr("Serial Connection: LOST"));
+    showMessage(tr("Serial Connection: LOST. Try checking device permissions"));
     serialStatusImg.setPixmap(QPixmap(":/images/symbols/reddot.png").scaledToHeight(20));
 }
 
 void StatusBar::flexConnectionEstabilished()
 {
-    this->showMessage(tr("Flex Connection: ESTABILISHED"));
+    showMessage(tr("Flex Connection: ESTABILISHED"));
     flexStatusImg.setPixmap(QPixmap(":/images/symbols/greendot.png").scaledToHeight(20));
 }
 
 void StatusBar::flexConnectionLost()
 {
-    this->showMessage(tr("Flex Connection: LOST"));
+    showMessage(tr("Flex Connection: LOST"));
     flexStatusImg.setPixmap(QPixmap(":/images/symbols/reddot.png").scaledToHeight(20));
 }
