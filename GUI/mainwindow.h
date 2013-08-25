@@ -6,7 +6,6 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QToolBar>
-//#include <QDockWidget>
 
 #include <QMdiArea>
 #include <QMdiSubWindow>
@@ -26,6 +25,10 @@
 #include "serialconfiguration.h"
 #include "monitor.h"
 #include "about.h"
+#include "monitorselection.h"
+#include "vehicle.h"
+#include "plots.h"
+#include "statusbar.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,10 +36,13 @@ class MainWindow : public QMainWindow
 
     SerialConfiguration * serialConfig;
     About * about;
+    MonitorSelection * monitorSelection;
 
     QMdiArea * mainWidget;
 
     QToolBar * monitorToolBar;
+
+    StatusBar * statusBar;
 
     QMenu * fileMenu;
     QMenu * questionsMenu;
@@ -45,25 +51,32 @@ class MainWindow : public QMainWindow
 
     QAction * exitAct;
     QAction * aboutAct;
+    QAction * plotsAct;
     QAction * serialConfigAct;
-    QAction * newMonitorAct;
-    QAction * editMonitorAct;
+    QAction * selectMonitorAct;
     QAction * serialConnectAct;
     QAction * alignMonitorAct;
 
     Serial serial;
+    Vehicle * vehicle;
+    Plots * plots;
 
     void createMenus();
     void createToolBars();
+    void newMonitor(unsigned int identifier);
 
 private slots:
     void exitSlot();
     void aboutSlot();
-    void newMonitorSlot();
-    void editMonitorSlot() {}
+    void plotsSlot();
+    void selectMonitorSlot();
     void serialConfigSlot();
     void serialConnectSlot();
     void alignMonitorSlot();
+
+public slots:
+    void updateMonitorsSlot();
+    void flexOnlineSlot();
 
 public:
     MainWindow(QWidget *parent = 0);

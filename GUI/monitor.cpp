@@ -1,10 +1,11 @@
 #include "monitor.h"
+#include <float.h>
 
-unsigned int MONITOR_WIDTH = 300;
-unsigned int MONITOR_HEIGHT = 300;
+unsigned int MONITOR_WIDTH = 350;
+unsigned int MONITOR_HEIGHT = 250;
 
 unsigned int GRAPHICS_WIDTH = MONITOR_WIDTH*3/5;
-unsigned int GRAPHICS_HEIGHT = MONITOR_HEIGHT*3/5;
+unsigned int GRAPHICS_HEIGHT = GRAPHICS_WIDTH;
 
 Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::WindowFlags f)
     : QWidget(parent, f)
@@ -29,7 +30,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/bg.png").scaledToWidth(GRAPHICS_WIDTH));
         arrow = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
         minAngle = -31;
-        maxAngle = 180 - minAngle;
+        maxAngle = 149;
         maxValue = 100;
         minValue = 0;
         break;
@@ -41,11 +42,27 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxValue = 17000;
         minValue = 0;
         break;
+    case SPEED:
+        bg = mainScene->addPixmap(QPixmap(":/images/gauges/speed/bg.png").scaledToWidth(GRAPHICS_WIDTH));
+        arrow = mainScene->addPixmap(QPixmap(":/images/gauges/speed/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
+        minAngle = -45;
+        maxAngle = 180+45;
+        maxValue = 160;
+        minValue = 0;
+        break;
+    case WATER_TEMP:
+        bg = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/bg.png").scaledToWidth(GRAPHICS_WIDTH));
+        arrow = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
+        minAngle = -90;
+        maxAngle = 180;
+        maxValue = 140;
+        minValue = 40;
+        break;
     default: break;
     }
 
-    minimum = maxValue;
-    maximum = minValue;
+    minimum = FLT_MAX-1.0;
+    maximum = -minimum;
 
     arrow->setTransformOriginPoint(GRAPHICS_WIDTH/2, GRAPHICS_HEIGHT/2);
 

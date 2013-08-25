@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = GUI
 TEMPLATE = app
@@ -18,14 +18,25 @@ SOURCES += \
     serial.cpp \
     serialconfiguration.cpp \
     monitor.cpp \
-    about.cpp
+    about.cpp \
+    monitorselection.cpp \
+    vehicle.cpp \
+    plots.cpp \
+    statusbar.cpp \
+    worker.cpp
 
 HEADERS  += \
     mainwindow.h\
     serial.h \
     serialconfiguration.h \
     monitor.h \
-    about.h
+    about.h \
+    monitorselection.h \
+    vehicle.h \
+    plots.h \
+    statusbar.h \
+    datagram.h \
+    worker.h
 
 RESOURCES += \
     images.qrc

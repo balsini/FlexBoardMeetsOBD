@@ -11,7 +11,7 @@
 #include <QLabel>
 
 typedef enum GaugeType_ {
-    FUEL, SPEED, RPM
+    FUEL, SPEED, RPM, WATER_TEMP
 } GaugeType;
 
 class Monitor : public QWidget

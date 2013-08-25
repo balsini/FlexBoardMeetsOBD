@@ -26,13 +26,14 @@ class Serial
     Serial_t serialConfig;  // Temporary configuration
     struct termios attribs; // Real configuration
 
+    fd_set select_set;
     int tty_fd;
 
 public:
     Serial();
     ~Serial();
-    int writeS(char * str, unsigned int len);
-    int writeC(char c);
+    int writeS(unsigned char * str, unsigned int len);
+    int writeC(unsigned char c);
     int readS(void * buffer, unsigned int nbytes);
     char readC();
     QStringList getDevices();
