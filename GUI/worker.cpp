@@ -9,6 +9,7 @@ Worker::Worker(Serial * serial, QWidget * parent)
     this->status = INITIALIZATION;
 
     connect(this, SIGNAL(flexConnectedSignal()), (MainWindow *)parent, SLOT(flexOnlineSlot()));
+    connect(this, SIGNAL(bluetoothInquiryCompleted(inquiry_result_t*,uint)), (MainWindow *)parent, SLOT(bluetoothInquiryCompleted(inquiry_result_t*,uint)));
 }
 
 void Worker::on()
@@ -46,6 +47,7 @@ void Worker::receiveDatagram(Datagram * datagram)
 int Worker::initialization()
 {
     Datagram data;
+    inquiry_result_t btDev[2];
 
     // PC: I'm alive!
     data.type = COMMAND;
@@ -66,7 +68,17 @@ int Worker::initialization()
     emit flexConnectedSignal();
 
     // wait for inquiry (about 20 seconds)
-    receiveDatagram(&data);
+    //receiveDatagram(&data);
+
+    strcpy(btDev[0].addr, "000A3A58F310");
+    strcpy(btDev[0].name, "Elm327");
+    strcpy(btDev[0].cod,  "12345");
+
+    strcpy(btDev[1].addr, "0003C92DB48F");
+    strcpy(btDev[1].name, "Nokia");
+    strcpy(btDev[1].cod,  "56789");
+
+    emit bluetoothInquiryCompleted(btDev, 2);
 
     /*
      * Do some stuff with it

@@ -34,16 +34,15 @@ char EE_bluetooth_receive()
 
 char EE_bluetooth_receive_no_timeout()
 {
-	char buffer;
-	read(my_socket, (void *)&buffer, 1);
+	static char buffer;
+	while (read(my_socket, (void *)&buffer, 1) != 1) ;
+	printf("%c", buffer);
 	return buffer;
 }
 
 int EE_bluetooth_sendS(char * str)
 {
-	int status;
-	status = write(my_socket, str, strlen(str)+1);
-	return status;
+	return write(my_socket, str, strlen(str));
 }
 
 void EE_bluetooth_init()
@@ -63,7 +62,7 @@ void EE_bluetooth_init()
 	ii = (inquiry_info*)malloc(max_rsp * sizeof(inquiry_info));
 }
 
-void EE_bluetooth_inquiry()
+int EE_bluetooth_inquiry()
 {
 	int i;
 
@@ -79,9 +78,11 @@ void EE_bluetooth_inquiry()
 			strcpy(name, "[unknown]");
 		printf("%d) %s  %s\n", i, addr, name);
 	}
+
+	return num_rsp;
 }
 
-void EE_bluetooth_connect()
+int EE_bluetooth_connect()
 {
 	if (num_rsp > 1) {
 		do {
@@ -93,14 +94,20 @@ void EE_bluetooth_connect()
 	}
 
 	// set the connection parameters (who to connect to)
-	ba2str(&(ii+connectId)->bdaddr, addr);
 	remote_addr.rc_family = AF_BLUETOOTH;
 	remote_addr.rc_channel = (uint8_t) 1;
-	str2ba(addr, &remote_addr.rc_bdaddr);
+	memcpy(&remote_addr.rc_bdaddr, &(ii+connectId)->bdaddr, sizeof(remote_addr.rc_bdaddr));
+	//ba2str(&(ii+connectId)->bdaddr, addr);
+	//str2ba(addr, &remote_addr.rc_bdaddr);
 
-	printf("Connecting...\n");
+	printf("Connecting...");
 
 	status = connect(my_socket, (struct sockaddr *)&remote_addr, sizeof(remote_addr));
+    if (status != -1)
+    	printf("DONE\n");
+    else
+    	printf("FAIL\n");
+	return status;
 }
 
 void EE_bluetooth_free()

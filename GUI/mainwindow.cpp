@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
     plots = new Plots(this, Qt::Window);
+    bluetoothDevices = new BluetoothDevices(this, Qt::Window);
 
     vehicle = new Vehicle(&serial, this);
     monitorSelection = new MonitorSelection(vehicle, this, Qt::Window);
@@ -184,4 +185,7 @@ void MainWindow::flexOnlineSlot()
     statusBar->flexConnectionEstabilished();
 }
 
+void MainWindow::bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num) {
+    bluetoothDevices->showBluetoothInquirySlot(data, num);
+}
 

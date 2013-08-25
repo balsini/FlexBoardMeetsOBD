@@ -8,6 +8,10 @@
 #ifndef EE_ELM327_C_
 #define EE_ELM327_C_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include "ee_elm327.h"
 #include "bluetooth.h"
 
@@ -56,38 +60,35 @@ int hex_converter(char * hex, char len)
 
 int ee_elm327_get(MPR_index_t identifier)
 {
-	char return_value[25];
-	int i;
+	static char return_value[25] = {0};
+	register int i;
 
 	EE_bluetooth_sendS(MPR[identifier].mode);
 	EE_bluetooth_sendS(" ");
 	EE_bluetooth_sendS(MPR[identifier].PID);
-	EE_bluetooth_sendS("\r\n");
+	EE_bluetooth_sendS("\r");
 
-	for (i=0; i<5; i++)
-		EE_bluetooth_receive();
+	while (EE_bluetooth_receive_no_timeout() != ' ');
+	while (EE_bluetooth_receive_no_timeout() != ' ');
 
-	i=0;
-	for (;;) {
-		return_value[i*2] = EE_bluetooth_receive();
-		return_value[i*2 + 1] = EE_bluetooth_receive();
-		i++;
-		if (i<MPR[identifier].return_byte_num)
-			EE_bluetooth_receive(); // spacing
-		else
-			break;
+	for (i=0; i<MPR[identifier].return_byte_num; i++) {
+		return_value[i*2] = EE_bluetooth_receive_no_timeout();
+		return_value[i*2 + 1] = EE_bluetooth_receive_no_timeout();
+		EE_bluetooth_receive_no_timeout(); // spacing
 	}
+
+	while (EE_bluetooth_receive_no_timeout() != '>') ;
+
+	//printf("%c%c%c%c\n",return_value[0], return_value[1], return_value[2], return_value[3]);
+
 	return_value[i] = '\0';
-
-	while (EE_bluetooth_receive() != '>') ;
-
 	return hex_converter(return_value, MPR[identifier].return_byte_num);
 }
 
 inline int EE_elm327_check_response_no_timeout(char * response)
 {
-	static unsigned char value = 0;
-	static char ret;
+	register unsigned char value = 0;
+	register int ret;
 
 	ret = 1;
 	for (; *response != '\0'; response++) {
@@ -100,12 +101,28 @@ inline int EE_elm327_check_response_no_timeout(char * response)
 	return ret;
 }
 
+int ee_elm327_set_protocol(char protocol)
+{
+	char protoStr[3];
+
+	printf("Changing protocol\n");
+
+	protoStr[0] = protocol;
+	protoStr[1] = '\0';
+	protoStr[2] = '\r';
+	EE_bluetooth_sendS("SP ");
+	EE_bluetooth_sendS(protoStr);
+
+	return EE_elm327_check_response_no_timeout("OK\r\r");
+}
+
 void ee_elm327_init()
 {
 	EE_elm327_MPR_init();
 	echo_enabled = 1;
 	ee_elm327_set_echo(0);
 	ee_elm327_reboot();
+	ee_elm327_set_protocol('0');
 }
 
 int ee_elm327_set_echo(char val)
@@ -117,13 +134,13 @@ int ee_elm327_set_echo(char val)
 
 	switch (val) {
 	case 0:
-		EE_bluetooth_sendS("AT E0\r");
-		ret = EE_elm327_check_response_no_timeout("AT E0\rOK\r\r");
+		EE_bluetooth_sendS("AT E0\r\n");
+		ret = EE_elm327_check_response_no_timeout("AT E0\r\nOK\r\r");
 		if (ret)
 			echo_enabled = 0;
 		break;
 	case 1:
-		EE_bluetooth_sendS("AT E1\r");
+		EE_bluetooth_sendS("AT E1\r\n");
 		ret = EE_elm327_check_response_no_timeout("OK\r\r");
 		if (ret)
 			echo_enabled = 1;
@@ -138,12 +155,22 @@ int ee_elm327_set_echo(char val)
 int ee_elm327_reboot()
 {
 	int i;
-	EE_bluetooth_sendS("AT Z\r");
+	int ret;
+
+	printf("Rebooting ELM327...");
+
+	EE_bluetooth_sendS("AT Z\r\n");
 	while (EE_bluetooth_receive() != 'v') ;
 	for (i=0; i<3; i++)
 		version[i] = EE_bluetooth_receive();
 	version[3] = '\0';
-	return EE_elm327_check_response_no_timeout("\r\r");
+
+	ret = EE_elm327_check_response_no_timeout("\r\r");
+	if (ret)
+		printf("DONE\n");
+	else
+		printf("FAIL\n");
+	return ret;
 }
 
 char * ee_elm327_get_version()

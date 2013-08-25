@@ -23,7 +23,8 @@ SOURCES += \
     vehicle.cpp \
     plots.cpp \
     statusbar.cpp \
-    worker.cpp
+    worker.cpp \
+    bluetoothdevices.cpp
 
 HEADERS  += \
     mainwindow.h\
@@ -36,7 +37,8 @@ HEADERS  += \
     plots.h \
     statusbar.h \
     datagram.h \
-    worker.h
+    worker.h \
+    bluetoothdevices.h
 
 RESOURCES += \
     images.qrc

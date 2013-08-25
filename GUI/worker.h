@@ -6,6 +6,7 @@
 #define CONNECT_TO 0x11
 
 #include <QThread>
+#include "bluetoothdevices.h"
 
 #include "datagram.h"
 #include "serial.h"
@@ -47,6 +48,8 @@ public:
 signals:
     void resultReady(Datagram data);
     void flexConnectedSignal();
+    void inquiryResultsReadySignal();
+    void bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num);
 };
 
 #endif // WORKER_H

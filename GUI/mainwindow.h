@@ -29,6 +29,7 @@
 #include "vehicle.h"
 #include "plots.h"
 #include "statusbar.h"
+#include "bluetoothdevices.h"
 
 class MainWindow : public QMainWindow
 {
@@ -37,6 +38,7 @@ class MainWindow : public QMainWindow
     SerialConfiguration * serialConfig;
     About * about;
     MonitorSelection * monitorSelection;
+    BluetoothDevices * bluetoothDevices;
 
     QMdiArea * mainWidget;
 
@@ -77,6 +79,7 @@ private slots:
 public slots:
     void updateMonitorsSlot();
     void flexOnlineSlot();
+    void bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num);
 
 public:
     MainWindow(QWidget *parent = 0);
