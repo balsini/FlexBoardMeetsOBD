@@ -6,13 +6,17 @@
 #define CONNECT_TO 0x11
 
 #include <QThread>
+#include <QSemaphore>
+
 #include "bluetoothdevices.h"
 
 #include "datagram.h"
 #include "serial.h"
 
 typedef enum WorkerStatus_ {
-    INITIALIZATION,
+    PING,
+    INQUIRY,
+    CONNECT,
     SEND_BITMASK,
     DATA_LOOP,
     QUIT
@@ -29,8 +33,13 @@ class Worker : public QThread
 
     bool active;
     WorkerStatus status;
+    QSemaphore * sync;
 
-    int initialization();
+    unsigned int btDeviceIndexChosen;
+
+    int ping();
+    int inquiry();
+    int connection();
     void sendBitmask();
     void dataLoop();
     void sendDatagram(Datagram * datagram);
@@ -40,8 +49,12 @@ protected:
     void run();
     int exec();
 
+public slots:
+    void bluetoothDeviceChosen(unsigned int num);
+
 public:
     Worker(Serial * serial, QWidget * parent);
+    ~Worker();
     void on();
     void off();
 

@@ -41,3 +41,8 @@ void Vehicle::start()
 {
     worker->start();
 }
+
+void Vehicle::bluetoothDeviceChosen(unsigned int num)
+{
+    worker->bluetoothDeviceChosen(num);
+}

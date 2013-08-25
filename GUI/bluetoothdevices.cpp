@@ -1,4 +1,5 @@
 #include "bluetoothdevices.h"
+#include "mainwindow.h"
 
 BluetoothDevices::BluetoothDevices(QWidget * parent, Qt::WindowFlags f)
     : QWidget(parent, f)
@@ -23,15 +24,15 @@ BluetoothDevices::BluetoothDevices(QWidget * parent, Qt::WindowFlags f)
 
 void BluetoothDevices::okSlot()
 {
-    /*
     QList<QAbstractButton *> buttonList = buttonGroup.buttons();
 
     for (unsigned int i=0; !buttonList.isEmpty(); i++) {
-        if (buttonList.takeFirst()->isChecked())
-            vehicle->setBitmaskBit(i);
+        if (buttonList.takeFirst()->isChecked()) {
+            ((MainWindow *)this->parent())->bluetoothDeviceChosen(i);
+            break;
+        }
     }
 
-    */
     this->hide();
 }
 

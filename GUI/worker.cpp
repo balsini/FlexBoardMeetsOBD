@@ -6,10 +6,16 @@ Worker::Worker(Serial * serial, QWidget * parent)
     this->parent = parent;
     this->serial = serial;
     this->active = false;
-    this->status = INITIALIZATION;
+    this->status = PING;
+    sync = new QSemaphore(0);
 
     connect(this, SIGNAL(flexConnectedSignal()), (MainWindow *)parent, SLOT(flexOnlineSlot()));
     connect(this, SIGNAL(bluetoothInquiryCompleted(inquiry_result_t*,uint)), (MainWindow *)parent, SLOT(bluetoothInquiryCompleted(inquiry_result_t*,uint)));
+}
+
+Worker::~Worker()
+{
+    delete sync;
 }
 
 void Worker::on()
@@ -44,10 +50,9 @@ void Worker::receiveDatagram(Datagram * datagram)
     }
 }
 
-int Worker::initialization()
+int Worker::ping()
 {
     Datagram data;
-    inquiry_result_t btDev[2];
 
     // PC: I'm alive!
     data.type = COMMAND;
@@ -67,9 +72,19 @@ int Worker::initialization()
     // Flex is alive
     emit flexConnectedSignal();
 
+    return 0;
+}
+
+int Worker::inquiry()
+{
+    inquiry_result_t btDev[2];
+
     // wait for inquiry (about 20 seconds)
+    // FLEX: returns Bluetooth devices
+
     //receiveDatagram(&data);
 
+    // This is a testing example
     strcpy(btDev[0].addr, "000A3A58F310");
     strcpy(btDev[0].name, "Elm327");
     strcpy(btDev[0].cod,  "12345");
@@ -80,13 +95,16 @@ int Worker::initialization()
 
     emit bluetoothInquiryCompleted(btDev, 2);
 
-    /*
-     * Do some stuff with it
-     */
+    sync->acquire();
+    return 0;
+}
 
-    // FLEX: returns Bluetooth devices
+int Worker::connection()
+{
     // PC: connect to i-th device
     // FLEX: returns connection result
+
+    qDebug() << "connecting to" << btDeviceIndexChosen;
 
     return 0;
 }
@@ -129,8 +147,16 @@ int Worker::exec()
 {
     for (;;) {
         switch (status) {
-        case INITIALIZATION:
-            initialization();
+        case PING:
+            ping();
+            status = INQUIRY;
+            break;
+        case INQUIRY:
+            inquiry();
+            status = CONNECT;
+            break;
+        case CONNECT:
+            connection();
             status = SEND_BITMASK;
             break;
         case SEND_BITMASK:
@@ -146,3 +172,10 @@ int Worker::exec()
         }
     }
 }
+
+void Worker::bluetoothDeviceChosen(unsigned int num)
+{
+    btDeviceIndexChosen = num;
+    sync->release();
+}
+

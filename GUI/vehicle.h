@@ -23,6 +23,7 @@ class Vehicle : public QObject
 
 public slots:
     void handleDatagram(Datagram datagram);
+    void bluetoothDeviceChosen(unsigned int num);
 
 public:
     Vehicle(Serial * serial, QWidget * parent);
@@ -30,6 +31,7 @@ public:
     void setBitmaskBit(unsigned int bitIdentifier);
     void getBitmaskBits(QList<unsigned int> * bitList);
     void start();
+
 };
 
 #endif // VEHICLE_H
