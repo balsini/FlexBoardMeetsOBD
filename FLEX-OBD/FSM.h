@@ -16,7 +16,7 @@ typedef enum Status_ {
 
 	BT_CONNECT, BT_CONNECT_VERIFY,
 
-	BT_INIT, BT_COMMUNICATE
+	BT_INIT, BT_COMMUNICATE, CONFIGURE_BITMASK, USB_INIT
 } Status;
 
 typedef enum Signal_ {ABSENT, B1, B2, B3, B4} Signal;

@@ -47,6 +47,8 @@ CPU mySystem {
 			APP_SRC = "code.c";
 			APP_SRC = "LCD.c";
 			APP_SRC = "eeuart.c";
+			APP_SRC = "ee_usb.c";
+			APP_SRC = "communication.c";
 			APP_SRC = "ee_bluetooth.c";
 			APP_SRC = "ee_elm327.c";
 			APP_SRC = "FSM.c";
@@ -93,6 +95,10 @@ CPU mySystem {
 	};
 	
 	RESOURCE LCD_MUTEX {
+		RESOURCEPROPERTY = STANDARD;
+	};
+
+	RESOURCE USB_MUTEX {
 		RESOURCEPROPERTY = STANDARD;
 	};
 

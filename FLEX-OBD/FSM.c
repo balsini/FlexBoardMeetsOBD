@@ -9,8 +9,11 @@
 
 #include "constants.h"
 #include "buttons.h"
+#include "ee_usb.h"
 #include "ee_bluetooth.h"
 #include "ee_elm327.h"
+#include "communication.h"
+
 
 Status status_;
 char blink_counter;
@@ -20,6 +23,7 @@ char lcd_changed;
 inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
+
 
 Signal FSM_getSignals()
 {
@@ -46,6 +50,7 @@ void FSM_tran_(Status dest)
 void FSM_dispatch()
 {
 	Signal s = FSM_getSignals();
+	int command_response_status;
 	switch (status_) {
 	case WELCOME:
 		switch (s) {
@@ -61,10 +66,15 @@ void FSM_dispatch()
 			}
 			break;
 		default:
-			FSM_tran_(BT_INIT);
+			FSM_tran_(USB_INIT);
 			break;
 		}
 		break;
+		case USB_INIT:
+			EE_uartusb_init(115200, BIT8_NO | BIT_STOP_1, 0);
+//			FSM_tran_(BT_INIT);
+			FSM_tran_(BT_COMMUNICATE);
+			break;
 		case BT_INIT:
 			EE_bluetooth_acquire();
 			LCD_appendR("BT Init...");
@@ -194,11 +204,20 @@ void FSM_dispatch()
 				break;
 			}
 			break;
+		case CONFIGURE_BITMASK:
+			command_response_status = send_command(GET_BITMASK, 0, '\0', '\0');
+			FSM_tran_(BT_COMMUNICATE);
+			break;
+
 		case BT_COMMUNICATE:
-			ee_elm327_init();
-			LCD_appendR("Elm v.");
-			LCD_appendS(ee_elm327_get_version());
-			FSM_tran_(DEAD);
+//			ee_elm327_init();
+//			LCD_appendR("Elm v.");
+//			LCD_appendS(ee_elm327_get_version());
+//			for(;;) {
+
+//			}
+			if(0) FSM_tran_(DEAD);
+			else FSM_tran_(CONFIGURE_BITMASK);
 			break;
 		case WAIT:
 			LCD_appendR("WAITING 4E");

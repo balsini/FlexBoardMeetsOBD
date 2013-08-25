@@ -68,7 +68,7 @@ EEBASE := $(shell cygpath `cygpath -ms '${ERIKA_FILES}'`)
 else # ERIKA_FILES
 
 ifndef EEBASE
-        EEBASE := $(shell cygpath `cygpath -ms 'C:\Evidence\eclipse\plugins\com.eu.evidence.ee_2.1.0.20130729_2014\ee_files'`)
+        EEBASE := $(shell cygpath `cygpath -ms 'C:\eclipse\plugins\com.eu.evidence.ee_2.0.0.20130220_2013\ee_files'`)
 else
         $(warning The usage of EEBASE is deprecated. Please use ERIKA_FILES)
 endif
@@ -86,8 +86,8 @@ $(info Using erika files in $(EEBASE))
 APPBASE := ..
 OUTBASE := Debug
 
-PIC30_ASMDIR := $(shell $(EEBASE)/pkg/cfg/arch/cc_pic30_detect.sh ASM "C:\Program Files (x86)\Microchip\MPLAB ASM30 Suite")
-PIC30_GCCDIR := $(shell $(EEBASE)/pkg/cfg/arch/cc_pic30_detect.sh GCC "C:\Program Files (x86)\Microchip\MPLAB C30")
+PIC30_ASMDIR := $(shell $(EEBASE)/pkg/cfg/arch/cc_pic30_detect.sh ASM "c:\Programmi\Microchip\MPLAB ASM30 Suite")
+PIC30_GCCDIR := $(shell $(EEBASE)/pkg/cfg/arch/cc_pic30_detect.sh GCC "c:\Programmi\Microchip\MPLAB C30")
 
 
 ############################################################################
@@ -120,7 +120,7 @@ LIBS    +=
 # Sources
 #
 ############################################################################
-APP_SRCS += $(OUTBASE)/eecfg.c code.c LCD.c eeuart.c ee_bluetooth.c ee_elm327.c FSM.c buttons.c
+APP_SRCS += $(OUTBASE)/eecfg.c code.c LCD.c eeuart.c ee_usb.c communication.c ee_bluetooth.c ee_elm327.c FSM.c buttons.c
 
 
 ############################################################################

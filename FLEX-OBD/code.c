@@ -7,11 +7,14 @@
 
 #include "ee.h"
 #include "ee_irq.h"
+#include "ee_usb.h"
 #include "ee_bluetooth.h"
 #include "LCD.h"
 #include "FSM.h"
 #include "buttons.h"
 #include "constants.h"
+
+#define USB_UART 2
 
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);
