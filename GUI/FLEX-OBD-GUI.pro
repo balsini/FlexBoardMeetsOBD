@@ -20,7 +20,9 @@ SOURCES += \
     monitor.cpp \
     about.cpp \
     monitorselection.cpp \
-    vehicle.cpp
+    vehicle.cpp \
+    plots.cpp \
+    statusbar.cpp
 
 HEADERS  += \
     mainwindow.h\
@@ -29,7 +31,9 @@ HEADERS  += \
     monitor.h \
     about.h \
     monitorselection.h \
-    vehicle.h
+    vehicle.h \
+    plots.h \
+    statusbar.h
 
 RESOURCES += \
     images.qrc

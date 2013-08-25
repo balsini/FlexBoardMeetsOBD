@@ -8,8 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus();
     createToolBars();
 
-    statusBar = new StatusBar(this);
-    this->setStatusBar(statusBar);
+    statusBar = new QStatusBar(this);
 
     mainWidget = new QMdiArea(this);
     this->setCentralWidget(mainWidget);
@@ -22,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
     monitorSelection = new MonitorSelection(vehicle, this, Qt::Window);
 
     this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
-
-    statusBar->showMessage(tr("Ready"));
 }
 
 MainWindow::~MainWindow() {}
@@ -104,8 +101,6 @@ void MainWindow::updateMonitorsSlot()
     vehicle->getBitmaskBits(&bitList);
     while (!bitList.isEmpty())
         newMonitor(bitList.takeFirst());
-
-    statusBar->showMessage(tr("Monitors generated and aligned"));
 }
 
 void MainWindow::selectMonitorSlot()
@@ -130,10 +125,6 @@ void MainWindow::newMonitor(unsigned int identifier)
     case 2: // FUEL
         name = tr("Fuel");
         monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
-        break;
-    case 3: // WATER_TEMPERATURE
-        name = tr("Water Temperature");
-        monitorWidget = new Monitor(name, WATER_TEMP, this, Qt::SubWindow);
         break;
     default:
         return;
@@ -171,8 +162,6 @@ void MainWindow::serialConfigSlot()
 
 void MainWindow::serialConnectSlot()
 {
-    if (serial.connect() != -1)
-        statusBar->serialConnectionEstabilished();
-    else
-        statusBar->serialConnectionLost();
+    serial.connect();
+    serial.writeS("Hello World!", 12);
 }

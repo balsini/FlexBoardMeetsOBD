@@ -1,4 +1,5 @@
 #include "monitor.h"
+#include <float.h>
 
 unsigned int MONITOR_WIDTH = 350;
 unsigned int MONITOR_HEIGHT = 250;
@@ -49,11 +50,19 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxValue = 160;
         minValue = 0;
         break;
+    case WATER_TEMP:
+        bg = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/bg.png").scaledToWidth(GRAPHICS_WIDTH));
+        arrow = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
+        minAngle = -90;
+        maxAngle = 180;
+        maxValue = 140;
+        minValue = 40;
+        break;
     default: break;
     }
 
-    minimum = maxValue;
-    maximum = minValue;
+    minimum = FLT_MAX-1.0;
+    maximum = -minimum;
 
     arrow->setTransformOriginPoint(GRAPHICS_WIDTH/2, GRAPHICS_HEIGHT/2);
 

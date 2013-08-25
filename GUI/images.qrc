@@ -8,5 +8,9 @@
         <file>images/gauges/rpm/arrow.png</file>
         <file>images/gauges/speed/arrow.png</file>
         <file>images/gauges/speed/bg.png</file>
+        <file>images/symbols/reddot.png</file>
+        <file>images/symbols/greendot.png</file>
+        <file>images/gauges/water_temp/arrow.png</file>
+        <file>images/gauges/water_temp/bg.png</file>
     </qresource>
 </RCC>

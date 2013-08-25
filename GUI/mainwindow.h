@@ -6,7 +6,6 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QToolBar>
-//#include <QDockWidget>
 
 #include <QMdiArea>
 #include <QMdiSubWindow>
@@ -28,6 +27,8 @@
 #include "about.h"
 #include "monitorselection.h"
 #include "vehicle.h"
+#include "plots.h"
+#include "statusbar.h"
 
 class MainWindow : public QMainWindow
 {
@@ -41,6 +42,8 @@ class MainWindow : public QMainWindow
 
     QToolBar * monitorToolBar;
 
+    StatusBar * statusBar;
+
     QMenu * fileMenu;
     QMenu * questionsMenu;
     QMenu * settingsMenu;
@@ -48,14 +51,15 @@ class MainWindow : public QMainWindow
 
     QAction * exitAct;
     QAction * aboutAct;
+    QAction * plotsAct;
     QAction * serialConfigAct;
     QAction * selectMonitorAct;
-    QAction * editMonitorAct;
     QAction * serialConnectAct;
     QAction * alignMonitorAct;
 
     Serial serial;
     Vehicle * vehicle;
+    Plots * plots;
 
     void createMenus();
     void createToolBars();
@@ -64,8 +68,8 @@ class MainWindow : public QMainWindow
 private slots:
     void exitSlot();
     void aboutSlot();
+    void plotsSlot();
     void selectMonitorSlot();
-    void editMonitorSlot() {}
     void serialConfigSlot();
     void serialConnectSlot();
     void alignMonitorSlot();

@@ -26,6 +26,10 @@ MonitorSelection::MonitorSelection(Vehicle * vehicle, QWidget * parent, Qt::Wind
     buttonGroup.addButton(checkBox);
     vLayout.addWidget(checkBox);
 
+    checkBox = new QCheckBox("&Water Temperature",this);
+    buttonGroup.addButton(checkBox);
+    vLayout.addWidget(checkBox);
+
     hLayout.addLayout(&vLayout);
 
     buttons.setOrientation(Qt::Vertical);
