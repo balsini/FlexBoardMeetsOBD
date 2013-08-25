@@ -10,10 +10,14 @@ class StatusBar : public QStatusBar
 
     QLabel serialStatusText;
     QLabel serialStatusImg;
+    QLabel flexStatusText;
+    QLabel flexStatusImg;
 
 public slots:
     void serialConnectionEstabilished();
     void serialConnectionLost();
+    void flexConnectionEstabilished();
+    void flexConnectionLost();
 
 public:
     StatusBar(QWidget * parent = 0);
