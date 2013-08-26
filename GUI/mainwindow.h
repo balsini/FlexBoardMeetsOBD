@@ -57,6 +57,7 @@ class MainWindow : public QMainWindow
     QAction * serialConfigAct;
     QAction * selectMonitorAct;
     QAction * serialConnectAct;
+    QAction * serialDisconnectAct;
     QAction * alignMonitorAct;
 
     Serial serial;
@@ -74,6 +75,7 @@ private slots:
     void selectMonitorSlot();
     void serialConfigSlot();
     void serialConnectSlot();
+    void serialDisconnectSlot();
     void alignMonitorSlot();
 
 public slots:

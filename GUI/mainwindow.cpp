@@ -72,12 +72,17 @@ void MainWindow::createToolBars()
     serialConnectAct->setText(tr("&Serial Connect"));
     connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
 
+    serialDisconnectAct = new QAction(this);
+    serialDisconnectAct->setText(tr("&Serial Disconnect"));
+    connect(serialDisconnectAct, SIGNAL(triggered()), this, SLOT(serialDisconnectSlot()));
+
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(selectMonitorAct);
     monitorToolBar->addAction(alignMonitorAct);
     monitorToolBar->addSeparator();
     monitorToolBar->addAction(serialConnectAct);
+    monitorToolBar->addAction(serialDisconnectAct);
     monitorToolBar->setOrientation(Qt::Vertical);
     monitorToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 }
@@ -174,6 +179,12 @@ void MainWindow::serialConnectSlot()
     }
     else
         statusBar->serialConnectionLost();
+}
+
+void MainWindow::serialDisconnectSlot()
+{
+    serial.disconnect();
+    statusBar->serialConnectionLost();
 }
 
 void MainWindow::flexOnlineSlot()

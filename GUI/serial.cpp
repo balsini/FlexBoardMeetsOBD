@@ -40,6 +40,13 @@ void Serial::setConfig(Serial_t config)
     serialConfig.stop_bits = config.stop_bits;
 }
 
+
+void Serial::disconnect()
+{
+    if (tty_fd != -1)
+        close(tty_fd);
+}
+
 int Serial::connect()
 {
     std::string device;
