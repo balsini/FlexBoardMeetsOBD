@@ -1,6 +1,11 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
+#ifdef DEBUGGING
+#include <QDebug>
+#include <QScrollBar>
+#endif
+
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
@@ -44,6 +49,14 @@ class Monitor : public QWidget
     float value;
     float minimum;
     float maximum;
+
+#ifdef DEBUGGING
+    QScrollBar scrollBar;
+
+private slots:
+    void valueChanged(int i);
+#endif
+
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void setValue(float value);
