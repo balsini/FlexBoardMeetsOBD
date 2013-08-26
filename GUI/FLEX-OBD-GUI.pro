@@ -24,7 +24,8 @@ SOURCES += \
     plots.cpp \
     statusbar.cpp \
     worker.cpp \
-    bluetoothdevices.cpp
+    bluetoothdevices.cpp \
+    datagram.cpp
 
 HEADERS  += \
     mainwindow.h\

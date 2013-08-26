@@ -35,7 +35,7 @@ public:
     int writeS(unsigned char * str, unsigned int len);
     int writeC(unsigned char c);
     int readS(void * buffer, unsigned int nbytes);
-    char readC();
+    unsigned char readC();
     QStringList getDevices();
     void setConfig(Serial_t config);
     int connect();

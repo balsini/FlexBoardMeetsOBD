@@ -37,6 +37,13 @@ void Worker::sendDatagram(Datagram * datagram)
         serial->writeS(datagram->data, datagram->size);
 }
 
+void Worker::sendDatagram(unsigned char type, unsigned char id)
+{
+    Datagram dg;
+    constructDatagram(&dg, type, id);
+    sendDatagram(&dg);
+}
+
 void Worker::receiveDatagram(Datagram * datagram)
 {
     datagram->type = serial->readC();
@@ -52,27 +59,23 @@ void Worker::receiveDatagram(Datagram * datagram)
 
 int Worker::ping()
 {
-    Datagram data;
+    Datagram dg;
 
     // PC: I'm alive!
-    data.type = COMMAND;
-    data.id = HELLO;
-    data.size = 0;
-
-    sendDatagram(&data);
+    sendDatagram(COMMAND, HELLO);
 
     // FLEX: I'm alive!
-    receiveDatagram(&data);
-    if (data.size != 0)
-        delete[] data.data;
+    receiveDatagram(&dg);
+    destructDatagramData(&dg);
 
-    if (data.type != COMMAND || data.id != HELLO) // Flex is not alive
-        return -1;
+    if (dg.type == COMMAND && dg.id == HELLO) {
+        // Flex is alive
+        emit flexConnectedSignal();
+        return 0;
+    }
 
-    // Flex is alive
-    emit flexConnectedSignal();
-
-    return 0;
+    // Flex is not alive
+    return -1;
 }
 
 int Worker::inquiry()
@@ -148,8 +151,8 @@ int Worker::exec()
     for (;;) {
         switch (status) {
         case PING:
-            ping();
-            status = INQUIRY;
+            if (ping() != -1)
+                status = INQUIRY;
             break;
         case INQUIRY:
             inquiry();
@@ -166,11 +169,10 @@ int Worker::exec()
         case DATA_LOOP:
             dataLoop();
             break;
-        default:
-            return 0;
-            break;
+        default: break;
         }
     }
+    return 0;
 }
 
 void Worker::bluetoothDeviceChosen(unsigned int num)

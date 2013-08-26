@@ -175,7 +175,7 @@ int Serial::readS(void * buffer, unsigned int nbytes)
     return read(tty_fd, buffer, nbytes);
 }
 
-char Serial::readC()
+unsigned char Serial::readC()
 {
     static char c;
     select(tty_fd+1, &select_set, NULL, NULL, NULL);

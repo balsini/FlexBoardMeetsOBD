@@ -1,10 +1,6 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#define COMMAND 0
-#define HELLO 0xA8
-#define CONNECT_TO 0x11
-
 #include <QThread>
 #include <QSemaphore>
 
@@ -43,6 +39,7 @@ class Worker : public QThread
     void sendBitmask();
     void dataLoop();
     void sendDatagram(Datagram * datagram);
+    void sendDatagram(unsigned char type, unsigned char id);
     void receiveDatagram(Datagram * datagram);
 
 protected:
