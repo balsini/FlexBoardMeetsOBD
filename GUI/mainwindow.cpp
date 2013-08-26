@@ -48,11 +48,11 @@ void MainWindow::createMenus()
     connect(plotsAct, SIGNAL(triggered()), this, SLOT(plotsSlot()));
 
     serialConnectAct = new QAction(this);
-    serialConnectAct->setText(tr("&Serial Connect"));
+    serialConnectAct->setText(tr("&Serial Enable"));
     connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
 
     serialDisconnectAct = new QAction(this);
-    serialDisconnectAct->setText(tr("Serial &Disconnect"));
+    serialDisconnectAct->setText(tr("Serial &Disable"));
     connect(serialDisconnectAct, SIGNAL(triggered()), this, SLOT(serialDisconnectSlot()));
 
     deviceConnectAct = new QAction(this);
@@ -159,7 +159,7 @@ void MainWindow::newMonitor(unsigned int identifier)
         break;
     }
 
-    monitorWidget->setValue(0);
+    //monitorWidget->setValue(17000);
     QMdiSubWindow * subWindow = mainWidget.addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 

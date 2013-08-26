@@ -6,7 +6,7 @@ Worker::Worker(Serial * serial, QWidget * parent)
     this->parent = parent;
     this->serial = serial;
     this->active = false;
-    this->status = PING;
+    this->status = WAIT;
     sync = new QSemaphore(0);
 
     connect(this, SIGNAL(flexConnectedSignal()), (MainWindow *)parent, SLOT(flexOnlineSlot()));
@@ -176,7 +176,7 @@ int Worker::exec()
         switch (status) {
         case PING:
             if (ping() == 0)
-                status = INQUIRY_REQ;
+                status = WAIT;
             break;
         case INQUIRY_REQ:
             inquiry();
