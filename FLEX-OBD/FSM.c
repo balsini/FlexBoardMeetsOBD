@@ -24,6 +24,8 @@ inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
 
+unsigned char bitmask[10];
+unsigned char buffer[10];
 
 Signal FSM_getSignals()
 {
@@ -71,7 +73,7 @@ void FSM_dispatch()
 		}
 		break;
 		case USB_INIT:
-			EE_uartusb_init(115200, BIT8_NO | BIT_STOP_1, 0);
+			EE_uartusb_init(38400, BIT8_NO | BIT_STOP_1, 0);
 //			FSM_tran_(BT_INIT);
 			FSM_tran_(BT_COMMUNICATE);
 			break;
@@ -205,7 +207,8 @@ void FSM_dispatch()
 			}
 			break;
 		case CONFIGURE_BITMASK:
-			command_response_status = send_command(GET_BITMASK, 0, '\0', '\0');
+			LCD_writeR(0, "Send GET_BITMASK");
+			command_response_status = send_command(GET_BITMASK, 0, 0, bitmask);
 			FSM_tran_(BT_COMMUNICATE);
 			break;
 
@@ -214,8 +217,17 @@ void FSM_dispatch()
 //			LCD_appendR("Elm v.");
 //			LCD_appendS(ee_elm327_get_version());
 //			for(;;) {
-
 //			}
+			LCD_writeR(0, "READ DATA");
+			buffer[0] = 1;
+			buffer[1] = 2;
+			if(bitmask[0] & MSPEED )
+				command_response_status = send_data(SPEED, 1, buffer);
+			if(bitmask[0] & MRPM)
+				command_response_status = send_data(RPM, 2, buffer);
+			if(bitmask[0] & MTEMP)
+				command_response_status = send_data(TEMP, 2, buffer);
+
 			if(0) FSM_tran_(DEAD);
 			else FSM_tran_(CONFIGURE_BITMASK);
 			break;

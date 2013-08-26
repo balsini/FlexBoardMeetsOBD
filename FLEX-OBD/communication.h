@@ -17,6 +17,15 @@
 #define GET_BITMASK  0x22
 #define STOP         0x31
 
-int send_command(unsigned char command, unsigned char numbyte, char* req_buffer, char* res_buffer);
+#define SPEED        0
+#define RPM          1
+
+//BITMASKS
+#define MSPEED 0x80
+#define MRPM   0x40
+#define MTEMP  0x20
+
+int send_command(unsigned char, unsigned char, char*, unsigned char*);
+int send_data(unsigned char, unsigned char, unsigned char*);
 
 #endif /* COMMUNICATION_H_ */
