@@ -184,14 +184,20 @@ int Worker::exec()
             break;
         case CONNECT:
             connection();
-            status = SEND_BITMASK;
+            status = WAIT;
             break;
         case SEND_BITMASK:
             sendBitmask();
-            status = DATA_LOOP;
+            status = WAIT;
             break;
         case DATA_LOOP:
             dataLoop();
+            break;
+        case WAIT:
+            sync->acquire();
+            break;
+        case QUIT:
+            return 0;
             break;
         default: break;
         }
@@ -202,6 +208,18 @@ int Worker::exec()
 void Worker::bluetoothDeviceChosen(int num)
 {
     btDeviceIndexChosen = num;
+    sync->release();
+}
+
+void Worker::bridgeInquiry()
+{
+    status = INQUIRY_REQ;
+    sync->release();
+}
+
+void Worker::bridgeConnect()
+{
+    status = PING;
     sync->release();
 }
 

@@ -26,7 +26,7 @@ void StatusBar::serialConnectionEstabilished()
 
 void StatusBar::serialConnectionLost()
 {
-    showMessage(tr("Serial Connection: LOST. Try checking device permissions"));
+    showMessage(tr("Serial Connection: LOST."));
     serialStatusImg.setPixmap(QPixmap(":/images/symbols/reddot.png").scaledToHeight(20));
 }
 

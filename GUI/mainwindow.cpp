@@ -47,9 +47,31 @@ void MainWindow::createMenus()
     plotsAct->setText(tr("&Show Plots"));
     connect(plotsAct, SIGNAL(triggered()), this, SLOT(plotsSlot()));
 
+    serialConnectAct = new QAction(this);
+    serialConnectAct->setText(tr("&Serial Connect"));
+    connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
+
+    serialDisconnectAct = new QAction(this);
+    serialDisconnectAct->setText(tr("Serial &Disconnect"));
+    connect(serialDisconnectAct, SIGNAL(triggered()), this, SLOT(serialDisconnectSlot()));
+
+    deviceConnectAct = new QAction(this);
+    deviceConnectAct->setText(tr("&Bridge Connect"));
+    connect(deviceConnectAct, SIGNAL(triggered()), this, SLOT(deviceConnectSlot()));
+
+    deviceInquiryAct = new QAction(this);
+    deviceInquiryAct->setText(tr("Bridge In&quiry"));
+    connect(deviceInquiryAct, SIGNAL(triggered()), this, SLOT(deviceInquirySlot()));
 
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAct);
+
+    devicesMenu = menuBar()->addMenu(tr("&Devices"));
+    devicesMenu->addAction(serialConnectAct);
+    devicesMenu->addAction(serialDisconnectAct);
+    devicesMenu->addSeparator();
+    devicesMenu->addAction(deviceConnectAct);
+    devicesMenu->addAction(deviceInquiryAct);
 
     settingsMenu = menuBar()->addMenu(tr("&Configure"));
     settingsMenu->addAction(serialConfigAct);
@@ -68,14 +90,6 @@ void MainWindow::createToolBars()
     selectMonitorAct->setText(tr("&Select Monitors"));
     connect(selectMonitorAct, SIGNAL(triggered()), this, SLOT(selectMonitorSlot()));
 
-    serialConnectAct = new QAction(this);
-    serialConnectAct->setText(tr("&Serial Connect"));
-    connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
-
-    serialDisconnectAct = new QAction(this);
-    serialDisconnectAct->setText(tr("&Serial Disconnect"));
-    connect(serialDisconnectAct, SIGNAL(triggered()), this, SLOT(serialDisconnectSlot()));
-
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(selectMonitorAct);
@@ -83,6 +97,9 @@ void MainWindow::createToolBars()
     monitorToolBar->addSeparator();
     monitorToolBar->addAction(serialConnectAct);
     monitorToolBar->addAction(serialDisconnectAct);
+    monitorToolBar->addSeparator();
+    monitorToolBar->addAction(deviceConnectAct);
+    monitorToolBar->addAction(deviceInquiryAct);
     monitorToolBar->setOrientation(Qt::Vertical);
     monitorToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 }
@@ -199,4 +216,13 @@ void MainWindow::bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int
 void MainWindow::bluetoothDeviceChosen(int num)
 {
     vehicle->bluetoothDeviceChosen(num);
+}
+
+void MainWindow::deviceConnectSlot()
+{
+    vehicle->bridgeConnect();
+}
+void MainWindow::deviceInquirySlot()
+{
+    vehicle->bridgeInquiry();
 }

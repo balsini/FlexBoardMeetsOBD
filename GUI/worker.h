@@ -15,7 +15,8 @@ typedef enum WorkerStatus_ {
     CONNECT,
     SEND_BITMASK,
     DATA_LOOP,
-    QUIT
+    QUIT,
+    WAIT
 } WorkerStatus;
 
 class Worker : public QThread
@@ -48,6 +49,8 @@ protected:
 
 public slots:
     void bluetoothDeviceChosen(int num);
+    void bridgeInquiry();
+    void bridgeConnect();
 
 public:
     Worker(Serial * serial, QWidget * parent);

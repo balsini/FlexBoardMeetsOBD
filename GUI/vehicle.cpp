@@ -46,3 +46,13 @@ void Vehicle::bluetoothDeviceChosen(int num)
 {
     worker->bluetoothDeviceChosen(num);
 }
+
+void Vehicle::bridgeInquiry()
+{
+    worker->bridgeInquiry();
+}
+
+void Vehicle::bridgeConnect()
+{
+    worker->bridgeConnect();
+}
