@@ -11,7 +11,7 @@
 
 typedef enum WorkerStatus_ {
     PING,
-    INQUIRY,
+    INQUIRY_REQ,
     CONNECT,
     SEND_BITMASK,
     DATA_LOOP,
