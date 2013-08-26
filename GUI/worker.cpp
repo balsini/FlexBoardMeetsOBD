@@ -99,6 +99,12 @@ int Worker::inquiry()
     emit bluetoothInquiryCompleted(btDev, 2);
 
     sync->acquire();
+
+    if (btDeviceIndexChosen == -1)
+        return -1;
+
+    sendDatagram(COMMAND, OK);
+
     return 0;
 }
 
@@ -151,7 +157,7 @@ int Worker::exec()
     for (;;) {
         switch (status) {
         case PING:
-            if (ping() != -1)
+            if (ping() == 0)
                 status = INQUIRY;
             break;
         case INQUIRY:
@@ -175,7 +181,7 @@ int Worker::exec()
     return 0;
 }
 
-void Worker::bluetoothDeviceChosen(unsigned int num)
+void Worker::bluetoothDeviceChosen(int num)
 {
     btDeviceIndexChosen = num;
     sync->release();

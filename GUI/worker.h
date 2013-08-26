@@ -31,7 +31,7 @@ class Worker : public QThread
     WorkerStatus status;
     QSemaphore * sync;
 
-    unsigned int btDeviceIndexChosen;
+    int btDeviceIndexChosen;
 
     int ping();
     int inquiry();
@@ -47,7 +47,7 @@ protected:
     int exec();
 
 public slots:
-    void bluetoothDeviceChosen(unsigned int num);
+    void bluetoothDeviceChosen(int num);
 
 public:
     Worker(Serial * serial, QWidget * parent);

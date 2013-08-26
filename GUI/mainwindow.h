@@ -80,7 +80,7 @@ public slots:
     void updateMonitorsSlot();
     void flexOnlineSlot();
     void bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num);
-    void bluetoothDeviceChosen(unsigned int num);
+    void bluetoothDeviceChosen(int num);
 
 public:
     MainWindow(QWidget *parent = 0);

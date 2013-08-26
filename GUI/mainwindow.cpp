@@ -185,7 +185,7 @@ void MainWindow::bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int
     bluetoothDevices->showBluetoothInquirySlot(data, num);
 }
 
-void MainWindow::bluetoothDeviceChosen(unsigned int num)
+void MainWindow::bluetoothDeviceChosen(int num)
 {
     vehicle->bluetoothDeviceChosen(num);
 }

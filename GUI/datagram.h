@@ -7,7 +7,8 @@
 #define HELLO   0x00
 #define CONNECT_TO 0x01
 #define GET_BITMASK 0x02
-#define STOP 0x03
+#define STOP    0x03
+#define OK      0x04
 
 typedef struct Datagram_ {
     unsigned char type;     // Discriminates if command or data
