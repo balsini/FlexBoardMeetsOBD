@@ -10,7 +10,7 @@
 
 #define REQUEST 0
 #define RESPONSE 1
-#define DATA    1
+#define DATA    2
 
 #define HELLO        0x01
 #define CONNECT_TO   0x11
