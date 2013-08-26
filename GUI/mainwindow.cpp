@@ -4,15 +4,13 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     this->setWindowTitle("FlexBoardMeetsOBD");
-    this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     createMenus();
     createToolBars();
 
     statusBar = new StatusBar(this);
-    this->setStatusBar(statusBar);
 
-    mainWidget = new QMdiArea(this);
-    this->setCentralWidget(mainWidget);
+    this->setStatusBar(statusBar);
+    this->setCentralWidget(&mainWidget);
 
     serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
@@ -21,8 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     vehicle = new Vehicle(&serial, this);
     monitorSelection = new MonitorSelection(vehicle, this, Qt::Window);
-
-    this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
 
     statusBar->showMessage(tr("Ready"));
 }
@@ -97,7 +93,7 @@ void MainWindow::updateMonitorsSlot()
     QList<QMdiSubWindow *> subWindowList;
     bitList.clear();
     subWindowList.clear();
-    subWindowList = mainWidget->subWindowList();
+    subWindowList = mainWidget.subWindowList();
 
     while (!subWindowList.isEmpty())
         subWindowList.takeFirst()->close();
@@ -142,17 +138,17 @@ void MainWindow::newMonitor(unsigned int identifier)
     }
 
     monitorWidget->setValue(0);
-    QMdiSubWindow * subWindow = mainWidget->addSubWindow(monitorWidget);
+    QMdiSubWindow * subWindow = mainWidget.addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     subWindow->show();
 
-    mainWidget->tileSubWindows();
+    mainWidget.tileSubWindows();
 }
 
 void MainWindow::alignMonitorSlot()
 {
-    mainWidget->tileSubWindows();
+    mainWidget.tileSubWindows();
 }
 
 void MainWindow::aboutSlot()

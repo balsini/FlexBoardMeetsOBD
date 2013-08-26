@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow
     MonitorSelection * monitorSelection;
     BluetoothDevices * bluetoothDevices;
 
-    QMdiArea * mainWidget;
+    QMdiArea mainWidget;
 
     QToolBar * monitorToolBar;
 
