@@ -12,12 +12,16 @@ class StatusBar : public QStatusBar
     QLabel serialStatusImg;
     QLabel flexStatusText;
     QLabel flexStatusImg;
+    QLabel vehicleStatusText;
+    QLabel vehicleStatusImg;
 
 public slots:
     void serialConnectionEstabilished();
     void serialConnectionLost();
     void flexConnectionEstabilished();
     void flexConnectionLost();
+    void vehicleConnectionEstabilished();
+    void vehicleConnectionLost();
 
 public:
     StatusBar(QWidget * parent = 0);

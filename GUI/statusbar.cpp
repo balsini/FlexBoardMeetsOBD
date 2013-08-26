@@ -7,11 +7,15 @@ StatusBar::StatusBar(QWidget * parent)
     serialConnectionLost();
     flexStatusText.setText("Flex:");
     flexConnectionLost();
+    vehicleStatusText.setText("Vehicle:");
+    vehicleConnectionLost();
 
     addPermanentWidget(&serialStatusText);
     addPermanentWidget(&serialStatusImg);
     addPermanentWidget(&flexStatusText);
     addPermanentWidget(&flexStatusImg);
+    addPermanentWidget(&vehicleStatusText);
+    addPermanentWidget(&vehicleStatusImg);
 }
 
 void StatusBar::serialConnectionEstabilished()
@@ -36,4 +40,15 @@ void StatusBar::flexConnectionLost()
 {
     showMessage(tr("Flex Connection: LOST"));
     flexStatusImg.setPixmap(QPixmap(":/images/symbols/reddot.png").scaledToHeight(20));
+}
+void StatusBar::vehicleConnectionEstabilished()
+{
+    showMessage(tr("Vehicle Connection: ESTABILISHED"));
+    vehicleStatusImg.setPixmap(QPixmap(":/images/symbols/greendot.png").scaledToHeight(20));
+}
+
+void StatusBar::vehicleConnectionLost()
+{
+    showMessage(tr("Vehicle Connection: LOST"));
+    vehicleStatusImg.setPixmap(QPixmap(":/images/symbols/reddot.png").scaledToHeight(20));
 }
