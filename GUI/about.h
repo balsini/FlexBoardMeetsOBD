@@ -17,6 +17,8 @@ class About : public QWidget
     QVBoxLayout * aboutToolsLayout;
     QLabel * aboutAuthorsTitle;
     QLabel * aboutAuthors[ABOUT_AUTHORS_NUM];
+    QLabel * aboutUniPi;
+    QLabel * aboutSSSUP;
     QLabel * aboutQt;
     QLabel * aboutDigia;
 
