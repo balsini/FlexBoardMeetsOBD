@@ -42,6 +42,7 @@ void BluetoothDevices::okSlot()
 
 void BluetoothDevices::cancelSlot()
 {
+    ((MainWindow *)this->parent())->bluetoothDeviceChosen(-1);
     this->hide();
 }
 
@@ -61,6 +62,8 @@ void BluetoothDevices::showBluetoothInquirySlot(inquiry_result_t * devices, unsi
         checkBox = new QCheckBox(name, this);
         buttonGroup.addButton(checkBox);
         vLayout.addWidget(checkBox);
+        if (i==0)
+            buttonGroup.buttons().first()->setChecked(true);
     }
     this->show();
 }

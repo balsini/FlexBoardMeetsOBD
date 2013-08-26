@@ -47,6 +47,7 @@ class MainWindow : public QMainWindow
     StatusBar * statusBar;
 
     QMenu * fileMenu;
+    QMenu * devicesMenu;
     QMenu * questionsMenu;
     QMenu * settingsMenu;
     QMenu * viewMenu;
@@ -57,7 +58,11 @@ class MainWindow : public QMainWindow
     QAction * serialConfigAct;
     QAction * selectMonitorAct;
     QAction * serialConnectAct;
+    QAction * serialDisconnectAct;
     QAction * alignMonitorAct;
+
+    QAction * deviceConnectAct;
+    QAction * deviceInquiryAct;
 
     Serial serial;
     Vehicle * vehicle;
@@ -74,7 +79,10 @@ private slots:
     void selectMonitorSlot();
     void serialConfigSlot();
     void serialConnectSlot();
+    void serialDisconnectSlot();
     void alignMonitorSlot();
+    void deviceConnectSlot();
+    void deviceInquirySlot();
 
 public slots:
     void updateMonitorsSlot();

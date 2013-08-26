@@ -24,6 +24,8 @@ class Vehicle : public QObject
 public slots:
     void handleDatagram(Datagram datagram);
     void bluetoothDeviceChosen(int num);
+    void bridgeInquiry();
+    void bridgeConnect();
 
 public:
     Vehicle(Serial * serial, QWidget * parent);

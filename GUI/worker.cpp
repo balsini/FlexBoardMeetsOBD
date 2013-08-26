@@ -6,7 +6,7 @@ Worker::Worker(Serial * serial, QWidget * parent)
     this->parent = parent;
     this->serial = serial;
     this->active = false;
-    this->status = PING;
+    this->status = WAIT;
     sync = new QSemaphore(0);
 
     connect(this, SIGNAL(flexConnectedSignal()), (MainWindow *)parent, SLOT(flexOnlineSlot()));
@@ -62,13 +62,13 @@ int Worker::ping()
     Datagram dg;
 
     // PC: I'm alive!
-    sendDatagram(COMMAND, HELLO);
+    sendDatagram(REQUEST, HELLO);
 
     // FLEX: I'm alive!
     receiveDatagram(&dg);
     destructDatagramData(&dg);
 
-    if (dg.type == COMMAND && dg.id == HELLO) {
+    if (dg.type == RESPONSE && dg.id == HELLO) {
         // Flex is alive
         emit flexConnectedSignal();
         return 0;
@@ -80,14 +80,10 @@ int Worker::ping()
 
 int Worker::inquiry()
 {
-    inquiry_result_t btDev[2];
-
-    // wait for inquiry (about 20 seconds)
-    // FLEX: returns Bluetooth devices
-
-    //receiveDatagram(&data);
+    //Datagram dg;
 
     // This is a testing example
+    inquiry_result_t btDev[2];
     strcpy(btDev[0].addr, "000A3A58F310");
     strcpy(btDev[0].name, "Elm327");
     strcpy(btDev[0].cod,  "12345");
@@ -96,6 +92,12 @@ int Worker::inquiry()
     strcpy(btDev[1].name, "Nokia");
     strcpy(btDev[1].cod,  "56789");
 
+    // wait for inquiry (about 20 seconds)
+    // FLEX: returns Bluetooth devices
+
+    //sendDatagram(REQUEST, INQUIRY);
+    //receiveDatagram(&dg);
+
     emit bluetoothInquiryCompleted(btDev, 2);
 
     sync->acquire();
@@ -103,15 +105,31 @@ int Worker::inquiry()
     if (btDeviceIndexChosen == -1)
         return -1;
 
-    sendDatagram(COMMAND, OK);
+    sendDatagram(RESPONSE, SUCCESS);
 
     return 0;
 }
 
 int Worker::connection()
 {
+    Datagram dg;
+    unsigned char * btDev = new unsigned char[1];
+    *btDev = (unsigned char)btDeviceIndexChosen;
+
     // PC: connect to i-th device
+
+    constructDatagram(&dg, REQUEST, CONNECT_TO, 1, btDev);
+    sendDatagram(&dg);
+    destructDatagramData(&dg);
+
     // FLEX: returns connection result
+
+    receiveDatagram(&dg);
+    if (dg.type == RESPONSE && dg.id == SUCCESS) {
+        // Flex is alive
+        emit flexConnectedSignal();
+        return 0;
+    }
 
     qDebug() << "connecting to" << btDeviceIndexChosen;
 
@@ -158,22 +176,28 @@ int Worker::exec()
         switch (status) {
         case PING:
             if (ping() == 0)
-                status = INQUIRY;
+                status = WAIT;
             break;
-        case INQUIRY:
+        case INQUIRY_REQ:
             inquiry();
             status = CONNECT;
             break;
         case CONNECT:
             connection();
-            status = SEND_BITMASK;
+            status = WAIT;
             break;
         case SEND_BITMASK:
             sendBitmask();
-            status = DATA_LOOP;
+            status = WAIT;
             break;
         case DATA_LOOP:
             dataLoop();
+            break;
+        case WAIT:
+            sync->acquire();
+            break;
+        case QUIT:
+            return 0;
             break;
         default: break;
         }
@@ -184,6 +208,18 @@ int Worker::exec()
 void Worker::bluetoothDeviceChosen(int num)
 {
     btDeviceIndexChosen = num;
+    sync->release();
+}
+
+void Worker::bridgeInquiry()
+{
+    status = INQUIRY_REQ;
+    sync->release();
+}
+
+void Worker::bridgeConnect()
+{
+    status = PING;
     sync->release();
 }
 

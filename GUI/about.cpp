@@ -9,6 +9,9 @@ About::About(QWidget *parent, Qt::WindowFlags f) :
     this->setMinimumHeight(250);
     this->setMaximumHeight(250);
 
+    aboutUniPi = new QLabel("Universita` degli Studi di Pisa", this);
+    aboutSSSUP = new QLabel("Scuola Superiore Sant'Anna", this);
+
     aboutQt = new QLabel(this);
     //aboutQt->setMinimumSize(200,200);
     aboutQt->setPixmap(QPixmap(":/images/qt/qt_logo.png").scaledToHeight(150));
@@ -33,6 +36,9 @@ About::About(QWidget *parent, Qt::WindowFlags f) :
     aboutAuthorsLayout->addSpacing(15);
     aboutAuthorsLayout->addWidget(aboutAuthors[0]);
     aboutAuthorsLayout->addWidget(aboutAuthors[1]);
+    aboutAuthorsLayout->addSpacing(15);
+    aboutAuthorsLayout->addWidget(aboutUniPi);
+    aboutAuthorsLayout->addWidget(aboutSSSUP);
     aboutAuthorsLayout->addSpacing(50);
     aboutToolsLayout->addWidget(aboutQt);
     aboutToolsLayout->addWidget(aboutDigia);

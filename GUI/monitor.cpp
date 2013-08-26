@@ -30,7 +30,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/bg.png").scaledToWidth(GRAPHICS_WIDTH));
         arrow = mainScene->addPixmap(QPixmap(":/images/gauges/fuel/arrow.png").scaledToWidth(GRAPHICS_WIDTH));
         minAngle = -31;
-        maxAngle = 149;
+        maxAngle = 180 + 31;
         maxValue = 100;
         minValue = 0;
         break;
@@ -86,6 +86,12 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     vLayout.addWidget(&minimumValueLabel);
     vLayout.addWidget(&minimumLcd);
 
+#ifdef DEBUGGING
+    scrollBar.setOrientation(Qt::Horizontal);
+    vLayout.addWidget(&scrollBar);
+    connect(&scrollBar, SIGNAL(valueChanged(int)), this, SLOT(valueChanged(int)));
+#endif
+
     vLayout.addSpacerItem(spacer);
 
     layout->addLayout(&vLayout);
@@ -93,7 +99,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 
 void Monitor::setValue(float value)
 {
-    float tmp;
+    float tmp = value;
     this->value = value;
 
     if (value > maxValue)
@@ -101,7 +107,7 @@ void Monitor::setValue(float value)
     if (value < minValue)
         tmp = minValue;
 
-    angle = minAngle + tmp / maxValue * (maxAngle - minAngle);
+    angle = minAngle + (tmp - minValue) / (maxValue - minValue) * (maxAngle - minAngle);
 
     actualLcd.display(value);
 
@@ -114,3 +120,15 @@ void Monitor::setValue(float value)
     maximumLcd.display(maximum);
     arrow->setRotation(angle);
 }
+
+#ifdef DEBUGGING
+void Monitor::valueChanged(int i)
+{
+    double fi = i / 100.0;
+    double value;
+    qDebug() << "i:" << fi;
+    value = minValue + (fi * (maxValue - minValue));
+    qDebug() << "value:" << value;
+    setValue(value);
+}
+#endif

@@ -39,6 +39,7 @@ public:
     QStringList getDevices();
     void setConfig(Serial_t config);
     int connect();
+    void disconnect();
 };
 
 #endif // SERIAL_H
