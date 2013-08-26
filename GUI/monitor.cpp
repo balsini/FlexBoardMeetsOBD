@@ -93,9 +93,15 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 
 void Monitor::setValue(float value)
 {
+    float tmp;
     this->value = value;
 
-    angle = minAngle + value / maxValue * (maxAngle - minAngle);
+    if (value > maxValue)
+        tmp = maxValue;
+    if (value < minValue)
+        tmp = minValue;
+
+    angle = minAngle + tmp / maxValue * (maxAngle - minAngle);
 
     actualLcd.display(value);
 
