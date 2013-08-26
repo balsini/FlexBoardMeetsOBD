@@ -1,14 +1,17 @@
 #ifndef DATAGRAM_H
 #define DATAGRAM_H
 
-#define COMMAND 0x00
-#define DATA    0x01
+#define REQUEST     0x00
+#define RESPONSE    0x01
+#define DATA        0x02
 
-#define HELLO   0x00
-#define CONNECT_TO 0x01
+#define HELLO       0x00
+#define CONNECT_TO  0x01
 #define GET_BITMASK 0x02
-#define STOP    0x03
-#define OK      0x04
+#define STOP        0x03
+#define SUCCESS     0x04
+#define FAIL        0x05
+#define INQUIRY     0x06
 
 typedef struct Datagram_ {
     unsigned char type;     // Discriminates if command or data
