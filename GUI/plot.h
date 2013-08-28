@@ -1,11 +1,12 @@
-#ifndef PLOTS_H
-#define PLOTS_H
+#ifndef PLOT_H
+#define PLOT_H
 
 #include <QWidget>
 #include <QGraphicsView>
 #include <QHBoxLayout>
+#include <QBrush>
 
-class Plots : public QWidget
+class Plot : public QWidget
 {
     Q_OBJECT
 
@@ -14,7 +15,7 @@ class Plots : public QWidget
     QGraphicsScene * mainScene;
 
 public:
-    Plots(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    Plot(QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
-#endif // PLOTS_H
+#endif // PLOT_H

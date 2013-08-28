@@ -14,6 +14,9 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 #include <QLabel>
+#include <QPushButton>
+
+#include "plot.h"
 
 typedef enum GaugeType_ {
     FUEL, SPEED, RPM, WATER_TEMP
@@ -42,6 +45,10 @@ class Monitor : public QWidget
     QSpacerItem * spacer;
     QVBoxLayout vLayout;
 
+    QPushButton plotButton;
+
+    Plot * plot;
+
     float minAngle;
     float maxAngle;
     float minValue;
@@ -54,10 +61,15 @@ class Monitor : public QWidget
 
 #ifdef DEBUGGING
     QScrollBar scrollBar;
+#endif
 
 private slots:
+    void plotSlot();
+
+#ifdef DEBUGGING
     void valueChanged(int i);
 #endif
+
 
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);

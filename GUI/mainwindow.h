@@ -28,7 +28,6 @@
 #include "about.h"
 #include "monitorselection.h"
 #include "vehicle.h"
-#include "plots.h"
 #include "statusbar.h"
 #include "bluetoothdevices.h"
 
@@ -56,7 +55,6 @@ class MainWindow : public QMainWindow
 
     QAction * exitAct;
     QAction * aboutAct;
-    QAction * plotsAct;
     QAction * serialConfigAct;
     QAction * selectMonitorAct;
     QAction * serialConnectAct;
@@ -68,7 +66,6 @@ class MainWindow : public QMainWindow
 
     Serial serial;
     Vehicle * vehicle;
-    Plots * plots;
 
     void createMenus();
     void createToolBars();
@@ -77,7 +74,6 @@ class MainWindow : public QMainWindow
 private slots:
     void exitSlot();
     void aboutSlot();
-    void plotsSlot();
     void selectMonitorSlot();
     void serialConfigSlot();
     void serialConnectSlot();

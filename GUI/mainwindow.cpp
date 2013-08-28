@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     serialConfig = new SerialConfiguration(&serial, this, Qt::Window);
     about = new About(this, Qt::Window);
-    plots = new Plots(this, Qt::Window);
     bluetoothDevices = new BluetoothDevices(this, Qt::Window);
 
     vehicle = new Vehicle(&serial, this);
@@ -45,10 +44,6 @@ void MainWindow::createMenus()
     alignMonitorAct->setText(tr("&Tile Monitors"));
     connect(alignMonitorAct, SIGNAL(triggered()), this, SLOT(alignMonitorSlot()));
 
-    plotsAct = new QAction(this);
-    plotsAct->setText(tr("&Show Plots"));
-    connect(plotsAct, SIGNAL(triggered()), this, SLOT(plotsSlot()));
-
     serialConnectAct = new QAction(this);
     serialConnectAct->setText(tr("&Serial Enable"));
     connect(serialConnectAct, SIGNAL(triggered()), this, SLOT(serialConnectSlot()));
@@ -65,6 +60,10 @@ void MainWindow::createMenus()
     deviceInquiryAct->setText(tr("Bridge In&quiry"));
     connect(deviceInquiryAct, SIGNAL(triggered()), this, SLOT(deviceInquirySlot()));
 
+    selectMonitorAct = new QAction(this);
+    selectMonitorAct->setText(tr("&Select Monitors"));
+    connect(selectMonitorAct, SIGNAL(triggered()), this, SLOT(selectMonitorSlot()));
+
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAct);
 
@@ -79,8 +78,9 @@ void MainWindow::createMenus()
     settingsMenu->addAction(serialConfigAct);
 
     viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(selectMonitorAct);
     viewMenu->addAction(alignMonitorAct);
-    //viewMenu->addAction(plotsAct);
+    viewMenu->addSeparator();
 
     questionsMenu = menuBar()->addMenu(tr("&?"));
     questionsMenu ->addAction(aboutAct);
@@ -88,10 +88,6 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    selectMonitorAct = new QAction(this);
-    selectMonitorAct->setText(tr("&Select Monitors"));
-    connect(selectMonitorAct, SIGNAL(triggered()), this, SLOT(selectMonitorSlot()));
-
     monitorToolBar = new QToolBar(tr("File"));
     addToolBar(Qt::LeftToolBarArea, monitorToolBar);
     monitorToolBar->addAction(selectMonitorAct);
@@ -180,11 +176,6 @@ void MainWindow::alignMonitorSlot()
 void MainWindow::aboutSlot()
 {
     about->show();
-}
-
-void MainWindow::plotsSlot()
-{
-    plots->show();
 }
 
 void MainWindow::serialConfigSlot()

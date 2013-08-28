@@ -89,6 +89,14 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     vLayout.addWidget(&minimumValueLabel);
     vLayout.addWidget(&minimumLcd);
 
+    plot = new Plot(this, Qt::Window);
+    plot->setWindowTitle(this->windowTitle());
+
+    plotButton.setText("&Plot");
+
+    connect(&plotButton, SIGNAL(released()), this, SLOT(plotSlot()));
+
+
 #ifdef DEBUGGING
     scrollBar.setOrientation(Qt::Horizontal);
     vLayout.addWidget(&scrollBar);
@@ -96,6 +104,8 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 #endif
 
     vLayout.addSpacerItem(spacer);
+
+    vLayout.addWidget(&plotButton);
 
     layout->addLayout(&vLayout);
 }
@@ -127,6 +137,11 @@ void Monitor::setValue(float value)
     minimumLcd.display(minimum);
     maximumLcd.display(maximum);
     arrow->setRotation(angle);
+}
+
+void Monitor::plotSlot()
+{
+    plot->show();
 }
 
 #ifdef DEBUGGING
