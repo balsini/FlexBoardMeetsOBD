@@ -28,6 +28,7 @@ class Serial
 
     fd_set select_set;
     int tty_fd;
+    struct timeval tv;
 
 public:
     Serial();
@@ -35,7 +36,9 @@ public:
     int writeS(unsigned char * str, unsigned int len);
     int writeC(unsigned char c);
     int readS(void * buffer, unsigned int nbytes);
+    int readSTimeout(void * buffer, unsigned int nbytes);
     unsigned char readC();
+    unsigned char readCTimeout();
     QStringList getDevices();
     void setConfig(Serial_t config);
     int connect();

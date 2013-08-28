@@ -4,10 +4,14 @@
 Serial::Serial()
 {
     serialConfig.device = "ttyUSB0";
-    serialConfig.baud_rate = 15; // 9600
+    serialConfig.baud_rate = 9600;
     serialConfig.parity = 0;
     serialConfig.bits = 8;
     serialConfig.stop_bits = 1;
+
+    // select timeout
+    tv.tv_sec = 0;
+    tv.tv_usec= 200000;
 
     tty_fd = -1;
 }
@@ -171,17 +175,31 @@ int Serial::writeC(unsigned char c)
 
 int Serial::readS(void * buffer, unsigned int nbytes)
 {
-    if (nbytes <= 0)
-        return 0;
-    select(tty_fd+1, &select_set, NULL, NULL, NULL);
-    FD_SET(tty_fd, &select_set);
-    return read(tty_fd, buffer, nbytes);
+    for (unsigned int i=0; i<nbytes; i++)
+        *(((unsigned char *)buffer)+i) = readC();
+    return nbytes;
+}
+
+int Serial::readSTimeout(void * buffer, unsigned int nbytes)
+{
+    for (unsigned int i=0; i<nbytes; i++)
+        *(((unsigned char *)buffer)+i) = readCTimeout();
+    return nbytes;
 }
 
 unsigned char Serial::readC()
 {
     static char c;
     select(tty_fd+1, &select_set, NULL, NULL, NULL);
+    FD_SET(tty_fd, &select_set);
+    read(tty_fd, &c, 1);
+    return c;
+}
+
+unsigned char Serial::readCTimeout()
+{
+    static char c;
+    select(tty_fd+1, &select_set, NULL, NULL, &tv);
     FD_SET(tty_fd, &select_set);
     read(tty_fd, &c, 1);
     return c;
