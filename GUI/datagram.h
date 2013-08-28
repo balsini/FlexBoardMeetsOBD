@@ -12,6 +12,7 @@
 #define SUCCESS     0x04
 #define FAIL        0x05
 #define INQUIRY     0x06
+#define OK          0x07
 
 typedef struct Datagram_ {
     unsigned char type;     // Discriminates if command or data
@@ -26,5 +27,10 @@ void constructDatagram(Datagram * dg,
                        unsigned char size = 0,
                        unsigned char * data = 0);
 void destructDatagramData(Datagram * dg);
+void sendDatagram(void * serial, Datagram * datagram);
+void sendDatagram(void * serial, unsigned char type, unsigned char id);
+void receiveDatagram(void * serial, Datagram * datagram);
+void receiveDatagramTimeout(void * serial, Datagram * datagram);
+float translateDatagramData(Datagram * datagram);
 
 #endif // PCFLEX_DATAGRAM_H

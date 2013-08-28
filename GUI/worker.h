@@ -10,7 +10,7 @@
 #include "serial.h"
 
 typedef enum WorkerStatus_ {
-    PING,
+    BRIDGE_CONNECT,
     INQUIRY_REQ,
     CONNECT,
     SEND_BITMASK,
@@ -27,6 +27,7 @@ class Worker : public QThread
     QWidget * parent;
 
     Serial * serial;
+    void * vehicle;
 
     bool active;
     WorkerStatus status;
@@ -34,14 +35,12 @@ class Worker : public QThread
 
     int btDeviceIndexChosen;
 
-    int ping();
+    int bridge_connect();
     int inquiry();
     int connection();
-    void sendBitmask();
+    int sendBitmask();
     void dataLoop();
-    void sendDatagram(Datagram * datagram);
-    void sendDatagram(unsigned char type, unsigned char id);
-    void receiveDatagram(Datagram * datagram);
+    unsigned char parseInquiryDatagram(inquiry_result_t ** result, Datagram * dg);
 
 protected:
     void run();
@@ -53,16 +52,17 @@ public slots:
     void bridgeConnect();
 
 public:
-    Worker(Serial * serial, QWidget * parent);
+    Worker(Serial * serial, void * vehicleParent, QWidget * parent);
     ~Worker();
     void on();
     void off();
 
 signals:
-    void resultReady(Datagram data);
     void flexConnectedSignal();
+    void vehicleConnectedSignal();
     void inquiryResultsReadySignal();
     void bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num);
+    void resultReady(unsigned char monitor, float data);
 };
 
 #endif // WORKER_H

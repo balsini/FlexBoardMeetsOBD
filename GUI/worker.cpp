@@ -1,7 +1,8 @@
 #include "worker.h"
+#include "vehicle.h"
 #include "mainwindow.h"
 
-Worker::Worker(Serial * serial, QWidget * parent)
+Worker::Worker(Serial * serial, void * vehicle, QWidget * parent)
 {
     this->parent = parent;
     this->serial = serial;
@@ -9,8 +10,12 @@ Worker::Worker(Serial * serial, QWidget * parent)
     this->status = WAIT;
     sync = new QSemaphore(0);
 
+    this->vehicle = vehicle;
+
     connect(this, SIGNAL(flexConnectedSignal()), (MainWindow *)parent, SLOT(flexOnlineSlot()));
+    connect(this, SIGNAL(vehicleConnectedSignal()), (MainWindow *)parent, SLOT(vehicleOnlineSlot()));
     connect(this, SIGNAL(bluetoothInquiryCompleted(inquiry_result_t*,uint)), (MainWindow *)parent, SLOT(bluetoothInquiryCompleted(inquiry_result_t*,uint)));
+    connect(this, SIGNAL(resultReady(unsigned char,float)), (MainWindow *)parent, SLOT(vehicleDataReady(unsigned char,float)));
 }
 
 Worker::~Worker()
@@ -28,44 +33,47 @@ void Worker::off()
     active = false;
 }
 
-void Worker::sendDatagram(Datagram * datagram)
+unsigned char Worker::parseInquiryDatagram(inquiry_result_t ** result, Datagram * dg)
 {
-    serial->writeC(datagram->type);
-    serial->writeC(datagram->id);
-    serial->writeC(datagram->size);
-    if (datagram->size > 0)
-        serial->writeS(datagram->data, datagram->size);
-}
+    int i,j;
+    unsigned char num;
+    unsigned char * iterator = dg->data;
+    inquiry_result_t * res;
 
-void Worker::sendDatagram(unsigned char type, unsigned char id)
-{
-    Datagram dg;
-    constructDatagram(&dg, type, id);
-    sendDatagram(&dg);
-}
+    num = *iterator;
+    iterator++;
+    res = new inquiry_result_t[num];
 
-void Worker::receiveDatagram(Datagram * datagram)
-{
-    datagram->type = serial->readC();
-    datagram->id = serial->readC();
-    datagram->size = serial->readC();
-    if (datagram->size > 0) {
-        datagram->data = new unsigned char[datagram->size];
-        serial->readS(datagram->data, datagram->size);
-    } else {
-        datagram->data = 0;
+    for (j=0; j<num; j++) {
+        for (i=0; *iterator!=','; i++) {
+            res[j].name[i] = *iterator;
+            iterator++;
+        }
+        iterator++;
+        for (i=0; *iterator!=','; i++) {
+            res[j].addr[i] = *iterator;
+            iterator++;
+        }
+        iterator++;
+        for (i=0; *iterator!='.'; i++) {
+            res[j].cod[i] = *iterator;
+            iterator++;
+        }
+        iterator++;
     }
+    *result = res;
+    return num;
 }
 
-int Worker::ping()
+int Worker::bridge_connect()
 {
     Datagram dg;
 
     // PC: I'm alive!
-    sendDatagram(REQUEST, HELLO);
+    sendDatagram(serial, (unsigned char)REQUEST, (unsigned char)HELLO);
 
     // FLEX: I'm alive!
-    receiveDatagram(&dg);
+    receiveDatagramTimeout(serial, &dg);
     destructDatagramData(&dg);
 
     if (dg.type == RESPONSE && dg.id == HELLO) {
@@ -80,32 +88,28 @@ int Worker::ping()
 
 int Worker::inquiry()
 {
-    //Datagram dg;
-
-    // This is a testing example
-    inquiry_result_t btDev[2];
-    strcpy(btDev[0].addr, "000A3A58F310");
-    strcpy(btDev[0].name, "Elm327");
-    strcpy(btDev[0].cod,  "12345");
-
-    strcpy(btDev[1].addr, "0003C92DB48F");
-    strcpy(btDev[1].name, "Nokia");
-    strcpy(btDev[1].cod,  "56789");
+    Datagram dg;
+    inquiry_result_t * btDev;
+    unsigned char btDevNum;
 
     // wait for inquiry (about 20 seconds)
     // FLEX: returns Bluetooth devices
 
-    //sendDatagram(REQUEST, INQUIRY);
-    //receiveDatagram(&dg);
+    sendDatagram(serial, REQUEST, INQUIRY);
+    receiveDatagram(serial, &dg);
+    if (!(dg.type == RESPONSE && dg.id == INQUIRY))
+        return -1;
 
-    emit bluetoothInquiryCompleted(btDev, 2);
+    btDevNum = parseInquiryDatagram(&btDev, &dg);
+
+    emit bluetoothInquiryCompleted(btDev, btDevNum);
 
     sync->acquire();
 
     if (btDeviceIndexChosen == -1)
         return -1;
 
-    sendDatagram(RESPONSE, SUCCESS);
+    sendDatagram(serial, RESPONSE, OK);
 
     return 0;
 }
@@ -113,56 +117,70 @@ int Worker::inquiry()
 int Worker::connection()
 {
     Datagram dg;
-    unsigned char * btDev = new unsigned char[1];
+    unsigned char * btDev = new unsigned char;
     *btDev = (unsigned char)btDeviceIndexChosen;
 
     // PC: connect to i-th device
 
     constructDatagram(&dg, REQUEST, CONNECT_TO, 1, btDev);
-    sendDatagram(&dg);
+    sendDatagram(serial, &dg);
     destructDatagramData(&dg);
 
     // FLEX: returns connection result
 
-    receiveDatagram(&dg);
+    receiveDatagram(serial, &dg);
     if (dg.type == RESPONSE && dg.id == SUCCESS) {
         // Flex is alive
-        emit flexConnectedSignal();
+        emit vehicleConnectedSignal();
         return 0;
     }
-
-    qDebug() << "connecting to" << btDeviceIndexChosen;
-
-    return 0;
+    return -1;
 }
 
-void Worker::sendBitmask()
+int Worker::sendBitmask()
 {
+    Datagram dg;
+    unsigned char * bitmask;
+
     // FLEX: requests the bitmask
+
+    receiveDatagram(serial, &dg);
+
+    if (dg.type != REQUEST || dg.id != GET_BITMASK) {
+        qDebug() << "Expected bitmap request!";
+        return -1;
+    }
+
     // PC: sends the bitmask
 
+    bitmask = new unsigned char[((Vehicle *)vehicle)->getBitmaskSize()];
+    ((Vehicle *)vehicle)->getBitmask(bitmask);
+    constructDatagram(&dg,
+                      RESPONSE,
+                      GET_BITMASK,
+                      ((Vehicle *)vehicle)->getBitmaskSize(),
+                      bitmask);
+
+    sendDatagram(serial, &dg);
+    destructDatagramData(&dg);
+
     // switch to data request loop
+
+    return 0;
 }
 
 
 void Worker::dataLoop()
 {
-    // do {
-    //   FLEX: fa il ciclo di richieste
-    //   FLEX: c’è = readUART1(&qualcosa)
-    // } while (!c’è || (c’è &&qualcosa == continua));
-    // if (qualcosa == smetti)
-    //   FSM_TRAN_(DEAD)
-    // if (qualcosa == cambia_bitmask)
-    //   FSM_TRAN_(MANDA_BITMASK)
+    Datagram dg;
+    unsigned char monitor;
+    float data;
 
-    /*
-     *Datagram data;
-     *while (active) {
-     *  serial->readS(&data, sizeof(data));
-     *  emit resultReady(data);
-     *}
-     */
+    receiveDatagram(serial, &dg);
+    monitor = dg.id;
+    data = translateDatagramData(&dg);
+
+    emit resultReady(monitor, data);
 }
 
 void Worker::run()
@@ -174,21 +192,27 @@ int Worker::exec()
 {
     for (;;) {
         switch (status) {
-        case PING:
-            if (ping() == 0)
-                status = WAIT;
+        case BRIDGE_CONNECT:
+            bridge_connect();
+            status = WAIT;
             break;
         case INQUIRY_REQ:
-            inquiry();
-            status = CONNECT;
+            if (inquiry() == 0)
+                status = CONNECT;
+            else
+                status = WAIT;
             break;
         case CONNECT:
-            connection();
-            status = WAIT;
+            if (connection() == 0)
+                status = SEND_BITMASK;
+            else
+                status = WAIT;
             break;
         case SEND_BITMASK:
-            sendBitmask();
-            status = WAIT;
+            if (sendBitmask() == 0)
+                status = DATA_LOOP;
+            else
+                status = WAIT;
             break;
         case DATA_LOOP:
             dataLoop();
@@ -219,7 +243,7 @@ void Worker::bridgeInquiry()
 
 void Worker::bridgeConnect()
 {
-    status = PING;
+    status = BRIDGE_CONNECT;
     sync->release();
 }
 
