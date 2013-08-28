@@ -76,20 +76,17 @@ int Worker::bridge_connect()
     // FLEX: I'm alive!
     if (receiveDatagramTimeout(serial, &dg) == -1) {
         // Flex is not alive
+        serial->flush();
         return -1;
-    }
-
-    if (dg.data != 0)
-        destructDatagramData(&dg);
-
-    if (dg.type == RESPONSE && dg.id == HELLO) {
+    } else if (dg.type == RESPONSE && dg.id == HELLO) {
         // Flex is alive
         emit flexConnectedSignal();
         return 0;
+    } else {
+        // Flex is not alive
+        serial->flush();
+        return -1;
     }
-    // Flex is not alive
-    return -1;
-
 }
 
 int Worker::inquiry()
