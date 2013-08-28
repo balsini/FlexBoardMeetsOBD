@@ -16,6 +16,7 @@ typedef enum WorkerStatus_ {
     SEND_BITMASK,
     DATA_LOOP,
     QUIT,
+    KILL,
     WAIT
 } WorkerStatus;
 
@@ -41,6 +42,7 @@ class Worker : public QThread
     int sendBitmask();
     void dataLoop();
     unsigned char parseInquiryDatagram(inquiry_result_t ** result, Datagram * dg);
+    void kill();
 
 protected:
     void run();
@@ -57,6 +59,7 @@ public:
     ~Worker();
     void on();
     void off();
+    void killRequest();
 
 signals:
     void flexConnectedSignal();

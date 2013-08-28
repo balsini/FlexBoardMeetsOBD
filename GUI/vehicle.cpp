@@ -11,6 +11,11 @@ Vehicle::Vehicle(Serial * serial, QWidget * parent)
     worker->moveToThread(&workerThread);
 }
 
+Vehicle::~Vehicle()
+{
+    worker->killRequest();
+}
+
 void Vehicle::clearBitmask()
 {
     for (unsigned int i=0; i<VEHICLE_BITMASK_SIZE; i++)

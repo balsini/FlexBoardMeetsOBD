@@ -179,11 +179,18 @@ void Worker::dataLoop()
     unsigned char monitor;
     float data;
 
-    receiveDatagram(serial, &dg);
-    monitor = dg.id;
-    data = translateDatagramData(&dg);
+    if (receiveDatagramTimeout(serial, &dg) != -1) {
 
-    emit resultReady(monitor, data);
+        monitor = dg.id;
+        data = translateDatagramData(&dg);
+
+        emit resultReady(monitor, data);
+    }
+}
+
+void Worker::kill()
+{
+    sendDatagram(serial, REQUEST, STOP);
 }
 
 void Worker::run()
@@ -220,6 +227,10 @@ int Worker::exec()
         case DATA_LOOP:
             dataLoop();
             break;
+        case KILL:
+            kill();
+            status = QUIT;
+            break;
         case WAIT:
             sync->acquire();
             break;
@@ -254,4 +265,10 @@ void Worker::bitmaskUpdated()
 {
     if (status == DATA_LOOP)
         status = SEND_BITMASK;
+}
+
+void Worker::killRequest()
+{
+    if (status == DATA_LOOP)
+        status = KILL;
 }

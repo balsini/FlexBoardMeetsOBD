@@ -93,7 +93,7 @@ public slots:
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void monitorDead(Monitor * monitor);
+    void monitorDead(int monitor);
 };
 
 #endif // MAINWINDOW_H

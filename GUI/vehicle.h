@@ -30,6 +30,7 @@ public slots:
 
 public:
     Vehicle(Serial * serial, QWidget * parent);
+    ~Vehicle();
     void clearBitmask();
     void getBitmask(unsigned char * bitMask);
     void setBitmaskBit(unsigned int bitIdentifier);

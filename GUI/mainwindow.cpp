@@ -24,7 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar->showMessage(tr("Ready"));
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow()
+{
+    delete vehicle;
+}
 
 void MainWindow::createMenus()
 {
@@ -157,7 +160,9 @@ void MainWindow::newMonitor(unsigned int identifier)
         break;
     }
 
-    subWindowVector->insert(identifier, monitorWidget);
+    while (identifier >= subWindowVector->size())
+        subWindowVector->append(0);
+    subWindowVector->replace(identifier, monitorWidget);
 
     //monitorWidget->setValue(17000);
     QMdiSubWindow * subWindow = mainWidget.addSubWindow(monitorWidget);
@@ -235,9 +240,9 @@ void MainWindow::deviceInquirySlot()
     vehicle->bridgeInquiry();
 }
 
-void MainWindow::monitorDead(Monitor * monitor)
+void MainWindow::monitorDead(int monitor)
 {
-    vehicle->clearBitmaskBit(subWindowVector->indexOf(monitor));
-    subWindowVector->replace(subWindowVector->indexOf(monitor), 0);
+    vehicle->clearBitmaskBit(monitor);
+    subWindowVector->replace(monitor, 0);
     emit vehicle->bitmaskUpdated();
 }

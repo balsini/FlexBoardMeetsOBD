@@ -112,7 +112,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 
 Monitor::~Monitor()
 {
-    ((MainWindow *)parent)->monitorDead(this);
+    ((MainWindow *)parent)->monitorDead(this->type);
 }
 
 void Monitor::setValue(float value)
