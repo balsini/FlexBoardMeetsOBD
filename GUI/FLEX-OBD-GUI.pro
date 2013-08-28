@@ -21,11 +21,11 @@ SOURCES += \
     about.cpp \
     monitorselection.cpp \
     vehicle.cpp \
-    plots.cpp \
     statusbar.cpp \
     worker.cpp \
     bluetoothdevices.cpp \
-    datagram.cpp
+    datagram.cpp \
+    plot.cpp
 
 HEADERS  += \
     mainwindow.h\
@@ -35,11 +35,11 @@ HEADERS  += \
     about.h \
     monitorselection.h \
     vehicle.h \
-    plots.h \
     statusbar.h \
     datagram.h \
     worker.h \
-    bluetoothdevices.h
+    bluetoothdevices.h \
+    plot.h
 
 RESOURCES += \
     images.qrc
