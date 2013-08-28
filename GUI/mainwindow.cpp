@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus();
     createToolBars();
 
+    subWindowVector = new QVector<void *>;
+
     statusBar = new StatusBar(this);
 
     this->setStatusBar(statusBar);
@@ -159,7 +161,7 @@ void MainWindow::newMonitor(unsigned int identifier)
         break;
     }
 
-    subWindowVector.insert(identifier, monitorWidget);
+    subWindowVector->insert(identifier, monitorWidget);
 
     //monitorWidget->setValue(17000);
     QMdiSubWindow * subWindow = mainWidget.addSubWindow(monitorWidget);
@@ -228,14 +230,15 @@ void MainWindow::bluetoothDeviceChosen(int num)
 void MainWindow::vehicleDataReady(unsigned char monitor, float data)
 {
     qDebug() << "Data ready: " << monitor << " : "<< data;
-    if (subWindowVector[monitor] != 0)
-        subWindowVector[monitor]->setValue(data);
+    if (subWindowVector->at(monitor) != 0)
+        ((Monitor *)subWindowVector->at(monitor))->setValue(data);
 }
 
 void MainWindow::deviceConnectSlot()
 {
     vehicle->bridgeConnect();
 }
+
 void MainWindow::deviceInquirySlot()
 {
     vehicle->bridgeInquiry();
@@ -243,6 +246,7 @@ void MainWindow::deviceInquirySlot()
 
 void MainWindow::monitorDead(Monitor * monitor)
 {
-    vehicle->clearBitmaskBit(subWindowVector.indexOf(monitor));
-    subWindowVector[subWindowVector.indexOf(monitor)] = 0;
+    vehicle->clearBitmaskBit(subWindowVector->indexOf(monitor));
+    subWindowVector->replace(subWindowVector->indexOf(monitor), 0);
+    emit vehicle->bitmaskUpdated();
 }

@@ -21,6 +21,7 @@
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QDir>
+#include <QVector>
 
 #include "serialconfiguration.h"
 #include "monitor.h"
@@ -41,7 +42,7 @@ class MainWindow : public QMainWindow
     BluetoothDevices * bluetoothDevices;
 
     QMdiArea mainWidget;
-    QVector<Monitor *> subWindowVector;
+    QVector<void *> * subWindowVector;
 
     QToolBar * monitorToolBar;
 
