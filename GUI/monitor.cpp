@@ -1,4 +1,6 @@
 #include "monitor.h"
+#include "mainwindow.h"
+
 #include <float.h>
 
 unsigned int MONITOR_WIDTH = 350;
@@ -11,6 +13,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     : QWidget(parent, f)
 {
     this->type = type;
+    this->parent = parent;
 
     this->setWindowTitle(title);
     this->setMaximumSize(MONITOR_WIDTH, MONITOR_HEIGHT);
@@ -95,6 +98,11 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
     vLayout.addSpacerItem(spacer);
 
     layout->addLayout(&vLayout);
+}
+
+Monitor::~Monitor()
+{
+    ((MainWindow *)parent)->monitorDead(this);
 }
 
 void Monitor::setValue(float value)

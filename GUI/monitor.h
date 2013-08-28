@@ -25,6 +25,8 @@ class Monitor : public QWidget
 
     GaugeType type;
 
+    void * parent;
+
     QHBoxLayout * layout;
     QGraphicsView * mainView;
     QGraphicsScene * mainScene;
@@ -59,6 +61,7 @@ private slots:
 
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ~Monitor();
     void setValue(float value);
 };
 
