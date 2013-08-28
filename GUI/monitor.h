@@ -1,9 +1,17 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
+#define KDE_LIBS
+
 #ifdef DEBUGGING
 #include <QDebug>
 #include <QScrollBar>
+#endif
+
+#ifdef KDE_LIBS
+#include "ksignalplotter.h"
+#else
+#include "plot.h"
 #endif
 
 #include <QWidget>
@@ -16,7 +24,6 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "plot.h"
 
 typedef enum GaugeType_ {
     FUEL, SPEED, RPM, WATER_TEMP
@@ -47,7 +54,13 @@ class Monitor : public QWidget
 
     QPushButton plotButton;
 
+    QList<qreal> data;
+
+#ifdef KDE_LIBS
+    KSignalPlotter * plot;
+#else
     Plot * plot;
+#endif
 
     float minAngle;
     float maxAngle;
@@ -69,7 +82,6 @@ private slots:
 #ifdef DEBUGGING
     void valueChanged(int i);
 #endif
-
 
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);

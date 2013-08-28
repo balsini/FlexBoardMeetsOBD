@@ -11,6 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GUI
 TEMPLATE = app
 
+LIBS += -lkde3support \
+    -lkdeclarative \
+-lkdecorations \
+-lkdecore \
+-lkdefakes \
+-lkdesu \
+-lkdeui \
+-lkdewebkit
 
 SOURCES += \
     main.cpp\
@@ -25,7 +33,8 @@ SOURCES += \
     worker.cpp \
     bluetoothdevices.cpp \
     datagram.cpp \
-    plot.cpp
+    plot.cpp \
+    ksignalplotter.cpp
 
 HEADERS  += \
     mainwindow.h\
@@ -39,7 +48,9 @@ HEADERS  += \
     datagram.h \
     worker.h \
     bluetoothdevices.h \
-    plot.h
+    plot.h \
+    ksignalplotter.h \
+    ksignalplotter_p.h
 
 RESOURCES += \
     images.qrc
