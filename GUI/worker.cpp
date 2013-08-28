@@ -68,22 +68,28 @@ unsigned char Worker::parseInquiryDatagram(inquiry_result_t ** result, Datagram 
 int Worker::bridge_connect()
 {
     Datagram dg;
+    dg.data = 0;
 
     // PC: I'm alive!
     sendDatagram(serial, (unsigned char)REQUEST, (unsigned char)HELLO);
 
     // FLEX: I'm alive!
-    receiveDatagramTimeout(serial, &dg);
-    destructDatagramData(&dg);
+    if (receiveDatagramTimeout(serial, &dg) == -1) {
+        // Flex is not alive
+        return -1;
+    }
+
+    if (dg.data != 0)
+        destructDatagramData(&dg);
 
     if (dg.type == RESPONSE && dg.id == HELLO) {
         // Flex is alive
         emit flexConnectedSignal();
         return 0;
     }
-
     // Flex is not alive
     return -1;
+
 }
 
 int Worker::inquiry()
@@ -247,3 +253,8 @@ void Worker::bridgeConnect()
     sync->release();
 }
 
+void Worker::bitmaskUpdated()
+{
+    if (status == DATA_LOOP)
+        status = SEND_BITMASK;
+}

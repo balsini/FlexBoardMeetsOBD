@@ -50,6 +50,7 @@ public slots:
     void bluetoothDeviceChosen(int num);
     void bridgeInquiry();
     void bridgeConnect();
+    void bitmaskUpdated();
 
 public:
     Worker(Serial * serial, void * vehicleParent, QWidget * parent);
