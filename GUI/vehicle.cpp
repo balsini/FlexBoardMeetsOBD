@@ -7,9 +7,8 @@ Vehicle::Vehicle(Serial * serial, QWidget * parent)
     this->serial = serial;
     clearBitmask();
 
-    worker = new Worker(serial, parent);
+    worker = new Worker(serial, this, parent);
     worker->moveToThread(&workerThread);
-    //connect(worker, SIGNAL(resultReady(Datagram)), this, SLOT(handleDatagram(Datagram)));
 }
 
 void Vehicle::clearBitmask()
@@ -23,12 +22,28 @@ void Vehicle::setBitmaskBit(unsigned int bit)
     bitmask[bit/8] |= 0x1 << (bit % 8);
 }
 
+void Vehicle::clearBitmaskBit(unsigned int bit)
+{
+    bitmask[bit/8] &= 0xFF ^ (0x1 << (bit % 8));
+}
+
+void Vehicle::getBitmask(unsigned char * bitMask)
+{
+    for (unsigned int i=0; i<VEHICLE_BITMASK_SIZE; i++)
+        bitMask[i] = bitmask[i];
+}
+
 void Vehicle::getBitmaskBits(QList<unsigned int> * bitList)
 {
     for (unsigned int i=0; i<VEHICLE_BITMASK_SIZE*8; i++) {
         if (bitmask[i/8] & (0x1 << (i % 8)))
             bitList->append(i);
     }
+}
+
+unsigned char Vehicle::getBitmaskSize()
+{
+    return VEHICLE_BITMASK_SIZE;
 }
 
 void Vehicle::handleDatagram(Datagram datagram)
