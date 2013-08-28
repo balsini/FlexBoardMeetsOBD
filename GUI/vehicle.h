@@ -26,6 +26,7 @@ public slots:
     void bluetoothDeviceChosen(int num);
     void bridgeInquiry();
     void bridgeConnect();
+    void bitmaskUpdated();
 
 public:
     Vehicle(Serial * serial, QWidget * parent);
@@ -36,7 +37,6 @@ public:
     void getBitmaskBits(QList<unsigned int> * bitList);
     unsigned char getBitmaskSize();
     void start();
-
 };
 
 #endif // VEHICLE_H

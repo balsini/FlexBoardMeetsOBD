@@ -27,6 +27,11 @@ void Vehicle::clearBitmaskBit(unsigned int bit)
     bitmask[bit/8] &= 0xFF ^ (0x1 << (bit % 8));
 }
 
+void Vehicle::bitmaskUpdated()
+{
+    emit worker->bitmaskUpdated();
+}
+
 void Vehicle::getBitmask(unsigned char * bitMask)
 {
     for (unsigned int i=0; i<VEHICLE_BITMASK_SIZE; i++)
