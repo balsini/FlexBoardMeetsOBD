@@ -48,17 +48,19 @@ void receiveDatagram(void * serial, Datagram * datagram)
     }
 }
 
-void receiveDatagramTimeout(void * serial, Datagram * datagram)
+int receiveDatagramTimeout(void * serial, Datagram * datagram)
 {
-    datagram->type = ((Serial *)serial)->readCTimeout();
-    datagram->id = ((Serial *)serial)->readCTimeout();
-    datagram->size = ((Serial *)serial)->readCTimeout();
+    if (((Serial *)serial)->readCTimeout(&datagram->type) == -1)
+        return -1;
+    datagram->id = ((Serial *)serial)->readC();
+    datagram->size = ((Serial *)serial)->readC();
     if (datagram->size > 0) {
         datagram->data = new unsigned char[datagram->size];
-        ((Serial *)serial)->readSTimeout(datagram->data, datagram->size);
+        ((Serial *)serial)->readS(datagram->data, datagram->size);
     } else {
         datagram->data = 0;
     }
+    return 0;
 }
 
 float translateDatagramData(Datagram * dg)

@@ -10,8 +10,8 @@ Serial::Serial()
     serialConfig.stop_bits = 1;
 
     // select timeout
-    tv.tv_sec = 0;
-    tv.tv_usec= 200000;
+    tv.tv_sec = 1;
+    tv.tv_usec= 0;
 
     tty_fd = -1;
 }
@@ -182,9 +182,13 @@ int Serial::readS(void * buffer, unsigned int nbytes)
 
 int Serial::readSTimeout(void * buffer, unsigned int nbytes)
 {
-    for (unsigned int i=0; i<nbytes; i++)
-        *(((unsigned char *)buffer)+i) = readCTimeout();
-    return nbytes;
+    int res = readCTimeout((unsigned char *)buffer);
+    if (res == 0) {
+        for (unsigned int i=1; i<nbytes; i++)
+            *(((unsigned char *)buffer)+i) = readC();
+        return 0;
+    }
+    return -1;
 }
 
 unsigned char Serial::readC()
@@ -196,11 +200,19 @@ unsigned char Serial::readC()
     return c;
 }
 
-unsigned char Serial::readCTimeout()
+int Serial::readCTimeout(unsigned char * result)
 {
-    static char c;
-    select(tty_fd+1, &select_set, NULL, NULL, &tv);
+    struct timeval tv_temp;
+
+    tv_temp.tv_sec = tv.tv_sec;
+    tv_temp.tv_usec = tv.tv_usec;
+
+    if (0 == select(tty_fd+1, &select_set, NULL, NULL, &tv_temp)) {
+        FD_SET(tty_fd, &select_set);
+        return -1;
+    }
+
     FD_SET(tty_fd, &select_set);
-    read(tty_fd, &c, 1);
-    return c;
+    read(tty_fd, result, 1);
+    return 0;
 }

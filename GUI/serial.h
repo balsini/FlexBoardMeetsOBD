@@ -8,9 +8,12 @@
 
 #include <string>
 
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <termios.h>
 #include <fcntl.h>
-#include <unistd.h>
 
 typedef struct Serial_t_ {
     std::string device;
@@ -38,7 +41,7 @@ public:
     int readS(void * buffer, unsigned int nbytes);
     int readSTimeout(void * buffer, unsigned int nbytes);
     unsigned char readC();
-    unsigned char readCTimeout();
+    int readCTimeout(unsigned char * buff);
     QStringList getDevices();
     void setConfig(Serial_t config);
     int connect();

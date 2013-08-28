@@ -30,7 +30,7 @@ void destructDatagramData(Datagram * dg);
 void sendDatagram(void * serial, Datagram * datagram);
 void sendDatagram(void * serial, unsigned char type, unsigned char id);
 void receiveDatagram(void * serial, Datagram * datagram);
-void receiveDatagramTimeout(void * serial, Datagram * datagram);
+int receiveDatagramTimeout(void * serial, Datagram * datagram);
 float translateDatagramData(Datagram * datagram);
 
 #endif // PCFLEX_DATAGRAM_H
