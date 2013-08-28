@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow
     BluetoothDevices * bluetoothDevices;
 
     QMdiArea mainWidget;
+    QVector<Monitor *> subWindowVector;
 
     QToolBar * monitorToolBar;
 
@@ -87,12 +88,15 @@ private slots:
 public slots:
     void updateMonitorsSlot();
     void flexOnlineSlot();
+    void vehicleOnlineSlot();
     void bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num);
     void bluetoothDeviceChosen(int num);
+    void vehicleDataReady(unsigned char monitor, float data);
 
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void monitorDead(Monitor * monitor);
 };
 
 #endif // MAINWINDOW_H

@@ -159,6 +159,8 @@ void MainWindow::newMonitor(unsigned int identifier)
         break;
     }
 
+    subWindowVector.insert(identifier, monitorWidget);
+
     //monitorWidget->setValue(17000);
     QMdiSubWindow * subWindow = mainWidget.addSubWindow(monitorWidget);
     subWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -209,6 +211,11 @@ void MainWindow::flexOnlineSlot()
     statusBar->flexConnectionEstabilished();
 }
 
+void MainWindow::vehicleOnlineSlot()
+{
+    statusBar->vehicleConnectionEstabilished();
+}
+
 void MainWindow::bluetoothInquiryCompleted(inquiry_result_t * data, unsigned int num) {
     bluetoothDevices->showBluetoothInquirySlot(data, num);
 }
@@ -218,6 +225,13 @@ void MainWindow::bluetoothDeviceChosen(int num)
     vehicle->bluetoothDeviceChosen(num);
 }
 
+void MainWindow::vehicleDataReady(unsigned char monitor, float data)
+{
+    qDebug() << "Data ready: " << monitor << " : "<< data;
+    if (subWindowVector[monitor] != 0)
+        subWindowVector[monitor]->setValue(data);
+}
+
 void MainWindow::deviceConnectSlot()
 {
     vehicle->bridgeConnect();
@@ -225,4 +239,10 @@ void MainWindow::deviceConnectSlot()
 void MainWindow::deviceInquirySlot()
 {
     vehicle->bridgeInquiry();
+}
+
+void MainWindow::monitorDead(Monitor * monitor)
+{
+    vehicle->clearBitmaskBit(subWindowVector.indexOf(monitor));
+    subWindowVector[subWindowVector.indexOf(monitor)] = 0;
 }
