@@ -200,6 +200,12 @@ unsigned char Serial::readC()
     return c;
 }
 
+void Serial::flush()
+{
+    char nll[100];
+    while (read(tty_fd, &nll, 100) >= 0) ;
+}
+
 int Serial::readCTimeout(unsigned char * result)
 {
     struct timeval tv_temp;

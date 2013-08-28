@@ -42,6 +42,7 @@ public:
     int readSTimeout(void * buffer, unsigned int nbytes);
     unsigned char readC();
     int readCTimeout(unsigned char * buff);
+    void flush();
     QStringList getDevices();
     void setConfig(Serial_t config);
     int connect();
