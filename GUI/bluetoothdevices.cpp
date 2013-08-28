@@ -65,5 +65,6 @@ void BluetoothDevices::showBluetoothInquirySlot(inquiry_result_t * devices, unsi
         if (i==0)
             buttonGroup.buttons().first()->setChecked(true);
     }
+    delete[] devices;
     this->show();
 }
