@@ -14,7 +14,7 @@ MonitorSelection::MonitorSelection(Vehicle * vehicle, QWidget * parent, Qt::Wind
 
     buttonGroup.setExclusive(false);
 
-    checkBox = new QCheckBox("&RPM",this);
+    checkBox = new QCheckBox("&Fuel",this);
     buttonGroup.addButton(checkBox);
     vLayout.addWidget(checkBox);
 
@@ -22,7 +22,7 @@ MonitorSelection::MonitorSelection(Vehicle * vehicle, QWidget * parent, Qt::Wind
     buttonGroup.addButton(checkBox);
     vLayout.addWidget(checkBox);
 
-    checkBox = new QCheckBox("&Fuel",this);
+    checkBox = new QCheckBox("&RPM",this);
     buttonGroup.addButton(checkBox);
     vLayout.addWidget(checkBox);
 

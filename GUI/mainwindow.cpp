@@ -133,25 +133,25 @@ void MainWindow::selectMonitorSlot()
     monitorSelection->show();
 }
 
-void MainWindow::newMonitor(unsigned int identifier)
+void MainWindow::newMonitor(int identifier)
 {
     QString name;
     Monitor * monitorWidget;
 
     switch (identifier) {
-    case 0: // RPM
+    case RPM: // RPM
         name = tr("RPM");
         monitorWidget = new Monitor(name, RPM, this, Qt::SubWindow);
         break;
-    case 1: // SPEED
+    case SPEED: // SPEED
         name = tr("Speed");
         monitorWidget = new Monitor(name, SPEED, this, Qt::SubWindow);
         break;
-    case 2: // FUEL
+    case FUEL: // FUEL
         name = tr("Fuel");
         monitorWidget = new Monitor(name, FUEL, this, Qt::SubWindow);
         break;
-    case 3: // WATER_TEMPERATURE
+    case WATER_TEMP: // WATER_TEMPERATURE
         name = tr("Water Temperature");
         monitorWidget = new Monitor(name, WATER_TEMP, this, Qt::SubWindow);
         break;

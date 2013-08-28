@@ -69,7 +69,7 @@ class MainWindow : public QMainWindow
 
     void createMenus();
     void createToolBars();
-    void newMonitor(unsigned int identifier);
+    void newMonitor(int identifier);
 
 private slots:
     void exitSlot();
