@@ -54,7 +54,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 180+45;
         maxValue = 160;
         minValue = 0;
-        color = Qt::yellow;
+        color = Qt::blue;
         break;
     case WATER_TEMP:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/bg.png").scaledToWidth(GRAPHICS_WIDTH));
@@ -63,7 +63,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 180;
         maxValue = 140;
         minValue = 40;
-        color = Qt::blue;
+        color = Qt::magenta;
         break;
     default: break;
     }
