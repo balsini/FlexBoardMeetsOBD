@@ -94,8 +94,7 @@
 
 \begin{abstract}
 
-%\noindent \lipsum[1] % Dummy abstract text
-\noindent The aim of the project is the development of a bridge made of a Flex Demo Board, a Bluetooth/UART module and an Elm327 device. The bridge gathers information from a standard OBDII vehicle and makes it available to other platforms.
+\noindent The aim of the project is the development of a system which retrieves and presents to the user diagnostic data from a vehicle. This system is made of Flex Board developed by Evidence, Bluetooth-to-UART module and a Bluetooth Elm327 device. Information gathered are presented to the user by an LCD display embedded in the Flex Board or by an interactive graphical interface on PC.
 
 \end{abstract}
 
@@ -107,7 +106,7 @@
 
 \section{Introduction}
 
-\lettrine[nindent=0em,lines=2.5]{N} owadays almost all the vehicles adopt, by law, a standard way of communicating diagnostic information.
+\lettrine[nindent=0em,lines=2]{N} owadays almost all the vehicles adopt, by law, a standard way of communicating diagnostic information.
 
 The OBDII standard is actually the most common protocol. It allows the user not only to retrieve diagnostic data, but also to program the control units and modify vehicle's parameters in real time.
 
@@ -115,7 +114,9 @@ The OBDII standard is actually the most common protocol. It allows the user not 
 
 \section{Hardware}
 
-Many interfaces for transfering vehicle diagnostics are not directly available in commond PCs or PDAs.
+\subsection{Modules Involved}
+
+Many interfaces for transfering vehicle diagnostics are not directly available in common PCs or PDAs.
 
 As bridge between OBDII and Bluetooth it is possible to use Elm 327 modules.
 
@@ -125,7 +126,43 @@ As bridge between OBDII and Bluetooth it is possible to use Elm 327 modules.
   \caption{\textit{Elm 327} Bluetooth/OBDII module}
 \end{figure}
 
-By default, our module is discovered with the Bluetooth name "CHX" and requires the password "6789" for pairing.
+By default, our module is discovered with the Bluetooth name "CHX" and requires the pin code "6789" for pairing.
+
+The Flex Light is the core of our bridge.
+
+It comes with a dsPIC by Microchip and is programmed with MPLAB ICD tools.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.6in]{img/flex_light_presentation}
+  \caption{\textit{Flex Light} board}
+\end{figure}
+
+Flex Light functionalities can be extended with the Multibus board which provides different useful communication interfaces.
+
+In particular, in this project will be used the two UART ports.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.6in]{img/flex101_presentation}
+  \caption{\textit{Flex Multibus} daughter board}
+\end{figure}
+
+Another daughter board which extends Flex Light's functionalities is the Flex Demo Board.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.3in]{img/flex_demo_board_presentation}
+  \caption{\textit{Flex Demo} board}
+\end{figure}
+
+The Bluetooth communication is allowed by the BlueSmirf module, a little board which embeds a Roving Networks RN-42.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.3in]{img/bluesmirf_presentation}
+  \caption{\textit{BlueSmirf} Bluetooth module}
+\end{figure}
 
 \subsection{Connectors and Wirings}
 
@@ -202,7 +239,7 @@ The standard OBDII female connector has the following pinout:
 
 %------------------------------------------------
 
-\section{Software}
+\section{Background}
 
 \subsection{Elm327 Communication Basics}
 
@@ -236,6 +273,7 @@ AT Z
 
 Resets the module, as if a power reset happened.
 It brings back all the settings to their default values.
+At reboot, module prints out the device name and firmware version, like \emph{ELM327 v1.4}.
 
 \begin{lstlisting}[language=bash]
 AT SP x
@@ -264,7 +302,7 @@ Each data request has three parameters associated:
 \begin{compactitem}
   \item mode: hexadecimal 2 byte identifier;
   \item pid: hexadecimal 2 byte identifier;
-  \item response length.
+  \item response length: response bytes.
 \end{compactitem}
 
 Each request has the following syntax
@@ -276,15 +314,24 @@ and each response has the syntax
 MODE PID VALUE
 \end{lstlisting}
 where \emph{VALUE} has different fixed sizes for different data.
-\emph{VALUE}'s length is \emph{n}-byte, each one separated by a space symbol.
+\emph{VALUE}'s length is \emph{n}-byte, each byte separated by a space symbol.
 
 \begin{lstlisting}[language=bash]
-MODE 00
+00 PID_REQ
 \end{lstlisting}
 
-Requests the list of pids available for the \emph{MM} mode.
+where
+\begin{equation}
+PID\_REQ = 0x10 \cdot k , \quad k = 0,1,2,4
+\end{equation}
+Requests the list of pids available.
 
-The value returned is a bit map, where each bit is associated to a pid and has value 1 if available or 0 if not available.
+The value returned is a bit map, where each bit is associated to a pid and has value:
+\begin{compactitem}
+  \item 1: available;
+  \item 0: not available.
+\end{compactitem}
+
 
 \begin{lstlisting}[language=bash]
 01 01
@@ -296,7 +343,7 @@ This returns a 4 byte response, like
 \end{lstlisting}
 where:
 \begin{compactitem}
-  \item \emph{41 01}: represents the response to the request;
+  \item \emph{41 01}: is the response to the request;
   \item \emph{AA}: is the number of trouble codes:
   \begin{compactitem}
     \item most significant bit: Multifunction Indicator Lamp (MIL, aka Check Engine Light) has been turned on;
@@ -324,7 +371,7 @@ Components & B2 & B6 \\
 \begin{table}[H]
 \centering
 \begin{tabular}{llr}
-\multicolumn{3}{c}{CC, DD Spark Ignition} \\
+\multicolumn{3}{c}{CC, DD in Spark Ignition} \\
 \toprule
 Test & Avail. & Incompl. \\
 \midrule
@@ -343,7 +390,7 @@ EGR System & C7 & D7 \\
 \begin{table}[H]
 \centering
 \begin{tabular}{llr}
-\multicolumn{3}{c}{CC, DD Compression Ignition} \\
+\multicolumn{3}{c}{CC, DD in Compression Ignition} \\
 \toprule
 Test & Avail. & Incompl. \\
 \midrule
@@ -357,39 +404,11 @@ EGR and/or VVT System & C7 & D7 \\
 \end{tabular}
 \end{table}
 
+\section{FlexMeetsObd}
 
-
-
-Response should be interpreted as a bit map.
-
-\subsubsection{Communication Example}
-We will use a fake Elm327 with a v1.5 firmware.
-When connected, it is possible to launch the command
-\begin{lstlisting}[language=bash]
-AT Z
-\end{lstlisting}
-
-This command will reboot the module and print out the device name and firmware version
-\begin{lstlisting}[language=bash]
-ELM327 v1.5
-\end{lstlisting}
-
-\subsection{Linux/BlueZ}
-
-It is necessary to add a new entry with the following format
-\begin{lstlisting}[language=bash]
-REMOTE PIN
-\end{lstlisting}
-to
-\begin{lstlisting}[language=bash]
-/var/lib/bluetooth/LOCAL/pincodes
-\end{lstlisting}
-where:
-\begin{compactitem}
-\item \emph{LOCAL} is the address of the Bluetooth device connected to PC;
-\item \emph{REMOTE} is the address of the remote Bluetooth device (in our case, the Elm327 interface);
-\item \emph{PIN} is the pin code used by the remote Bluetooth device for pairing.
-\end{compactitem}
+\subsection{PC}
+\subsection{Flex}
+\subsection{Elm327}
 
 \begin{table}[H]
 \caption{Example table}
@@ -414,19 +433,6 @@ e = mc^2
 \end{equation}
 
 \lipsum[6] % Dummy text
-
-%------------------------------------------------
-
-\section{Manual}
-
-%\lipsum[7-8] % Dummy text
-\subsection{Wiring}
-
-Wire the module like that.
-
-\subsection{User Interaction}
-
-Software starts with a welcome message...
 
 
 %----------------------------------------------------------------------------------------
