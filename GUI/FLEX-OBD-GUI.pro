@@ -11,14 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GUI
 TEMPLATE = app
 
-LIBS += -lkde3support \
-    -lkdeclarative \
--lkdecorations \
--lkdecore \
--lkdefakes \
--lkdesu \
--lkdeui \
--lkdewebkit
+LIBS += \
+    -lkdecore
 
 SOURCES += \
     main.cpp\
