@@ -70,6 +70,8 @@ class Monitor : public QWidget
     float minimum;
     float maximum;
 
+    QColor color;
+
 #ifdef DEBUGGING
     QScrollBar scrollBar;
 #endif
@@ -84,6 +86,7 @@ private slots:
 public:
     Monitor(const QString & title, GaugeType type, QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~Monitor();
+    QColor getColor();
     void setValue(float value);
 };
 

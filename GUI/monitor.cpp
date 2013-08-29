@@ -36,6 +36,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 180 + 31;
         maxValue = 100;
         minValue = 0;
+        color = Qt::green;
         break;
     case RPM:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/rpm/bg.png").scaledToWidth(GRAPHICS_WIDTH));
@@ -44,6 +45,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 145;
         maxValue = 17000;
         minValue = 0;
+        color = Qt::red;
         break;
     case SPEED:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/speed/bg.png").scaledToWidth(GRAPHICS_WIDTH));
@@ -52,6 +54,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 180+45;
         maxValue = 160;
         minValue = 0;
+        color = Qt::yellow;
         break;
     case WATER_TEMP:
         bg = mainScene->addPixmap(QPixmap(":/images/gauges/water_temp/bg.png").scaledToWidth(GRAPHICS_WIDTH));
@@ -60,6 +63,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
         maxAngle = 180;
         maxValue = 140;
         minValue = 40;
+        color = Qt::blue;
         break;
     default: break;
     }
@@ -93,7 +97,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 
 #ifdef KDE_LIBS
     plot = new KSignalPlotter(parent, Qt::Window);
-    plot->addBeam(Qt::blue);
+    plot->addBeam(this->color);
 #else
     plot = new Plot(this, Qt::Window);
 #endif
@@ -171,3 +175,8 @@ void Monitor::valueChanged(int i)
     setValue(value);
 }
 #endif
+
+QColor Monitor::getColor()
+{
+    return color;
+}
