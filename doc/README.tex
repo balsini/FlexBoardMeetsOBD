@@ -291,9 +291,9 @@ Sets the protocol to \emph{x}, in particular, by default:
   \item 7 ISO 15765-4 CAN (29 bit ID, 500 Kbaud);
   \item 8 ISO 15765-4 CAN (11 bit ID, 250 Kbaud);
   \item 9 ISO 15765-4 CAN (29 bit ID, 250 Kbaud);
-  \item A SAE J1939 CAN (29 bit ID, 250* Kbaud);
-  \item B USER1 CAN (11* bit ID, 125* Kbaud);
-  \item C USER2 CAN (11* bit ID, 50* Kbaud).
+  \item A SAE J1939 CAN (29 bit ID, 250 Kbaud);
+  \item B USER1 CAN (11 bit ID, 125 Kbaud);
+  \item C USER2 CAN (11 bit ID, 50 Kbaud).
 \end{compactitem}
 
 \subsubsection{Basic Data}
@@ -406,24 +406,16 @@ EGR and/or VVT System & C7 & D7 \\
 
 \section{FlexMeetsObd}
 
-\subsection{PC}
+\subsection{PC Interface}
 
-When the PC software is launched, the user will obtain the Welcome Window shown in figure.
+\subsubsection{Overview}
+
+When the PC software is launched, the user will obtain the welcome window shown in figure.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=3in]{img/GUI/welcome_window}
   \caption{Welcome window}
-\end{figure}
-
-The first step is to configure the serial port, through \emph{Configure > Serial Configuration}.
-
-Remember to set appropriate permissions to the file descriptor associated to the serial port in \emph{/dev/} folder.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=3in]{img/GUI/serial_port_configuration}
-  \caption{Serial port configuration window}
 \end{figure}
 
 Monitors are sub-windows that will be drawn inside the dark grey region of the main window. Each monitor is used to represent the vehicle data associated to it and some additional information.
@@ -438,7 +430,7 @@ For monitors management, click on \emph{View > Select Monitors} or directly on \
   \caption{Monitor selection window}
 \end{figure}
 
-Once the monitors are chose, the main window will be populated.
+Once the monitors are chosen, the main window will be populated.
 
 \begin{figure}[H]
   \centering
@@ -450,7 +442,20 @@ At this point, monitor has inconsistent values.
 
 It is possible to move monitors inside the window. To make an automatic monitors alignment, click on \emph{View > Tile Monitors} or on \emph{Tile Monitors} on the left bar.
 
-It's time to enable the serial connection and connect the Flex to retrieve data.
+\subsubsection{Connections}
+
+It's time to estabilish the connections.
+
+The first step is to configure the serial port, through \emph{Configure > Serial Configuration}.
+
+Remember to set appropriate permissions to the file descriptor associated to the serial port in \emph{/dev/} folder.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/serial_port_configuration}
+  \caption{Serial port configuration window}
+\end{figure}
+
 
 The coloured dots in the status bar, in bottom right of the window, show the status of the Serial, Flex and Vehicle links.
 Pay attention to them, in order to detect if something is going wrong.
@@ -461,7 +466,9 @@ The Serial dot should become green, otherwise, check if the serial device is pro
 To establish the connection with the Flex, click on \emph{Devices > Bridge Connect} or on \emph{Bridge Connect} on the left bar.
 The Flex dot should become green, otherwise, check if the serial configuration parameters are compatible with Flex's ones, Flex is powered on, Flex is in a consistent state and Flex is correctly connected to PC.
 
-Not it is possible to request the Flex to perform a Bluetooth inquiry, searching for the Elm327 device. Inquiry results are presented to the user, after clicking on \emph{Devices > Bridge Inquiry} or on \emph{Bridge Inquiry} on the left bar.
+Not it is possible to request the Flex to perform a Bluetooth inquiry, searching for the Elm327 device.
+
+Inquiry results are presented to the user, after clicking on \emph{Devices > Bridge Inquiry} or on \emph{Bridge Inquiry} on the left bar.
 
 \begin{figure}[H]
   \centering
@@ -469,7 +476,15 @@ Not it is possible to request the Flex to perform a Bluetooth inquiry, searching
   \caption{Bluetooth scan results}
 \end{figure}
 
-Once the device is chosen, data Flex will periodically send data which will be shown to the user.
+Select the preferred device in list and click \emph{Ok}.
+
+If the device is not in list, click \emph{Cancel}, check if Flex and Elm327 are correctly working and perform another inquiry.
+
+\subsubsection{Samples Presentation}
+
+Once the Elm327 device is chosen inside the inquiry list, data Flex will periodically send data to PC.
+
+This data will be shown to the user similarly to how is shown in figures.
 
 \begin{figure}[H]
   \centering
@@ -486,32 +501,32 @@ Once the device is chosen, data Flex will periodically send data which will be s
 It is always possible to add new monitors or remove monitors from main window, also while sampling.
 
 \subsection{Flex}
-\subsection{Elm327}
 
-\begin{table}[H]
-\caption{Example table}
-\centering
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Name} \\
-\cmidrule(r){1-2}
-First name & Last Name & Grade \\
-\midrule
-John & Doe & $7.5$ \\
-Richard & Miles & $2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Flex Demo Board Standalone}
 
-\lipsum[5] % Dummy text
+%\begin{table}[H]
+%\caption{Example table}
+%\centering
+%\begin{tabular}{llr}
+%\toprule
+%\multicolumn{2}{c}{Name} \\
+%\cmidrule(r){1-2}
+%First name & Last Name & Grade \\
+%\midrule
+%John & Doe & $7.5$ \\
+%Richard & Miles & $2$ \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
+%\lipsum[5] % Dummy text
 
-\lipsum[6] % Dummy text
+%\begin{equation}
+%\label{eq:emc}
+%e = mc^2
+%\end{equation}
 
+%\lipsum[6] % Dummy text
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
