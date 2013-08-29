@@ -23,14 +23,16 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{listings}
+
+\definecolor{grey}{rgb}{0.9,0.9,0.9}
 \lstset{basicstyle=\ttfamily,
   showstringspaces=false,
+  backgroundcolor=\color{grey},
   commentstyle=\color{red},
   keywordstyle=\color{blue}
 }
 
-
-\usepackage{lipsum} % Package to generate dummy text throughout this template
+%\usepackage{lipsum} % Package to generate dummy text throughout this template
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -500,9 +502,75 @@ This data will be shown to the user similarly to how is shown in figures.
 
 It is always possible to add new monitors or remove monitors from main window, also while sampling.
 
-\subsection{Flex}
+\subsection{Flex Multibus}
 
 \subsection{Flex Demo Board Standalone}
+
+After powerup, user receives a welcome message.
+
+\begin{lstlisting}[language=bash]
+  Flex2OBD 0.1
+    WELCOME!
+\end{lstlisting}
+
+Press any key to continue.
+
+Now Flex is going to:
+\begin{compactitem}
+  \item initialize the UART port;
+  \item initialize the RN-42 module;
+  \item setup the Bluetooth connection parameters;
+  \item perform an inquiry.
+\end{compactitem}
+
+\begin{lstlisting}[language=bash]
+BT Init...[Done]
+SetMode...[Done]
+Inquiry...[Done]
+\end{lstlisting}
+
+If no device is found, push any key to rescan.
+
+Otherwise, inquiry results will be shown to the user with an interactive menu. 
+
+\begin{lstlisting}[language=bash]
+Devices found: 3
+@ Elm327
+\end{lstlisting}
+
+It is possible to navigate the menu using the buttons, with a vi-like meaning:
+\begin{compactitem}
+  \item button 0: left;
+  \item button 1: down;
+  \item button 2: up;
+  \item button 3: right.
+\end{compactitem}
+
+Going up or down shows the devices found.
+
+Pressing left or right navigates from the module's properties: from left to right, name, address and class.
+
+Before the name is shown an \emph{@} symbol, meaning that pressing left will estabilish a connection with that device.
+After the class is shown a \emph{!} symbol, meaning that pressing the right key will perform another inquiry.
+
+After connection request, another menu will appear.
+
+\begin{lstlisting}[language=bash]
+Estabilish Conn.
+Comm|RConn|RScan
+\end{lstlisting}
+
+By pressing second or third button will attempt another connection with the device.
+
+By pressing last button will perform another inquiry.
+
+By pressing first button will start the communication with the Elm327, sentting up the module and requesting periodically the vehicle data. Before pressing, check if the Bluesmirf's led is green, otherwise something went wrong during the connection.
+
+If connection is estabilished, the welcome string of the Elm will be shown.
+
+\begin{lstlisting}[language=bash]
+Elm v.1.4
+\end{lstlisting}
 
 %\begin{table}[H]
 %\caption{Example table}
