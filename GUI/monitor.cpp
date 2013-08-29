@@ -93,6 +93,7 @@ Monitor::Monitor(const QString &title, GaugeType type, QWidget * parent, Qt::Win
 
 #ifdef KDE_LIBS
     plot = new KSignalPlotter(parent, Qt::Window);
+    plot->addBeam(Qt::blue);
 #else
     plot = new Plot(this, Qt::Window);
 #endif
@@ -121,40 +122,37 @@ Monitor::~Monitor()
 
 void Monitor::setValue(float value)
 {
-    static unsigned int i=0;
-    float tmp = value;
-    float norm;
+    static float tmp;
+    static float norm;
+
     this->value = value;
 
     if (value > maxValue)
         tmp = maxValue;
-    if (value < minValue)
+    else if (value < minValue)
         tmp = minValue;
+    else
+        tmp = value;
 
     norm = (tmp - minValue) / (maxValue - minValue);
 
     angle = minAngle + norm * (maxAngle - minAngle);
 
-    actualLcd.display(value);
-
     if (value > maximum)
         maximum = value;
-    if (value < minimum)
+    else if (value < minimum)
         minimum = value;
 
+    actualLcd.display(value);
     minimumLcd.display(minimum);
     maximumLcd.display(maximum);
     arrow->setRotation(angle);
 
-    if (i = (i+1) % 10000) {
 #ifdef KDE_LIBS
-    plot->addBeam(Qt::blue);
-    data << value;
-    plot->addSample(data);
+    plot->addSample(QList<double>() << value);
 #else
     emit plot->newData(norm);
 #endif
-    }
 }
 
 void Monitor::plotSlot()

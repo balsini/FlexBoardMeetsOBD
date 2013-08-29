@@ -54,8 +54,6 @@ class Monitor : public QWidget
 
     QPushButton plotButton;
 
-    QList<qreal> data;
-
 #ifdef KDE_LIBS
     KSignalPlotter * plot;
 #else
