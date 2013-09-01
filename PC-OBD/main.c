@@ -19,14 +19,14 @@ int main(int argc, char ** argv)
 	EE_bluetooth_init();
 	if (!EE_bluetooth_inquiry()) {
 		printf("No device found\n");
-		EE_bluetooth_connect_dev();
+		EE_bluetooth_connect_dev("00:0D:18:3A:73:9D");
 		ee_elm327_init();
 		printf("Elm327 Version: %s\n", ee_elm327_get_version());
 		for (i=0; i<10; i++) {
 			printf("Scan %d:\n",i);
+			printf("\tRPM: %d\n", ee_elm327_get(ENGINE_RPM));
 			printf("\tThrottle: %d\n", ee_elm327_get(THROTTLE_POSITION));
-			printf("\tRPM: %d\n", ee_elm327_get(ENGINE_COOLANT_TEMP));
-			printf("\tCoolant Temp: %d\n", ee_elm327_get(ENGINE_RPM));
+			printf("\tCoolant Temp: %d\n", ee_elm327_get(ENGINE_COOLANT_TEMP));
 			printf("\tSpeed: %d\n", ee_elm327_get(VEHICLE_SPEED));
 		}
 	} else {
@@ -37,9 +37,9 @@ int main(int argc, char ** argv)
 			printf("Elm327 Version: %s\n", ee_elm327_get_version());
 			for (i=0; i<10; i++) {
 				printf("Scan %d:\n",i);
+				printf("\tRPM: %d\n", ee_elm327_get(ENGINE_RPM));
 				printf("\tThrottle: %d\n", ee_elm327_get(THROTTLE_POSITION));
-				printf("\tRPM: %d\n", ee_elm327_get(ENGINE_COOLANT_TEMP));
-				printf("\tCoolant Temp: %d\n", ee_elm327_get(ENGINE_RPM));
+				printf("\tCoolant Temp: %d\n", ee_elm327_get(ENGINE_COOLANT_TEMP));
 				printf("\tSpeed: %d\n", ee_elm327_get(VEHICLE_SPEED));
 			}
 		}

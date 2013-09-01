@@ -20,6 +20,18 @@ char version[4];
 
 MPR_t MPR[4];
 
+void printall()
+{
+	char c;
+	for (;;) {
+		c = EE_bluetooth_receive();
+		//if ((c <= 'Z' && c >= 'A') || (c <= '9' && c >= '1') )
+		//	printf("%c\n", c);
+		//else
+			printf("0x%X\n", c);
+	}
+}
+
 void EE_elm327_MPR_assign(char * mode, char * PID, char byte, MPR_index_t index)
 {
 	MPR[index].mode[0] = mode[0];
@@ -41,28 +53,28 @@ void EE_elm327_MPR_init()
 
 int hex_converter(char * hex, char len)
 {
-    int i;
-    int ret = 0;
-    int power = 1;
+	int i;
+	int ret = 0;
+	int power = 1;
 
-    for (i=0; i<len; i++) {
-        if (hex[len-i-1] <= 'F' && hex[len-i-1] >= 'A')
-            ret += (hex[len-i-1] - 'A' + 10) * power;
-        else if (hex[len-i-1] <= '9' && hex[len-i-1] >= '0')
-            ret += (hex[len-i-1] - '0') * power;
-        else
-            return -1;
-        power *= 16;
-    }
+	for (i=0; i<len; i++) {
+		if (hex[len-i-1] <= 'F' && hex[len-i-1] >= 'A')
+			ret += (hex[len-i-1] - 'A' + 10) * power;
+		else if (hex[len-i-1] <= '9' && hex[len-i-1] >= '0')
+			ret += (hex[len-i-1] - '0') * power;
+		else
+			return -1;
+		power *= 16;
+	}
 
 	return ret;
 }
 
 int ee_elm327_get(MPR_index_t identifier)
 {
-	static char return_value[25] = {0};
+	static char return_value[25];
 	register int i;
-
+	printf("Sending: %s %s\n", MPR[identifier].mode, MPR[identifier].PID);
 	EE_bluetooth_sendS(MPR[identifier].mode);
 	EE_bluetooth_sendS(" ");
 	EE_bluetooth_sendS(MPR[identifier].PID);
@@ -79,9 +91,11 @@ int ee_elm327_get(MPR_index_t identifier)
 
 	while (EE_bluetooth_receive_no_timeout() != '>') ;
 
-	//printf("%c%c%c%c\n",return_value[0], return_value[1], return_value[2], return_value[3]);
+	printf("\nHex value:\n",return_value[0], return_value[1], return_value[2], return_value[3]);
+	for (i=0; i<MPR[identifier].return_byte_num; i++)
+		printf("%X\n", return_value[i]);
 
-	return_value[i] = '\0';
+	return_value[MPR[identifier].return_byte_num + 1] = '\0';
 	return hex_converter(return_value, MPR[identifier].return_byte_num);
 }
 
@@ -112,8 +126,7 @@ int ee_elm327_set_protocol(char protocol)
 	protoStr[2] = '\0';
 	EE_bluetooth_sendS("AT SP ");
 	EE_bluetooth_sendS(protoStr);
-	//for (;;)
-	//	printf("%X\n",EE_bluetooth_receive());
+
 	return EE_elm327_check_response_no_timeout("OK\r\r");
 }
 
@@ -125,7 +138,7 @@ void ee_elm327_init()
 	ee_elm327_reboot();
 	echo_enabled = 1;
 	ee_elm327_set_echo(0);
-	ee_elm327_set_protocol('0');
+	//ee_elm327_set_protocol('0');
 }
 
 int ee_elm327_set_echo(char val)
