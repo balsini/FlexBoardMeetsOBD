@@ -23,14 +23,16 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{listings}
+
+\definecolor{grey}{rgb}{0.9,0.9,0.9}
 \lstset{basicstyle=\ttfamily,
   showstringspaces=false,
+  backgroundcolor=\color{grey},
   commentstyle=\color{red},
   keywordstyle=\color{blue}
 }
 
-
-\usepackage{lipsum} % Package to generate dummy text throughout this template
+%\usepackage{lipsum} % Package to generate dummy text throughout this template
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -291,9 +293,9 @@ Sets the protocol to \emph{x}, in particular, by default:
   \item 7 ISO 15765-4 CAN (29 bit ID, 500 Kbaud);
   \item 8 ISO 15765-4 CAN (11 bit ID, 250 Kbaud);
   \item 9 ISO 15765-4 CAN (29 bit ID, 250 Kbaud);
-  \item A SAE J1939 CAN (29 bit ID, 250* Kbaud);
-  \item B USER1 CAN (11* bit ID, 125* Kbaud);
-  \item C USER2 CAN (11* bit ID, 50* Kbaud).
+  \item A SAE J1939 CAN (29 bit ID, 250 Kbaud);
+  \item B USER1 CAN (11 bit ID, 125 Kbaud);
+  \item C USER2 CAN (11 bit ID, 50 Kbaud).
 \end{compactitem}
 
 \subsubsection{Basic Data}
@@ -406,34 +408,193 @@ EGR and/or VVT System & C7 & D7 \\
 
 \section{FlexMeetsObd}
 
-\subsection{PC}
-\subsection{Flex}
-\subsection{Elm327}
+\subsection{PC Interface}
 
-\begin{table}[H]
-\caption{Example table}
-\centering
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{Name} \\
-\cmidrule(r){1-2}
-First name & Last Name & Grade \\
-\midrule
-John & Doe & $7.5$ \\
-Richard & Miles & $2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsubsection{Overview}
 
-\lipsum[5] % Dummy text
+When the PC software is launched, the user will obtain the welcome window shown in figure.
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/welcome_window}
+  \caption{Welcome window}
+\end{figure}
 
-\lipsum[6] % Dummy text
+Monitors are sub-windows that will be drawn inside the dark grey region of the main window. Each monitor is used to represent the vehicle data associated to it and some additional information.
 
+From each monitor is possible to open a new window containing it's plot diagram, which shows the last received samples.
+
+For monitors management, click on \emph{View > Select Monitors} or directly on \emph{Select Monitors} on the right bar menu.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.2in]{img/GUI/monitor_selection}
+  \caption{Monitor selection window}
+\end{figure}
+
+Once the monitors are chosen, the main window will be populated.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/monitor_created}
+  \caption{Mainwindow after monitor creation}
+\end{figure}
+
+At this point, monitor has inconsistent values.
+
+It is possible to move monitors inside the window. To make an automatic monitors alignment, click on \emph{View > Tile Monitors} or on \emph{Tile Monitors} on the left bar.
+
+\subsubsection{Connections}
+
+It's time to estabilish the connections.
+
+The first step is to configure the serial port, through \emph{Configure > Serial Configuration}.
+
+Remember to set appropriate permissions to the file descriptor associated to the serial port in \emph{/dev/} folder.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/serial_port_configuration}
+  \caption{Serial port configuration window}
+\end{figure}
+
+
+The coloured dots in the status bar, in bottom right of the window, show the status of the Serial, Flex and Vehicle links.
+Pay attention to them, in order to detect if something is going wrong.
+
+To enable [disable] serial device, click on \emph{Devices > Serial Enable [Disable]} or on \emph{Serial Enable [Disable]} on the left bar.
+The Serial dot should become green, otherwise, check if the serial device is properly connected and permissions are correct.
+
+To establish the connection with the Flex, click on \emph{Devices > Bridge Connect} or on \emph{Bridge Connect} on the left bar.
+The Flex dot should become green, otherwise, check if the serial configuration parameters are compatible with Flex's ones, Flex is powered on, Flex is in a consistent state and Flex is correctly connected to PC.
+
+Not it is possible to request the Flex to perform a Bluetooth inquiry, searching for the Elm327 device.
+
+Inquiry results are presented to the user, after clicking on \emph{Devices > Bridge Inquiry} or on \emph{Bridge Inquiry} on the left bar.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.8in]{img/GUI/bluetooth_scan_results}
+  \caption{Bluetooth scan results}
+\end{figure}
+
+Select the preferred device in list and click \emph{Ok}.
+
+If the device is not in list, click \emph{Cancel}, check if Flex and Elm327 are correctly working and perform another inquiry.
+
+\subsubsection{Samples Presentation}
+
+Once the Elm327 device is chosen inside the inquiry list, data Flex will periodically send data to PC.
+
+This data will be shown to the user similarly to how is shown in figures.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/sampling_monitor}
+  \caption{Monitor appearance while sampling}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=3in]{img/GUI/sampling_plot}
+  \caption{Plot appearance while sampling}
+\end{figure}
+
+It is always possible to add new monitors or remove monitors from main window, also while sampling.
+
+\subsection{Flex Multibus}
+
+\subsection{Flex Demo Board Standalone}
+
+After powerup, user receives a welcome message.
+
+\begin{lstlisting}[language=bash]
+  Flex2OBD 0.1
+    WELCOME!
+\end{lstlisting}
+
+Press any key to continue.
+
+Now Flex is going to:
+\begin{compactitem}
+  \item initialize the UART port;
+  \item initialize the RN-42 module;
+  \item setup the Bluetooth connection parameters;
+  \item perform an inquiry.
+\end{compactitem}
+
+\begin{lstlisting}[language=bash]
+BT Init...[Done]
+SetMode...[Done]
+Inquiry...[Done]
+\end{lstlisting}
+
+If no device is found, push any key to rescan.
+
+Otherwise, inquiry results will be shown to the user with an interactive menu. 
+
+\begin{lstlisting}[language=bash]
+Devices found: 3
+@ Elm327
+\end{lstlisting}
+
+It is possible to navigate the menu using the buttons, with a vi-like meaning:
+\begin{compactitem}
+  \item button 0: left;
+  \item button 1: down;
+  \item button 2: up;
+  \item button 3: right.
+\end{compactitem}
+
+Going up or down shows the devices found.
+
+Pressing left or right navigates from the module's properties: from left to right, name, address and class.
+
+Before the name is shown an \emph{@} symbol, meaning that pressing left will estabilish a connection with that device.
+After the class is shown a \emph{!} symbol, meaning that pressing the right key will perform another inquiry.
+
+After connection request, another menu will appear.
+
+\begin{lstlisting}[language=bash]
+Estabilish Conn.
+Comm|RConn|RScan
+\end{lstlisting}
+
+By pressing second or third button will attempt another connection with the device.
+
+By pressing last button will perform another inquiry.
+
+By pressing first button will start the communication with the Elm327, sentting up the module and requesting periodically the vehicle data. Before pressing, check if the Bluesmirf's led is green, otherwise something went wrong during the connection.
+
+If connection is estabilished, the welcome string of the Elm will be shown.
+
+\begin{lstlisting}[language=bash]
+Elm v.1.4
+\end{lstlisting}
+
+%\begin{table}[H]
+%\caption{Example table}
+%\centering
+%\begin{tabular}{llr}
+%\toprule
+%\multicolumn{2}{c}{Name} \\
+%\cmidrule(r){1-2}
+%First name & Last Name & Grade \\
+%\midrule
+%John & Doe & $7.5$ \\
+%Richard & Miles & $2$ \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
+
+%\lipsum[5] % Dummy text
+
+%\begin{equation}
+%\label{eq:emc}
+%e = mc^2
+%\end{equation}
+
+%\lipsum[6] % Dummy text
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
