@@ -15,5 +15,6 @@ void EE_bluetooth_init();
 int EE_bluetooth_connect();
 int EE_bluetooth_inquiry();
 void EE_bluetooth_free();
+int EE_bluetooth_connect_dev(char * bdaddr);
 
 #endif /* BLUETOOTH_H_ */

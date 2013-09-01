@@ -108,11 +108,12 @@ int ee_elm327_set_protocol(char protocol)
 	printf("Changing protocol\n");
 
 	protoStr[0] = protocol;
-	protoStr[1] = '\0';
-	protoStr[2] = '\r';
-	EE_bluetooth_sendS("SP ");
+	protoStr[1] = '\r';
+	protoStr[2] = '\0';
+	EE_bluetooth_sendS("AT SP ");
 	EE_bluetooth_sendS(protoStr);
-
+	//for (;;)
+	//	printf("%X\n",EE_bluetooth_receive());
 	return EE_elm327_check_response_no_timeout("OK\r\r");
 }
 
@@ -122,6 +123,8 @@ void ee_elm327_init()
 	echo_enabled = 1;
 	ee_elm327_set_echo(0);
 	ee_elm327_reboot();
+	echo_enabled = 1;
+	ee_elm327_set_echo(0);
 	ee_elm327_set_protocol('0');
 }
 
