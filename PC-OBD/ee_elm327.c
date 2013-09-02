@@ -20,6 +20,7 @@ char version[4];
 
 MPR_t MPR[4];
 
+/*
 void printall()
 {
 	char c;
@@ -28,9 +29,10 @@ void printall()
 		//if ((c <= 'Z' && c >= 'A') || (c <= '9' && c >= '1') )
 		//	printf("%c\n", c);
 		//else
-			printf("0x%X\n", c);
+			printf("%X\n", c);
 	}
 }
+*/
 
 void EE_elm327_MPR_assign(char * mode, char * PID, char byte, MPR_index_t index)
 {
@@ -73,12 +75,17 @@ int hex_converter(char * hex, char len)
 int ee_elm327_get(MPR_index_t identifier)
 {
 	static char return_value[25];
-	register int i;
-	printf("Sending: %s %s\n", MPR[identifier].mode, MPR[identifier].PID);
+	unsigned int i;
+
+	//usleep(10000L);
+
+	//printf("Sending: %s %s\n", MPR[identifier].mode, MPR[identifier].PID);
 	EE_bluetooth_sendS(MPR[identifier].mode);
 	EE_bluetooth_sendS(" ");
 	EE_bluetooth_sendS(MPR[identifier].PID);
 	EE_bluetooth_sendS("\r");
+
+	//printall();
 
 	while (EE_bluetooth_receive_no_timeout() != ' ');
 	while (EE_bluetooth_receive_no_timeout() != ' ');
@@ -91,12 +98,15 @@ int ee_elm327_get(MPR_index_t identifier)
 
 	while (EE_bluetooth_receive_no_timeout() != '>') ;
 
-	printf("\nHex value:\n",return_value[0], return_value[1], return_value[2], return_value[3]);
-	for (i=0; i<MPR[identifier].return_byte_num; i++)
+	/*
+	printf("\nHex value:\n");
+	for (i=0; i<MPR[identifier].return_byte_num * 2; i++)
 		printf("%X\n", return_value[i]);
+	*/
 
-	return_value[MPR[identifier].return_byte_num + 1] = '\0';
-	return hex_converter(return_value, MPR[identifier].return_byte_num);
+	return_value[MPR[identifier].return_byte_num * 2 + 1] = '\0';
+
+	return hex_converter(return_value, MPR[identifier].return_byte_num * 2);
 }
 
 inline int EE_elm327_check_response_no_timeout(char * response)
