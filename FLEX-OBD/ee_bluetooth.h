@@ -23,9 +23,12 @@ typedef struct inquiry_result_t_ {
 	char cod[7];
 } inquiry_result_t;
 
-/*
+/**
  * Initializes the UART to make Bluetooth available.
- * baud defines the UART channel
+ *
+ * \param baud Baudrate of Bluetooth device.
+ * \param byteformat Bluetooth UART parameters.
+ * \param mode Bluetooth UART flow control.
  */
 
 int EE_bluetooth_init(EE_UINT32 baud,
