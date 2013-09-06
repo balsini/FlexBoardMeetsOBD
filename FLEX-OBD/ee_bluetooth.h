@@ -13,9 +13,14 @@
 
 #include "LCD.h"
 
-// Inquiry result is a matrix of maximum 9 rows, where
-// each element is like:
-// <BT addr>,<BT name>,<COD>
+/**
+ * Each element returned by inquiry comprehends three
+ * fields:
+ *
+ * [BT addr],[BT name],[COD]
+ *
+ * Inquiry results are stored in vector of this type.
+ */
 
 typedef struct inquiry_result_t_ {
 	char addr[13];
@@ -35,40 +40,45 @@ int EE_bluetooth_init(EE_UINT32 baud,
 		EE_UINT16 byteformat,
 		EE_UINT16 mode);
 
-/*
- * Brings Bluetooth module to Master mode
+/**
+ * Brings Bluetooth module to Master mode.
+ * \return 0 if something went wrong.
  */
 
 int EE_bluetooth_set_master();
 
-/*
- * Brings Bluetooth module to Slave mode
+/**
+ * Brings Bluetooth module to Slave mode.
+ * \return 0 if something went wrong.
  */
 
 int EE_bluetooth_set_slave();
 
-/*
- * Brings Bluetooth module to Pairing mode
+/**
+ * Brings Bluetooth module to Pairing mode.
+ * \return 0 if something went wrong.
  */
 
 int EE_bluetooth_set_pairing();
 
-/*
- * Returns 1 if Bluetooth module is alive
+/**
+ * Checks if Bluetooth module is alive.
+ * \return 1 if Bluetooth module is alive.
  */
 
 int EE_bluetooth_alive();
 
-/*
- * Connects to the Bluetooth remote device with
- * given address
+/**
+ * Connects to the Bluetooth remote device.
+ * \param remote_addr String containing remote
+ * device's address to which establish connection. 
  */
 
 int EE_bluetooth_connect(char * remote_addr);
 
-
-/*
- * Sets authentication:
+/**
+ * Sets Bluetooth's authentication mode:
+ * \param value Authentication mode.
  *
  * 0: Open mode. With this mode, the module uses
  *   Bluetooth version 2.0 with NO encryption
@@ -86,7 +96,7 @@ int EE_bluetooth_connect(char * remote_addr);
  *   simply press OK or Yes on the remote device
  *   to authenticate.
  *
- * 2: SSP “just works” mode. This mode works with
+ * 2: SSP "just works" mode. This mode works with
  *   iOS device and newer PCs. You can use this
  *   mode with Droid devices if the application
  *   connects using unsecure mode (which was the
@@ -104,45 +114,63 @@ int EE_bluetooth_connect(char * remote_addr);
 
 int EE_bluetooth_set_authentication(unsigned char value);
 
-/*
- * Sets the Bluetooth module's name
+/**
+ * Sets the Bluetooth module's name.
+ * \param name String containing Bluetooth name
+ *   to be assigned.
  */
 
 int EE_bluetooth_set_name(char * name);
 
-/*
+/**
  * Sets the Bluetooth module's PIN value
  * for remote device authentication.
- * Default value: "1234"
+ * \param pin String containing pin. Default
+ *   value: "1234"
  */
 
 int EE_bluetooth_set_pin(char * pin);
-/*
+
+/**
  * Sends a string via Bluetooth
+ * \param str String to be sent. The string
+ * termination character will not be sent.
  */
 
-void EE_bluetooth_sendS(char * string);
+void EE_bluetooth_sendS(char * str);
 
-/*
- * Receives a char via Bluetooth
+/**
+ * Receives a char via Bluetooth. This function has
+ * a timeout.
+ * \return The character received via Bluetooth. If
+ *   no data is received, then 0xFF value is returned.
  */
 
 unsigned char EE_bluetooth_receive();
+
+/**
+ * Receives a char via Bluetooth. This function has
+ * no timeout, so it can wait forever if no data is
+ * transmitted.
+ * \return The character received via Bluetooth.
+ */
+ 
 unsigned char EE_bluetooth_receive_no_timeout();
 
-/*
+/**
  * Resets the device.
  * This function is needed to update some device
- * properties, like device name
+ * properties, like device name.
  */
 
 int EE_bluetooth_reboot();
 
-/*
+/**
  * Makes a Bluetooth inquiry, scanning for
  * other devices.
- * Results of the inquiry are stored in
- * dest container
+ * \param dest Containter in where results of the
+ *   inquiry will be stored.
+ * \return Number of devices found during the inquiry.
  */
 
 int EE_bluetooth_inquiry(inquiry_result_t * dest);
