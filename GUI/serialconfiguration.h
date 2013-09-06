@@ -1,3 +1,13 @@
+/**
+ * @file    serialconfiguration.h
+ * @author  Alessio Balsini <alessio.balsini@gmail.com>
+ * @version 1.0
+ *
+ * @section DESCRIPTION
+ *
+ * Serial configuration parameters window.
+ */
+
 #ifndef SERIALCONFIGURATION_H
 #define SERIALCONFIGURATION_H
 
@@ -18,6 +28,11 @@
 #include <QDir>
 
 #include "serial.h"
+
+/**
+ * The SerialConfiguration class creates a window
+ * for managing the serial port parameters.
+ */
 
 class SerialConfiguration : public QWidget
 {
@@ -59,15 +74,50 @@ class SerialConfiguration : public QWidget
 
     Serial * serial;
 
+    /**
+     * Initializes window contents variables.
+     */
+
     void initVariables();
+
+    /**
+     * Creates window contents.
+     */
+
     void createWidget();
 
 private slots:
+
+    /**
+     * User requested to refresh the devices list.
+     */
+
     void refreshDevicesSlot();
+
+    /**
+     * User pushed OK button, so serial parameters
+     * chosen are saved.
+     */
+
     void okSlot();
+
+    /**
+     * User pushed CANCEL button, so any modification
+     * is discarded.
+     */
+
     void cancelSlot();
 
 public:
+
+    /**
+     * SerialConfiguration constructor.
+     * @param serial Serial device to which the configuration
+     * will be sent.
+     * @param parent The parent widget.
+     * @param f The window flags.
+     */
+
     SerialConfiguration(Serial * serial, QWidget *parent = 0, Qt::WindowFlags f = 0);
 };
 

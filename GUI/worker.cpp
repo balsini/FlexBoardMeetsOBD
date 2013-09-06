@@ -23,16 +23,6 @@ Worker::~Worker()
     delete sync;
 }
 
-void Worker::on()
-{
-    active = true;
-}
-
-void Worker::off()
-{
-    active = false;
-}
-
 unsigned char Worker::parseInquiryDatagram(inquiry_result_t ** result, Datagram * dg)
 {
     int i,j;

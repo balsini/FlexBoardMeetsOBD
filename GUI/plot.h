@@ -1,3 +1,13 @@
+/**
+ * @file    plot.h
+ * @author  Alessio Balsini <alessio.balsini@gmail.com>
+ * @version 0
+ *
+ * @section DESCRIPTION
+ *
+ * Not working. Please, ignore this class.
+ */
+
 #ifndef PLOT_H
 #define PLOT_H
 

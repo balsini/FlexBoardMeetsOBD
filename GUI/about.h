@@ -1,3 +1,13 @@
+/**
+ * @file    about.h
+ * @author  Alessio Balsini <alessio.balsini@gmail.com>
+ * @version 1.0
+ *
+ * @section DESCRIPTION
+ *
+ * The About window file.
+ */
+
 #ifndef ABOUT_H
 #define ABOUT_H
 
@@ -6,7 +16,15 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
+/**
+ * Number of authors.
+ */
+
 #define ABOUT_AUTHORS_NUM 2
+
+/**
+ * The About class, which creates the About window.
+ */
 
 class About : public QWidget
 {
@@ -23,6 +41,13 @@ class About : public QWidget
     QLabel * aboutDigia;
 
 public:
+
+    /**
+     * Class constructor, which generates the window.
+     * @param parent The class's parent widget.
+     * @param f Window flags.
+     */
+
     About(QWidget *parent = 0, Qt::WindowFlags f = 0);
 };
 
