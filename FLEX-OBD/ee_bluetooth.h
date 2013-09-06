@@ -175,10 +175,16 @@ int EE_bluetooth_reboot();
 
 int EE_bluetooth_inquiry(inquiry_result_t * dest);
 
-/*
- * Functions for mutual exclusion on the BT resource
+/**
+ * Acquires the mutual exclusion on the BT resource.
  */
+ 
 void EE_bluetooth_acquire();
+
+/**
+ * Releases the mutual exclusion on the BT resource.
+ */
+
 void EE_bluetooth_release();
 
 #endif /* EE_BLUETOOTH_H_ */
