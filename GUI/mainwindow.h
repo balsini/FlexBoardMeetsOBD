@@ -205,6 +205,13 @@ public slots:
     void vehicleDataReady(unsigned char monitor, float data);
 
 public:
+
+    /**
+     * The MainWindow constructor. This creates all the main
+     * window contents.
+     * @param The parent widget. Generally main window has no parent.
+     */
+
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
