@@ -13,6 +13,8 @@
 
 #include "vehicleData.h"
 
+vehicleData vehicleDataBuffer;
+
 receiveVehicleDataStatus receiveVehicleDataStatus_;
 
 void receiveVehicleDataFSM_init()
