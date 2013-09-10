@@ -49,8 +49,10 @@ CPU mySystem {
 			APP_SRC = "eeuart.c";
 			APP_SRC = "ee_bluetooth.c";
 			APP_SRC = "ee_elm327.c";
-			APP_SRC = "mainFSM.c";
 			APP_SRC = "buttons.c";
+			APP_SRC = "mainFSM.c";
+			APP_SRC = "updateLCDFSM.c";
+			APP_SRC = "receiveVehicleDataFSM.c";
 			MULTI_STACK = FALSE;
 			ICD2 = TRUE;
 		};
@@ -77,6 +79,7 @@ CPU mySystem {
 		SCHEDULE = FULL;
 		RESOURCE = BT_MUTEX;
 		RESOURCE = LCD_MUTEX;
+		RESOURCE = BUTTONS_MUTEX;
 	};
 	
 	TASK TaskReceiveVehicleData {
@@ -93,6 +96,7 @@ CPU mySystem {
 		SCHEDULE = FULL;
 		RESOURCE = LCD_MUTEX;
 		RESOURCE = VEHICLE_DATA_BUFFER;
+		RESOURCE = BUTTONS_MUTEX;
 	};
 	
 	COUNTER mainCounter;
@@ -125,6 +129,10 @@ CPU mySystem {
 	};
 	
 	RESOURCE LCD_MUTEX {
+		RESOURCEPROPERTY = STANDARD;
+	};
+	
+	RESOURCE BUTTONS_MUTEX {
 		RESOURCEPROPERTY = STANDARD;
 	};
 	

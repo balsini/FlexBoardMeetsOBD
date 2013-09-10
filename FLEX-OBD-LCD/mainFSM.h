@@ -5,8 +5,10 @@
  *      Author: Alessio
  */
 
-#ifndef FSM_H_
-#define FSM_H_
+#ifndef MAINFSM_H_
+#define MAINFSM_H_
+
+#include "constants.h"
 
 typedef enum mainStatus_ {
 	WELCOME, DEAD,
@@ -19,11 +21,9 @@ typedef enum mainStatus_ {
 	BT_INIT, BT_COMMUNICATE
 } mainStatus;
 
-typedef enum mainSignal_ {ABSENT, B1, B2, B3, B4} Signal;
-
 Signal mainFSM_getSignals();
 void mainFSM_init();
 void mainFSM_tran_(mainStatus dest);
 void mainFSM_dispatch();
 
-#endif /* FSM_H_ */
+#endif /* MAINFSM_H_ */

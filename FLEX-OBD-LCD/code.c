@@ -9,9 +9,12 @@
 #include "ee_irq.h"
 #include "ee_bluetooth.h"
 #include "LCD.h"
-#include "mainFSM.h"
 #include "buttons.h"
 #include "constants.h"
+
+#include "mainFSM.h"
+#include "updateLCDFSM.h"
+#include "receiveVehicleDataFSM.h"
 
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);
@@ -61,9 +64,13 @@ TASK(TaskMain)
 	mainFSM_dispatch();
 }
 
-TASK(TaskReceiveVehicleData) {}
+TASK(TaskReceiveVehicleData) {
+	receiveVehicleDataFSM_dispatch();
+}
 
-TASK(TaskUpdateLCD) {}
+TASK(TaskUpdateLCD) {
+	updateLCDFSM_dispatch();
+}
 
 int main(void)
 {

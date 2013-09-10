@@ -12,6 +12,9 @@
 #include "ee_bluetooth.h"
 #include "ee_elm327.h"
 
+#include "updateLCDFSM.h"
+#include "receiveVehicleDataFSM.h"
+
 mainStatus status_;
 char blink_counter;
 char blink;
@@ -195,17 +198,19 @@ void mainFSM_dispatch()
 			}
 			break;
 		case BT_COMMUNICATE:
-			ee_elm327_init();
-			LCD_appendR("Elm v.");
-			LCD_appendS(ee_elm327_get_version());
 			CancelAlarm(TaskMain);
-			SetRelAlarm(TaskUpdateLCD, 1000, 150);
-			SetRelAlarm(TaskReceiveVehicleData, 1000, 150);
+
+			receiveVehicleDataFSM_init();
+			SetRelAlarm(TaskReceiveVehicleData, 100, 150);
+
+			updateLCDFSM_init();
+			SetRelAlarm(TaskUpdateLCD, 100, 150);
+
 			mainFSM_tran_(DEAD);
+			EE_bluetooth_release();
 			break;
 		case DEAD:
 		default:
-			EE_bluetooth_release();
 			break;
 	}
 }
