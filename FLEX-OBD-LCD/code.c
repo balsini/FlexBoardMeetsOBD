@@ -9,7 +9,7 @@
 #include "ee_irq.h"
 #include "ee_bluetooth.h"
 #include "LCD.h"
-#include "FSM.h"
+#include "mainFSM.h"
 #include "buttons.h"
 #include "constants.h"
 
@@ -51,13 +51,19 @@ ISR2(_T1Interrupt)
 	T1_clear();
 
 	/* count the interrupts, waking up expired alarms */
-	CounterTick(myCounter);
+	CounterTick(mainCounter);
+	CounterTick(updateLCDCounter);
+	CounterTick(receiveVehicleDataCounter);
 }
 
-TASK(TaskScan)
+TASK(TaskMain)
 {
-	FSM_dispatch();
+	mainFSM_dispatch();
 }
+
+TASK(TaskReceiveVehicleData) {}
+
+TASK(TaskUpdateLCD) {}
 
 int main(void)
 {
@@ -76,12 +82,12 @@ int main(void)
 	/* Init LCD, buttons and Finite State Machine */
 	LCD_init();
 	LCD_appendR("  Flex2OBD 0.1");
-	LCD_appendR("    WELCOME!");
+	LCD_appendR("InitializingFlex");
 	buttons_init();
-	FSM_init();
+	mainFSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(TaskScan, 1000, 150);
+	SetRelAlarm(TaskMain, 1000, 150);
 
 	//ActivateTask(TaskInit);
 

@@ -5,14 +5,14 @@
  *      Author: Alessio
  */
 
-#include "FSM.h"
+#include "mainFSM.h"
 
 #include "constants.h"
 #include "buttons.h"
 #include "ee_bluetooth.h"
 #include "ee_elm327.h"
 
-Status status_;
+mainStatus status_;
 char blink_counter;
 char blink;
 char lcd_changed;
@@ -21,7 +21,7 @@ inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
 
-Signal FSM_getSignals()
+Signal mainFSM_getSignals()
 {
 	char b = buttons_get();
 	if (b & 1) return B1;
@@ -31,21 +31,21 @@ Signal FSM_getSignals()
 	return ABSENT;
 }
 
-void FSM_init()
+void mainFSM_init()
 {
 	blink_counter = 0;
 	blink = 0;
 	status_ = WELCOME;
 }
 
-void FSM_tran_(Status dest)
+void mainFSM_tran_(mainStatus dest)
 {
 	status_ = dest;
 }
 
-void FSM_dispatch()
+void mainFSM_dispatch()
 {
-	Signal s = FSM_getSignals();
+	Signal s = mainFSM_getSignals();
 	switch (status_) {
 	case WELCOME:
 		switch (s) {
@@ -61,7 +61,7 @@ void FSM_dispatch()
 			}
 			break;
 		default:
-			FSM_tran_(BT_INIT);
+			mainFSM_tran_(BT_INIT);
 			break;
 		}
 		break;
@@ -83,16 +83,16 @@ void FSM_dispatch()
 				}
 				else {
 					LCD_appendS("[Fail]");
-					FSM_tran_(DEAD);
+					mainFSM_tran_(DEAD);
 					return;
 				}
 			} else {
 				LCD_appendS("[Fail]");
 				LCD_appendR("Reboot BT device");
-				FSM_tran_(DEAD);
+				mainFSM_tran_(DEAD);
 				return;
 			}
-			FSM_tran_(BT_INQUIRY);
+			mainFSM_tran_(BT_INQUIRY);
 			break;
 		case BT_INQUIRY:
 			LCD_appendR("Inquiry...");
@@ -104,11 +104,11 @@ void FSM_dispatch()
 			LCD_appendC(inquiry_result_num + '0');
 			if (inquiry_result_num == 0) {
 				LCD_appendR("Push to rescan");
-				FSM_tran_(BT_INQUIRY_RESCAN);
+				mainFSM_tran_(BT_INQUIRY_RESCAN);
 			} else {
 				LCD_appendR("");
 				lcd_changed = 1;
-				FSM_tran_(BT_INQUIRY_SHOW);
+				mainFSM_tran_(BT_INQUIRY_SHOW);
 			}
 			break;
 		case BT_INQUIRY_RESCAN:
@@ -116,7 +116,7 @@ void FSM_dispatch()
 			case ABSENT:
 				break;
 			default:
-				FSM_tran_(BT_INQUIRY);
+				mainFSM_tran_(BT_INQUIRY);
 				break;
 			}
 			break;
@@ -128,7 +128,7 @@ void FSM_dispatch()
 			case B1:
 				lcd_changed = 1;
 				if (!inquiry_selector[0])
-					FSM_tran_(BT_CONNECT);
+					mainFSM_tran_(BT_CONNECT);
 				else
 					inquiry_selector[0]--;
 				break;
@@ -146,7 +146,7 @@ void FSM_dispatch()
 			case B4:
 				lcd_changed = 1;
 				if (inquiry_selector[0] == 2)
-					FSM_tran_(BT_INQUIRY);
+					mainFSM_tran_(BT_INQUIRY);
 				else
 					inquiry_selector[0]++;
 				break;
@@ -176,21 +176,21 @@ void FSM_dispatch()
 			LCD_appendR("Estabilish Conn.");
 			EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr);
 			LCD_appendR("Comm|RConn|RScan");
-			FSM_tran_(BT_CONNECT_VERIFY);
+			mainFSM_tran_(BT_CONNECT_VERIFY);
 			break;
 		case BT_CONNECT_VERIFY:
 			switch (s) {
 			case ABSENT:
 				break;
 			case B1:
-				FSM_tran_(BT_COMMUNICATE);
+				mainFSM_tran_(BT_COMMUNICATE);
 				break;
 			case B2:
 			case B3:
-				FSM_tran_(BT_CONNECT);
+				mainFSM_tran_(BT_CONNECT);
 				break;
 			case B4:
-				FSM_tran_(BT_INQUIRY);
+				mainFSM_tran_(BT_INQUIRY);
 				break;
 			}
 			break;
@@ -198,13 +198,12 @@ void FSM_dispatch()
 			ee_elm327_init();
 			LCD_appendR("Elm v.");
 			LCD_appendS(ee_elm327_get_version());
-			FSM_tran_(DEAD);
+			CancelAlarm(TaskMain);
+			SetRelAlarm(TaskUpdateLCD, 1000, 150);
+			SetRelAlarm(TaskReceiveVehicleData, 1000, 150);
+			mainFSM_tran_(DEAD);
 			break;
-		case WAIT:
-			LCD_appendR("WAITING 4E");
-			FSM_tran_(DEAD);
-			return;
-			break;
+		case DEAD:
 		default:
 			EE_bluetooth_release();
 			break;
