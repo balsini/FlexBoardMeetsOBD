@@ -21,7 +21,6 @@ typedef enum mainStatus_ {
 	BT_INIT, BT_COMMUNICATE
 } mainStatus;
 
-Signal mainFSM_getSignals();
 void mainFSM_init();
 void mainFSM_tran_(mainStatus dest);
 void mainFSM_dispatch();

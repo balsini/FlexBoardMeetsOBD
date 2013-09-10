@@ -11,11 +11,12 @@
 #include "ee.h"
 #include "ee_irq.h"
 #include "LCD.h"
+#include "constants.h"
 
 /*
  * Initialize button's handler
  */
-
+Signal getSignals();
 void buttons_init();
 char buttons_get();
 

@@ -7,7 +7,6 @@
 
 #include "mainFSM.h"
 
-#include "constants.h"
 #include "buttons.h"
 #include "ee_bluetooth.h"
 #include "ee_elm327.h"
@@ -24,15 +23,7 @@ inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
 
-Signal mainFSM_getSignals()
-{
-	char b = buttons_get();
-	if (b & 1) return B1;
-	if (b & 2) return B2;
-	if (b & 4) return B3;
-	if (b & 8) return B4;
-	return ABSENT;
-}
+
 
 void mainFSM_init()
 {
@@ -48,7 +39,7 @@ void mainFSM_tran_(mainStatus dest)
 
 void mainFSM_dispatch()
 {
-	Signal s = mainFSM_getSignals();
+	Signal s = getSignals();
 	switch (status_) {
 	case WELCOME:
 		switch (s) {

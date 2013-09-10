@@ -10,6 +10,16 @@
 
 char buttons_pressed;
 
+Signal getSignals()
+{
+	char b = buttons_get();
+	if (b & 1) return B1;
+	if (b & 2) return B2;
+	if (b & 4) return B3;
+	if (b & 8) return B4;
+	return ABSENT;
+}
+
 void buttons_handler()
 {
 	if (EE_button_get_S1())
