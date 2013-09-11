@@ -11,8 +11,6 @@
 #include "ee.h"
 #include "eeuart.h"
 
-#include "LCD.h"
-
 /**
  * Each element returned by inquiry comprehends three
  * fields:
