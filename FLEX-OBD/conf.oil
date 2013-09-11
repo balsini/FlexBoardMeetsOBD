@@ -50,7 +50,9 @@ CPU mySystem {
 			APP_SRC = "ee_bluetooth.c";
 			APP_SRC = "ee_uartusb.c";
 			APP_SRC = "ee_elm327.c";
-			APP_SRC = "FSM.c";
+			APP_SRC = "mainFSM.c";
+			APP_SRC = "getFSM.c";
+			APP_SRC = "sendFSM.c";
 			MULTI_STACK = FALSE;
 			ICD2 = TRUE;
 		};
@@ -71,7 +73,7 @@ CPU mySystem {
 		EE_OPT = "__USE_UART__";
 	};
 	
-	TASK TaskScan {
+	TASK TaskMain {
 		PRIORITY = 3;
 		STACK = SHARED;
 		SCHEDULE = FULL;
@@ -79,26 +81,57 @@ CPU mySystem {
 		RESOURCE = LCD_MUTEX;
 	};
 	
-	COUNTER myCounter;
+	TASK TaskGet {
+		PRIORITY = 3;
+		STACK = SHARED;
+		SCHEDULE = FULL;
+		RESOURCE = BT_MUTEX;
+		RESOURCE = VEHICLE_DATA_BUFFER;
+	};
+	
+	TASK TaskSend {
+		PRIORITY = 3;
+		STACK = SHARED;
+		SCHEDULE = FULL;
+		RESOURCE = USB_MUTEX;
+		RESOURCE = VEHICLE_DATA_BUFFER;
+	};
+	
+	COUNTER mainCounter;
+	COUNTER getCounter;
+	COUNTER sendCounter;
 
-	ALARM AlarmScan {
-		COUNTER = myCounter;
+	ALARM AlarmMain {
+		COUNTER = mainCounter;
 		ACTION = ACTIVATETASK {
-			TASK = TaskScan;
+			TASK = TaskMain;
+		};
+	};
+	
+	ALARM AlarmGet {
+		COUNTER = getCounter;
+		ACTION = ACTIVATETASK {
+			TASK = TaskGet;
+		};
+	};
+	
+	ALARM AlarmSend {
+		COUNTER = sendCounter;
+		ACTION = ACTIVATETASK {
+			TASK = TaskSend;
 		};
 	};
 	
 	RESOURCE BT_MUTEX {
 		RESOURCEPROPERTY = STANDARD;
 	};
-	
-	RESOURCE LCD_MUTEX {
-		RESOURCEPROPERTY = STANDARD;
-	};
 
 	RESOURCE USB_MUTEX {
 		RESOURCEPROPERTY = STANDARD;
 	};
-
+	
+	RESOURCE VEHICLE_DATA_BUFFER {
+		RESOURCEPROPERTY = STANDARD;
+	};
 };
 
