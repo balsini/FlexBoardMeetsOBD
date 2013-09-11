@@ -13,7 +13,7 @@
 #include "ee_elm327.h"
 #include "datagram.h"
 
-Status status_;
+mainStatus mainStatus_;
 
 inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
@@ -22,35 +22,22 @@ int inquiry_selector[2]; // Pointer for row and column
 unsigned char bitmask[10];
 unsigned char buffer[10];
 
-Signal FSM_getSignals()
+void mainFSM_init()
 {
-	/*
-	char b = buttons_get();
-	if (b & 1) return B1;
-	if (b & 2) return B2;
-	if (b & 4) return B3;
-	if (b & 8) return B4;
-	 */
-	return ABSENT;
+	mainStatus_ = MAIN_START;
 }
 
-void FSM_init()
+void mainFSM_tran_(mainStatus dest)
 {
-	status_ = START;
+	mainStatus_ = dest;
 }
 
-void FSM_tran_(Status dest)
+void mainFSM_dispatch()
 {
-	status_ = dest;
-}
-
-void FSM_dispatch()
-{
-	Signal s = FSM_getSignals();
-	switch (status_) {
-	case START:
+	switch (mainStatus_) {
+	case MAIN_START:
 		EE_uartusb_init(USB_BAUD_RATE, USB_PARAM, USB_CONG_CTRL);
-		FSM_tran_(BT_INIT);
+		mainFSM_tran_(BT_INIT);
 		break;
 	case BT_INIT:
 		EE_bluetooth_acquire();
@@ -64,14 +51,14 @@ void FSM_dispatch()
 				EE_bluetooth_set_name("Flex_RN42");
 				EE_bluetooth_reboot();
 			} else {
-				FSM_tran_(DEAD);
+				mainFSM_tran_(MAIN_DEAD);
 				return;
 			}
 		} else {
-			FSM_tran_(DEAD);
+			mainFSM_tran_(MAIN_DEAD);
 			return;
 		}
-		FSM_tran_(WAIT_FOR_PING);
+		mainFSM_tran_(WAIT_FOR_PING);
 		break;
 	case WAIT_FOR_PING:
 		break;
@@ -80,29 +67,23 @@ void FSM_dispatch()
 		inquiry_result_num = EE_bluetooth_inquiry(inquiry_result);
 		inquiry_selector[0] = inquiry_selector[1] = 0;
 		if (inquiry_result_num == 0)
-			FSM_tran_(BT_INQUIRY_RESCAN);
+			mainFSM_tran_(BT_INQUIRY_RESCAN);
 		else
-			FSM_tran_(BT_INQUIRY_SHOW);
+			mainFSM_tran_(BT_INQUIRY_SHOW);
 		break;
 	case BT_INQUIRY_RESCAN:
-		switch (s) {
-		case ABSENT:
-			break;
-		default:
-			FSM_tran_(BT_INQUIRY);
-			break;
-		}
+		mainFSM_tran_(BT_INQUIRY);
 		break;
-		case BT_INQUIRY_SHOW:
-			break;
-		case BT_CONNECT:
-			EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr);
-			FSM_tran_(DEAD);
-			break;
-		case DEAD:
-		default:
-			EE_bluetooth_release();
-			break;
+	case BT_INQUIRY_SHOW:
+		break;
+	case BT_CONNECT:
+		EE_bluetooth_connect(inquiry_result[inquiry_selector[1]].addr);
+		mainFSM_tran_(MAIN_DEAD);
+		break;
+	case MAIN_DEAD:
+	default:
+		EE_bluetooth_release();
+		break;
 	}
 }
 
