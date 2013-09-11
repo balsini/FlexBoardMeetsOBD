@@ -9,12 +9,7 @@
 #define SENDFSM_H_
 
 typedef enum sendStatus_ {
-	START, DEAD,
-
-	WAIT_FOR_PING,
-
-	BT_INIT, BT_INQUIRY, BT_INQUIRY_SHOW,
-	BT_INQUIRY_RESCAN, BT_CONNECT
+	SEND_START, SEND_DEAD
 } sendStatus;
 
 void sendFSM_init();

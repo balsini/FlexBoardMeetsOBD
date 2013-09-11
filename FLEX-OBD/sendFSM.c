@@ -17,7 +17,7 @@ sendStatus sendStatus_;
 
 void sendFSM_init()
 {
-	sendStatus_ = START;
+	sendStatus_ = SEND_START;
 }
 
 void sendFSM_tran_(sendStatus dest)

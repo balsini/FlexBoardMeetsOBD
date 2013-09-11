@@ -17,7 +17,7 @@ getStatus getStatus_;
 
 void getFSM_init()
 {
-	getStatus_ = START;
+	getStatus_ = GET_START;
 }
 
 void getFSM_tran_(getStatus dest)
