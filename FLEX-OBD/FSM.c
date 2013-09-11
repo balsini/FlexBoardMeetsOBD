@@ -8,11 +8,10 @@
 #include "FSM.h"
 
 #include "constants.h"
-#include "buttons.h"
-#include "ee_usb.h"
+#include "ee_uartusb.h"
 #include "ee_bluetooth.h"
 #include "ee_elm327.h"
-#include "communication.h"
+#include "datagram.h"
 
 
 Status status_;
@@ -29,11 +28,13 @@ unsigned char buffer[10];
 
 Signal FSM_getSignals()
 {
+	/*
 	char b = buttons_get();
 	if (b & 1) return B1;
 	if (b & 2) return B2;
 	if (b & 4) return B3;
 	if (b & 8) return B4;
+	*/
 	return ABSENT;
 }
 
