@@ -23,8 +23,6 @@ inquiry_result_t inquiry_result[9];
 int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
 
-
-
 void mainFSM_init()
 {
 	blink_counter = 0;
@@ -192,10 +190,10 @@ void mainFSM_dispatch()
 			CancelAlarm(TaskMain);
 
 			receiveVehicleDataFSM_init();
-			SetRelAlarm(TaskReceiveVehicleData, 100, 150);
+			SetRelAlarm(TaskReceiveVehicleData, 100, 140);
 
 			updateLCDFSM_init();
-			SetRelAlarm(TaskUpdateLCD, 100, 150);
+			SetRelAlarm(TaskUpdateLCD, 1000, 140);
 
 			mainFSM_tran_(DEAD);
 			EE_bluetooth_release();
