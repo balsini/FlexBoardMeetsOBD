@@ -5,7 +5,7 @@
  *
  * @section DESCRIPTION
  *
- * The data structures used to construct communication
+ * The data structures used to manage communication
  * packets during communication with Flex.
  */
 
