@@ -9,7 +9,7 @@
 #include "ee_irq.h"
 #include "ee_uartusb.h"
 #include "ee_bluetooth.h"
-#include "FSM.h"
+#include "mainFSM.h"
 #include "constants.h"
 
 // Primary (XT, HS, EC) Oscillator with PLL
@@ -50,10 +50,10 @@ ISR2(_T1Interrupt)
 	T1_clear();
 
 	/* count the interrupts, waking up expired alarms */
-	CounterTick(myCounter);
+	CounterTick(mainCounter);
 }
 
-TASK(TaskScan)
+TASK(TaskMain)
 {
 	FSM_dispatch();
 }
@@ -76,7 +76,7 @@ int main(void)
 	FSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(TaskScan, 1000, 150);
+	SetRelAlarm(TaskMain, 1000, 150);
 
 	//ActivateTask(TaskInit);
 
