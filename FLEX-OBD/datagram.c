@@ -15,11 +15,12 @@ void constructDatagram(Datagram * dg,
 
 void sendDatagram(Datagram * datagram)
 {
+	int i;
 	EE_uartusb_sendC(datagram->type);
 	EE_uartusb_sendC(datagram->id);
 	EE_uartusb_sendC(datagram->size);
-	if (datagram->size > 0)
-		EE_uartusb_sendS((char *)datagram->data);
+	for (i=0; i<datagram->size; i++)
+		EE_uartusb_sendC(datagram->data[i]);
 }
 
 void sendDatagramSmall(unsigned char type, unsigned char id)
