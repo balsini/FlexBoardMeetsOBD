@@ -9,7 +9,6 @@
 #define GETFSM_H_
 
 typedef enum getStatus_ {
-	GET_START,
 	ELM327_INIT,
 	OBTAIN_VEHICLE_DATA,
 	ACQUIRE_DATA_BUFFER,
