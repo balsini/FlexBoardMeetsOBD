@@ -19,7 +19,7 @@ void sendDatagram(Datagram * datagram)
 	EE_uartusb_sendC(datagram->id);
 	EE_uartusb_sendC(datagram->size);
 	if (datagram->size > 0)
-		EE_uartusb_sendS(datagram->data);
+		EE_uartusb_sendS((char *)datagram->data);
 }
 
 void sendDatagramSmall(unsigned char type, unsigned char id)
@@ -35,13 +35,11 @@ void sendDatagramSmall(unsigned char type, unsigned char id)
 void receiveDatagram(Datagram * datagram)
 {
 	int i;
-	datagram->type = EE_uartusb_receive();
-	datagram->id = EE_uartusb_receive();
-	datagram->size = EE_uartusb_receive();
+	datagram->type = EE_uartusb_receive_no_timeout();
+	datagram->id = EE_uartusb_receive_no_timeout();
+	datagram->size = EE_uartusb_receive_no_timeout();
 	if (datagram->size > 0) {
 		for (i=0; i<datagram->size; i++)
-			datagram->data[i] = EE_uartusb_receive();
-	} else {
-		datagram->data = 0;
+			datagram->data[i] = EE_uartusb_receive_no_timeout();
 	}
 }

@@ -10,6 +10,7 @@
 
 #include "ee.h"
 #include "eeuart.h"
+#include "constants.h"
 
 /**
  * Each element returned by inquiry comprehends three

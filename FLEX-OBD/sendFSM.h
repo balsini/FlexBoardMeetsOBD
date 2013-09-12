@@ -9,7 +9,7 @@
 #define SENDFSM_H_
 
 typedef enum sendStatus_ {
-	SEND_START, SEND_DEAD
+	SEND_START
 } sendStatus;
 
 void sendFSM_init();

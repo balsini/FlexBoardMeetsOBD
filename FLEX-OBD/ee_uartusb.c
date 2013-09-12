@@ -25,10 +25,10 @@ void EE_uartusb_sendC(unsigned char c)
 #endif
 }
 
-void EE_uartusb_sendS(unsigned char * str)
+void EE_uartusb_sendS(char * str)
 {
 	for (; *str != '\0'; str++)
-		EE_uartusb_sendC(*str);
+		EE_uartusb_sendC(*(unsigned char *)str);
 }
 
 unsigned char EE_uartusb_receive_no_timeout()
