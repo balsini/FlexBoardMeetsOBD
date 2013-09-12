@@ -188,6 +188,7 @@ void mainFSM_dispatch()
 			break;
 		case BT_COMMUNICATE:
 			CancelAlarm(TaskMain);
+			EE_bluetooth_release();
 
 			receiveVehicleDataFSM_init();
 			SetRelAlarm(TaskReceiveVehicleData, 100, 140);
@@ -196,7 +197,6 @@ void mainFSM_dispatch()
 			SetRelAlarm(TaskUpdateLCD, 1000, 140);
 
 			mainFSM_tran_(DEAD);
-			EE_bluetooth_release();
 			break;
 		case DEAD:
 		default:
