@@ -7,6 +7,8 @@
 
 #include "mainFSM.h"
 
+#include "ee.h"
+
 #include "constants.h"
 #include "ee_uartusb.h"
 #include "ee_bluetooth.h"
@@ -22,8 +24,6 @@ int inquiry_result_num;
 int inquiry_selector[2]; // Pointer for row and column
 
 unsigned char buffer[255];
-
-unsigned char bitmask[10];
 
 void mainFSM_init()
 {
@@ -125,7 +125,7 @@ void mainFSM_dispatch()
 					buffer[k++] = inquiry_result[i].cod[j];
 				buffer[k++] = '.';
 			}
-			constructDatagram(&dg, RESPONSE, INQUIRY, k-1, buffer);
+			constructDatagram(&dg, RESPONSE, INQUIRY, k, buffer);
 #ifdef DEBUGGING
 			EE_uartusb_sendS("Send Inquiry results\r\n");
 #endif
@@ -149,11 +149,17 @@ void mainFSM_dispatch()
 			break;
 		case MAIN_DEAD:
 		default:
+			CancelAlarm(TaskMain);
 			EE_bluetooth_release();
+
+#ifdef DEBUGGING
+			EE_uartusb_sendS("Activating tasks\r\n");
+#endif
+
 			getFSM_init();
-			SetRelAlarm(TaskGet, 1500, 100);
+			SetRelAlarm(TaskGet, 3500, 140);
 			sendFSM_init();
-			SetRelAlarm(TaskSend, 1600, 150);
+			SetRelAlarm(TaskSend, 3600, 140);
 			return;
 			break;
 		}
