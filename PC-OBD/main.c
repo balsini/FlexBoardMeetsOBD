@@ -14,8 +14,9 @@
 
 void vehicleScan()
 {
-	printf("\tThrottle: %d\n", ee_elm327_get(THROTTLE_POSITION));
-	//printf("\tSpeed: %d\tRPM: %d\tCoolant Temp: %d\n", ee_elm327_get(VEHICLE_SPEED),ee_elm327_get(ENGINE_RPM)/4,ee_elm327_get(ENGINE_COOLANT_TEMP)-40);
+	printf("AAA\n");
+	//printf("\tThrottle: %d\n", ee_elm327_get(THROTTLE_POSITION));
+	printf("\tSpeed: %d\tRPM: %d\tCoolant Temp: %d\n", ee_elm327_get(VEHICLE_SPEED),ee_elm327_get(ENGINE_RPM)/4,ee_elm327_get(ENGINE_COOLANT_TEMP)-40);
 	/*printf("\tRPM: %d\n", ee_elm327_get(ENGINE_RPM));*/
 }
 

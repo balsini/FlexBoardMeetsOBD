@@ -20,19 +20,19 @@ char version[4];
 
 MPR_t MPR[4];
 
-/*
+
 void printall()
 {
 	char c;
 	for (;;) {
 		c = EE_bluetooth_receive();
-		//if ((c <= 'Z' && c >= 'A') || (c <= '9' && c >= '1') )
-		//	printf("%c\n", c);
-		//else
-			printf("%X\n", c);
+		if ((c <= 'Z' && c >= 'A') || (c <= '9' && c >= '1') )
+			printf("%c\n", c);
+		else
+			printf("0x%X\n", c);
 	}
 }
-*/
+
 
 void EE_elm327_MPR_assign(char * mode, char * PID, char byte, MPR_index_t index)
 {
@@ -86,6 +86,10 @@ int ee_elm327_get(MPR_index_t identifier)
 	EE_bluetooth_sendS("\r");
 
 	//printall();
+	if (EE_bluetooth_receive_no_timeout() == 'S') { // Searching for data
+		while (EE_bluetooth_receive_no_timeout() != 0xD)
+			; // wait until data is ready
+	}
 
 	while (EE_bluetooth_receive_no_timeout() != ' ');
 	while (EE_bluetooth_receive_no_timeout() != ' ');
@@ -137,6 +141,8 @@ int ee_elm327_set_protocol(char protocol)
 	EE_bluetooth_sendS("AT SP ");
 	EE_bluetooth_sendS(protoStr);
 
+	//printall();
+
 	return EE_elm327_check_response_no_timeout("OK\r\r");
 }
 
@@ -148,7 +154,7 @@ void ee_elm327_init()
 	ee_elm327_reboot();
 	echo_enabled = 1;
 	ee_elm327_set_echo(0);
-	//ee_elm327_set_protocol('0');
+	ee_elm327_set_protocol('0');
 }
 
 int ee_elm327_set_echo(char val)
