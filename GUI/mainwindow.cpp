@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
     createToolBars();
 
     subWindowVector = new QVector<void *>;
+    for (unsigned int i=0; i<10; i++)
+        subWindowVector->append(0);
 
     statusBar = new StatusBar(this);
 
