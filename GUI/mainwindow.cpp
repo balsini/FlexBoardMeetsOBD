@@ -227,7 +227,7 @@ void MainWindow::bluetoothDeviceChosen(int num)
 
 void MainWindow::vehicleDataReady(unsigned char monitor, float data)
 {
-    qDebug() << "Data ready: " << monitor << " : "<< data;
+    //qDebug() << "Data ready: " << monitor << " : "<< data;
     if (subWindowVector->at(monitor) != 0)
         ((Monitor *)subWindowVector->at(monitor))->setValue(data);
 }
