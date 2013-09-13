@@ -10,8 +10,8 @@ Serial::Serial()
     serialConfig.stop_bits = 1;
 
     // select timeout
-    tv.tv_sec = 1;
-    tv.tv_usec= 0;
+    tv.tv_sec = 5;
+    tv.tv_usec= 1000;
 
     tty_fd = -1;
 }
@@ -213,7 +213,7 @@ int Serial::readCTimeout(unsigned char * result)
     tv_temp.tv_sec = tv.tv_sec;
     tv_temp.tv_usec = tv.tv_usec;
 
-    if (0 == select(tty_fd+1, &select_set, NULL, NULL, &tv_temp)) {
+    if (!select(tty_fd+1, &select_set, NULL, NULL, &tv_temp)) {
         FD_SET(tty_fd, &select_set);
         return -1;
     }
