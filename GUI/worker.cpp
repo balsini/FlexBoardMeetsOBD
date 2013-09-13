@@ -131,7 +131,6 @@ int Worker::connection()
     constructDatagram(&dg, REQUEST, CONNECT_TO, 1, &btDev);
     sendDatagram(serial, &dg);
     usleep(3000000);
-    destructDatagramData(&dg);
 
     // FLEX: returns connection result
 
