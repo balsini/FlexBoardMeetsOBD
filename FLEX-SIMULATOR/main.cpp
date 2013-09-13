@@ -40,28 +40,46 @@ void receiveBitmask()
 void loop()
 {
     for (;;) {
-        receiveBitmask();
+        //receiveBitmask();
+        unsigned int value, j;
+        unsigned char buff[10];
         unsigned char cmd;
         bool goOn = true;
         do {
             //FLEX: request loop
 
-            for (int i=0; i<bitmaskSize*8; i++) {
+            //for (int i=0; i<bitmaskSize*8; i++) {
+            for (int i=0; i<4; i++) {
                 qDebug() << "Dentro: "<< i;
-                if ((bitmask[i/8] & (0x1 << (i % 8))) != 0) {
-                    Datagram dg;
-                    unsigned char d;
+                Datagram dg;
+                unsigned int d;
 
-                    d = (1.0 + sin(t))/2.0 * 125.0;
-                    t += 0.01;
+                d = (1.0 + sin(t))/2.0 * 125.0;
+                t += 0.01;
 
-                    qDebug() << "Monitor: " << i;
-                    qDebug() << "Data:    " << i;
-                    qDebug() << " ";
-                    constructDatagram(&dg, DATA, i, 1, &d);
-                    sendDatagram(&serial,&dg);
-                    usleep(10000);
+                if (i == 2) {// RPM
+                    d *= 17000 / 125;
+                    qDebug() << "sending:" << d;
                 }
+
+                value = d;
+                for (j=0; value != 0; j++) {
+                    buff[j] = value % 256;
+                    value /= 256;
+                }
+                buff[j] = '\0';
+                if (j == 0) {
+                    buff[0] = 0;
+                    buff[1] = '\0';
+                    j = 1;
+                }
+
+                qDebug() << "Monitor: " << i;
+                qDebug() << "Data:    " << i;
+                qDebug() << " ";
+                constructDatagram(&dg, DATA, i, j, buff);
+                sendDatagram(&serial,&dg);
+                usleep(10000);
             }
 
             //FLEX: c’è = readUART1(&something)
