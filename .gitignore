@@ -1,7 +1,8 @@
 /FLEX-OBD/Debug
 /FLEX-OBD-LCD/Debug
 /PC-OBD/Debug
-/GUI/FLEX-OBD-GUI.pro.user
+/GUI/FLEX-OBD-GUI.pro.user*
+/FLEX-SIMULATOR/SerialFlexSimulator.pro.user*
 /doc/developer/Doxygen/GUI/html
 /doc/developer/Doxygen/GUI/latex
 /doc/user/*.aux
