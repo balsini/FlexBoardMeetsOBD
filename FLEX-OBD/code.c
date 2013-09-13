@@ -7,14 +7,12 @@
 
 #include "ee.h"
 #include "ee_irq.h"
-#include "ee_usb.h"
+#include "ee_uartusb.h"
 #include "ee_bluetooth.h"
-#include "LCD.h"
-#include "FSM.h"
-#include "buttons.h"
 #include "constants.h"
-
-#define USB_UART 2
+#include "mainFSM.h"
+#include "getFSM.h"
+#include "sendFSM.h"
 
 // Primary (XT, HS, EC) Oscillator with PLL
 _FOSCSEL(FNOSC_PRIPLL);
@@ -54,12 +52,24 @@ ISR2(_T1Interrupt)
 	T1_clear();
 
 	/* count the interrupts, waking up expired alarms */
-	CounterTick(myCounter);
+	CounterTick(mainCounter);
+	CounterTick(getCounter);
+	CounterTick(sendCounter);
 }
 
-TASK(TaskScan)
+TASK(TaskMain)
 {
-	FSM_dispatch();
+	mainFSM_dispatch();
+}
+
+TASK(TaskGet)
+{
+	getFSM_dispatch();
+}
+
+TASK(TaskSend)
+{
+	sendFSM_dispatch();
 }
 
 int main(void)
@@ -76,15 +86,11 @@ int main(void)
 	/* Program Timer 1 to raise interrupts */
 	T1_program();
 
-	/* Init LCD, buttons and Finite State Machine */
-	LCD_init();
-	LCD_appendR("  Flex2OBD 0.1");
-	LCD_appendR("    WELCOME!");
-	buttons_init();
-	FSM_init();
+	/* Init Finite State Machine */
+	mainFSM_init();
 
 	/* Program cyclic alarms which will fire after an initial offset, and after that periodically */
-	SetRelAlarm(TaskScan, 1000, 150);
+	SetRelAlarm(TaskMain, 1000, 0);
 
 	//ActivateTask(TaskInit);
 

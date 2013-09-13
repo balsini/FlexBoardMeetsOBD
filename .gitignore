@@ -1,5 +1,11 @@
-FLEX-OBD/Debug
-PC-OBD/Debug
+/FLEX-OBD/Debug
+/FLEX-OBD-LCD/Debug
+/PC-OBD/Debug
 /GUI/FLEX-OBD-GUI.pro.user
 /doc/developer/Doxygen/GUI/html
 /doc/developer/Doxygen/GUI/latex
+/doc/user/*.aux
+/doc/user/*.log
+/doc/user/*.out
+/doc/user/*.pdf
+/doc/user/*.synctex.gz

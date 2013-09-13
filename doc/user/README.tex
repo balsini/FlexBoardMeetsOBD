@@ -120,7 +120,7 @@ The OBDII standard is actually the most common protocol. It allows the user not 
 
 Many interfaces for transfering vehicle diagnostics are not directly available in common PCs or PDAs.
 
-As bridge between OBDII and Bluetooth it is possible to use Elm 327 modules.
+As bridge between OBDII and Bluetooth it is possible to use Elm327 modules.
 
 \begin{figure}[H]
   \centering
@@ -128,11 +128,12 @@ As bridge between OBDII and Bluetooth it is possible to use Elm 327 modules.
   \caption{\textit{Elm 327} Bluetooth/OBDII module}
 \end{figure}
 
-By default, our module is discovered with the Bluetooth name "CHX" and requires the pin code "6789" for pairing.
+By default, our Elm327 Bluetooth module is discovered with the Bluetooth name "CHX" and requires the pin code "6789" for pairing.
+Another common configuration for this kind of devices is a Bluetoooth name similar to "OBDII" and pin code "1234".
 
-The Flex Light is the core of our bridge.
+The Flex Light is the core of the project.
 
-It comes with a dsPIC by Microchip and is programmed with MPLAB ICD tools.
+It comes with a dsPIC developed by Microchip and is programmed with Microchip's MPLAB ICD tools.
 
 \begin{figure}[H]
   \centering
@@ -140,9 +141,9 @@ It comes with a dsPIC by Microchip and is programmed with MPLAB ICD tools.
   \caption{\textit{Flex Light} board}
 \end{figure}
 
-Flex Light functionalities can be extended with the Multibus board which provides different useful communication interfaces.
+%Flex Light functionalities can be extended with the Multibus board which provides different useful communication interfaces.
 
-In particular, in this project will be used the two UART ports.
+%In particular, in this project will be used the two UART ports.
 
 %\begin{figure}[H]
 %  \centering
@@ -150,7 +151,14 @@ In particular, in this project will be used the two UART ports.
 %  \caption{\textit{Flex Multibus} daughter board}
 %\end{figure}
 
+<<<<<<< HEAD
 %Another daughter board which extends Flex Light's functionalities is the Flex Demo Board.
+=======
+Flex Light functionalities can be extended with many different daughter boards.
+One of these is the so called Flex Demo Board.
+
+In particular, for this project, will be used the LCD screen, push buttons and the UART connector provided by the Demo Board.
+>>>>>>> f09f4118593f1ccce12964e1f7c1ff4fd03f26f7
 
 \begin{figure}[H]
   \centering
@@ -158,13 +166,15 @@ In particular, in this project will be used the two UART ports.
   \caption{\textit{Flex Demo} board}
 \end{figure}
 
-The Bluetooth communication is allowed by the BlueSmirf module, a little board which embeds a Roving Networks RN-42.
+The Bluetooth communication is allowed by the BlueSmirf, a little board which embeds the Roving Networks RN-42 module.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=2.3in]{img/bluesmirf_presentation}
   \caption{\textit{BlueSmirf} Bluetooth module}
 \end{figure}
+
+This module acts as a Bluetooth communication manager and as a converter of the data transferred within Bluetooth and UART port.
 
 \subsection{Connectors and Wirings}
 
@@ -552,8 +562,9 @@ Going up or down shows the devices found.
 
 Pressing left or right navigates from the module's properties: from left to right, name, address and class.
 
-Before the name is shown an \emph{@} symbol, meaning that pressing left will estabilish a connection with that device.
-After the class is shown a \emph{!} symbol, meaning that pressing the right key will perform another inquiry.
+Before the Bluetooth module's name is shown an \emph{@} symbol, meaning that pressing left will estabilish a connection with that device.
+
+After the Bluetooth module's class is shown a \emph{!} symbol, meaning that pressing the right key will perform another inquiry.
 
 After connection request, another menu will appear.
 
@@ -562,16 +573,16 @@ Estabilish Conn.
 Comm|RConn|RScan
 \end{lstlisting}
 
-By pressing second or third button will attempt another connection with the device.
+By pressing one of the two middle buttons, the Flex will attempt to establish another connection with the device.
 
-By pressing last button will perform another inquiry.
+By pressing the last button will be performed another inquiry scan.
 
-By pressing first button will start the communication with the Elm327, sentting up the module and requesting periodically the vehicle data. Before pressing, check if the Bluesmirf's led is green, otherwise something went wrong during the connection.
+By pressing first button, the Flex will start the communication with the Elm327, setting up the module, choosing the vehicle's protocol and requesting periodically the vehicle data. Before pressing this button, check if the Bluesmirf's led is green, otherwise something went wrong during the connection.
 
-If connection is estabilished, the welcome string of the Elm will be shown.
+If connection is established, the welcome string of the Elm will be shown.
 
 \begin{lstlisting}[language=bash]
-Elm v.1.4
+Elm v.1.5
 \end{lstlisting}
 
 %\begin{table}[H]

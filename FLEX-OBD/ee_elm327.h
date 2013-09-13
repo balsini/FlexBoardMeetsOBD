@@ -19,8 +19,11 @@ typedef enum MPR_index_t_ {
 	ENGINE_COOLANT_TEMP = 0,
 	ENGINE_RPM,
 	VEHICLE_SPEED,
-	THROTTLE_POSITION
+	THROTTLE_POSITION,
+	FUEL_REMAINING
 } MPR_index_t;
+
+extern char version[4];
 
 /*
  * Initializes the module.

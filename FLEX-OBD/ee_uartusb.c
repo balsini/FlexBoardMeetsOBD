@@ -4,9 +4,10 @@
  *  Created on: 24/ago/2013
  *      Author: Administrator
  */
-#include "ee_usb.h"
 
-int EE_uartusb_init(EE_UINT32 baud, EE_UINT16 byteformat, EE_UINT16 mode)
+#include "ee_uartusb.h"
+
+void EE_uartusb_init(EE_UINT32 baud, EE_UINT16 byteformat, EE_UINT16 mode)
 {
 #if USB_UART == 1
 	EE_UART1_Init(baud, byteformat, mode);
@@ -15,16 +16,19 @@ int EE_uartusb_init(EE_UINT32 baud, EE_UINT16 byteformat, EE_UINT16 mode)
 #endif
 }
 
-void EE_uartusb_sendC(unsigned char c) {
+void EE_uartusb_sendC(unsigned char c)
+{
 #if USB_UART == 1
 	EE_UART1_Send(c);
 #else
 	EE_UART2_Send(c);
 #endif
-	}
-void EE_uartusb_sendS(char* str)
+}
+
+void EE_uartusb_sendS(char * str)
 {
-	while((char)*str != '\0') EE_uartusb_sendC(*(unsigned char*)str++);
+	for (; *str != '\0'; str++)
+		EE_uartusb_sendC(*(unsigned char *)str);
 }
 
 unsigned char EE_uartusb_receive_no_timeout()

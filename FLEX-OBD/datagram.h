@@ -6,7 +6,7 @@
  * @section DESCRIPTION
  *
  * The data structures used to manage communication
- * packets during communication with Flex.
+ * packets during communication with PC.
  */
 
 #ifndef DATAGRAM_H
@@ -102,64 +102,31 @@ typedef struct Datagram_ {
 void constructDatagram(Datagram * dg,
                        unsigned char type,
                        unsigned char id,
-                       unsigned char size = 0,
-                       unsigned char * data = 0);
-
-/**
-  * Packet destructor. Destroys it's the data stored in dynamic memory.
-  * @param dg Datagram which will be cleaned.
-  */
-
-void destructDatagramData(Datagram * dg);
+                       unsigned char size,
+                       unsigned char * data);
 
 /**
   * Datagram sender.
-  * @param serial The Serial class identifier through which
-  * the packet will be sent.
   * @param datagram The datagram to be sent.
   */
 
-void sendDatagram(void * serial, Datagram * datagram);
+void sendDatagram(Datagram * datagram);
 
 /**
   * Datagram sender. It is similar to sendDatagram(), but it
   * is useful to directly send datagrams with no data.
-  * @param serial The Serial class identifier through which
-  * the packet will be sent.
   * @param type The type of the datagram to be sent.
   * @param id The identifier of the datagram to be sent.
   */
 
-void sendDatagram(void * serial, unsigned char type, unsigned char id);
+void sendDatagramSmall(unsigned char type, unsigned char id);
 
 /**
   * Datagram receiver without timeout. This function may wait
   * forever if no data is received.
-  * @param serial The Serial class identifier through which
-  * the packet will be received.
   * @param datagram The buffer in which the datagram will be stored.
   */
 
-void receiveDatagram(void * serial, Datagram * datagram);
-
-/**
-  * Datagram receiver with timeout. After a short period, if
-  * no data is received, the function returns.
-  * @param serial The Serial class identifier through which
-  * the packet will be received.
-  * @param datagram The buffer in which the datagram will be stored.
-  * @return 0 if data has been received.
-  * @return -1 if timeout has expired.
-  */
-
-int receiveDatagramTimeout(void * serial, Datagram * datagram);
-
-/**
-  * Datagram's data is translated to floating point number.
-  * @param datagram The datagram to be parsed.
-  * @return The floating point equivalent of the data field.
-  */
-
-float translateDatagramData(Datagram * datagram);
+void receiveDatagram(Datagram * datagram);
 
 #endif // PCFLEX_DATAGRAM_H
