@@ -69,7 +69,7 @@ float translateDatagramData(Datagram * dg)
     float ret = 0;
     for (unsigned int i=0; i<dg->size; i++) {
         ret *= 256;
-        ret += dg->data[i];
+        ret += dg->data[dg->size - i - 1];
     }
     return ret;
 }
