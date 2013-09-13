@@ -34,21 +34,33 @@ unsigned char Worker::parseInquiryDatagram(inquiry_result_t ** result, Datagram 
     iterator++;
     res = new inquiry_result_t[num];
 
+    //qDebug() << "size:";
+    //qDebug() << dg->size;
+
     for (j=0; j<num; j++) {
         for (i=0; *iterator!=','; i++) {
             res[j].name[i] = *iterator;
             iterator++;
         }
+        res[j].name[i] = '\0';
+        //qDebug() << "name:";
+        //qDebug() << res[j].name;
         iterator++;
         for (i=0; *iterator!=','; i++) {
             res[j].addr[i] = *iterator;
             iterator++;
         }
+        res[j].addr[i] = '\0';
+        //qDebug() << "addr:";
+        //qDebug() << res[j].addr;
         iterator++;
         for (i=0; *iterator!='.'; i++) {
             res[j].cod[i] = *iterator;
             iterator++;
         }
+        res[j].cod[i] = '\0';
+        //qDebug() << "cod:";
+        //qDebug() << res[j].cod;
         iterator++;
     }
     *result = res;
@@ -70,6 +82,7 @@ int Worker::bridge_connect()
         return -1;
     } else if (dg.type == RESPONSE && dg.id == HELLO) {
         // Flex is alive
+        usleep(1000000);
         emit flexConnectedSignal();
         return 0;
     } else {
@@ -110,24 +123,20 @@ int Worker::inquiry()
 int Worker::connection()
 {
     Datagram dg;
-    unsigned char * btDev = new unsigned char;
-    *btDev = (unsigned char)btDeviceIndexChosen;
+    unsigned char btDev;
+    btDev = (unsigned char)btDeviceIndexChosen;
 
     // PC: connect to i-th device
-
-    constructDatagram(&dg, REQUEST, CONNECT_TO, 1, btDev);
+    usleep(2000000);
+    constructDatagram(&dg, REQUEST, CONNECT_TO, 1, &btDev);
     sendDatagram(serial, &dg);
+    usleep(3000000);
     destructDatagramData(&dg);
 
     // FLEX: returns connection result
 
-    receiveDatagram(serial, &dg);
-    if (dg.type == RESPONSE && dg.id == SUCCESS) {
-        // Flex is alive
-        emit vehicleConnectedSignal();
-        return 0;
-    }
-    return -1;
+    emit vehicleConnectedSignal();
+    return 0;
 }
 
 int Worker::sendBitmask()
@@ -204,12 +213,6 @@ int Worker::exec()
             break;
         case CONNECT:
             if (connection() == 0)
-                status = SEND_BITMASK;
-            else
-                status = WAIT;
-            break;
-        case SEND_BITMASK:
-            if (sendBitmask() == 0)
                 status = DATA_LOOP;
             else
                 status = WAIT;
@@ -253,8 +256,8 @@ void Worker::bridgeConnect()
 
 void Worker::bitmaskUpdated()
 {
-    if (status == DATA_LOOP)
-        status = SEND_BITMASK;
+    //if (status == DATA_LOOP)
+    //    status = SEND_BITMASK;
 }
 
 void Worker::killRequest()
