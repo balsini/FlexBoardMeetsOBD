@@ -21,11 +21,12 @@ void destructDatagramData(Datagram * dg)
 
 void sendDatagram(void * serial, Datagram * datagram)
 {
-    ((Serial *)serial)->writeC(datagram->type);
-    ((Serial *)serial)->writeC(datagram->id);
-    ((Serial *)serial)->writeC(datagram->size);
-    if (datagram->size > 0)
-        ((Serial *)serial)->writeS(datagram->data, datagram->size);
+    Serial * s = (Serial *)serial;
+    s->writeC(datagram->type);
+    s->writeC(datagram->id);
+    s->writeC(datagram->size);
+    for (unsigned int i=0; i<datagram->size; i++)
+        s->writeC(datagram->data[i]);
 }
 
 void sendDatagram(void * serial, unsigned char type, unsigned char id)
