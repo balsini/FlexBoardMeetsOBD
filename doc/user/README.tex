@@ -73,11 +73,9 @@
 \author{
 \large
 \textsc{Alessio Balsini}\\[2mm] % Your name
-\textsc{David Librera}\\[2mm] % Your name
 \normalsize Universit\`a degli Studi di Pisa\\ % Your institution
 \normalsize Scuola Superiore Sant'Anna\\ % Your institution
 \normalsize \href{mailto:a.balsini@sssup.it}{a.balsini@sssup.it} % Your email address
-\normalsize \href{mailto:d.librera@sssup.it}{d.librera@sssup.it} % Your email address
 \vspace{-5mm}
 }
 \date{}
@@ -141,24 +139,18 @@ It comes with a dsPIC developed by Microchip and is programmed with Microchip's 
   \caption{\textit{Flex Light} board}
 \end{figure}
 
-%Flex Light functionalities can be extended with the Multibus board which provides different useful communication interfaces.
+The communication between Light Board and PC is made possible by a USB-UART converter.
 
-%In particular, in this project will be used the two UART ports.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2in]{img/usb_uart_presentation}
+  \caption{\textit{USB-UART converter}}
+\end{figure}
 
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=2.6in]{img/flex101_presentation}
-%  \caption{\textit{Flex Multibus} daughter board}
-%\end{figure}
-
-<<<<<<< HEAD
-%Another daughter board which extends Flex Light's functionalities is the Flex Demo Board.
-=======
 Flex Light functionalities can be extended with many different daughter boards.
 One of these is the so called Flex Demo Board.
 
 In particular, for this project, will be used the LCD screen, push buttons and the UART connector provided by the Demo Board.
->>>>>>> f09f4118593f1ccce12964e1f7c1ff4fd03f26f7
 
 \begin{figure}[H]
   \centering
@@ -177,6 +169,19 @@ The Bluetooth communication is allowed by the BlueSmirf, a little board which em
 This module acts as a Bluetooth communication manager and as a converter of the data transferred within Bluetooth and UART port.
 
 \subsection{Connectors and Wirings}
+
+The Flex Light Board pins involved in the project, from CON6 (see the Flex Light Base Board datasheet) are the following:
+
+\begin{compactitem}
+\item pin 37: UART 2 input;
+\item pin 39: UART 1 output;
+\item pin 40: UART 2 output;
+\item pin 42: UART 1 input;
+\item pin 55: Vout (5 V);
+\item pin 56: Vout (5 V).
+\item pin 59: GND.
+\item pin 60: GND.
+\end{compactitem}
 
 The Flex Demo Board pins involved in the project are the following:
 
@@ -220,6 +225,10 @@ The Bluesmirf module has been connected to the Flex Demo Board with the followin
 \item Flex 5 V <-> Bt Vcc;
 \item Flex GND <-> Bt GND.
 \end{compactitem}
+
+The Bluesmirf module can be connected with the Flex Light with the same logic, choosing UART 1 or 2 depending on the program's constants definitions.
+
+And the same approach must be followed during the commection between the Flex Light Board and the USB-UART module.
 
 The standard OBDII female connector has the following pinout:
 
@@ -416,9 +425,13 @@ EGR and/or VVT System & C7 & D7 \\
 \end{tabular}
 \end{table}
 
-\section{FlexMeetsObd}
+\section{FlexMeetsOBD}
 
-\subsection{PC Interface}
+\subsection{PC and Flex Light}
+
+\subsubsection{Flex Light}
+
+There's not so mucht to say about the Flex Light. After the wiring, it just needs to be powered up. The PC interface will do the rest.
 
 \subsubsection{Overview}
 
@@ -512,10 +525,6 @@ This data will be shown to the user similarly to how is shown in figures.
 
 It is always possible to add new monitors or remove monitors from main window, also while sampling.
 
-\subsection{Flex Light}
-
-DESCRIPTION OF FLEX LIGHT CONNECTION TO CAR AND TO PC
-
 \subsection{Flex Demo Board Standalone}
 
 After powerup, user receives a welcome message.
@@ -579,11 +588,27 @@ By pressing the last button will be performed another inquiry scan.
 
 By pressing first button, the Flex will start the communication with the Elm327, setting up the module, choosing the vehicle's protocol and requesting periodically the vehicle data. Before pressing this button, check if the Bluesmirf's led is green, otherwise something went wrong during the connection.
 
-If connection is established, the welcome string of the Elm will be shown.
+If connection is established, the vehicle's data will appear on the screen, with another dynamic menu.
 
 \begin{lstlisting}[language=bash]
-Elm v.1.5
+Elm Vers:   ???
+RPM:
+Speed:
+Cool.Temp.:
+Fuel:
 \end{lstlisting}
+
+Once data is ready, the fields will be filled, for example:
+
+\begin{lstlisting}[language=bash]
+Elm Vers:  1.5
+RPM:        800
+Speed:        0
+Cool.Temp.:  72
+Fuel:        48
+\end{lstlisting}
+
+It is possible to scroll the menu by pressing first two buttons (scroll down) of the last two buttons (scroll up).
 
 %\begin{table}[H]
 %\caption{Example table}
