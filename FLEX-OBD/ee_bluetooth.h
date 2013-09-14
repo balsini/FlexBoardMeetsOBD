@@ -76,8 +76,7 @@ int EE_bluetooth_alive();
 int EE_bluetooth_connect(char * remote_addr);
 
 /**
- * Sets Bluetooth's authentication mode:
- * \param value Authentication mode.
+ * Sets authentication:
  *
  * 0: Open mode. With this mode, the module uses
  *   Bluetooth version 2.0 with NO encryption
@@ -109,14 +108,18 @@ int EE_bluetooth_connect(char * remote_addr);
  *   similar to firmware version 4.77.
  *
  * Default value: 1
+ *
+ * @param value The desired authentication type.
+ * @return 1 if everything worked fine.
  */
 
 int EE_bluetooth_set_authentication(unsigned char value);
 
 /**
  * Sets the Bluetooth module's name.
- * \param name String containing Bluetooth name
+ * @param name String containing Bluetooth name
  *   to be assigned.
+ * @return 1 if everything worked fine.
  */
 
 int EE_bluetooth_set_name(char * name);
@@ -126,6 +129,7 @@ int EE_bluetooth_set_name(char * name);
  * for remote device authentication.
  * \param pin String containing pin. Default
  *   value: "1234"
+ * @return 1 if everything worked fine.
  */
 
 int EE_bluetooth_set_pin(char * pin);
@@ -160,6 +164,7 @@ unsigned char EE_bluetooth_receive_no_timeout();
  * Resets the device.
  * This function is needed to update some device
  * properties, like device name.
+ * @return 1 if everything worked fine.
  */
 
 int EE_bluetooth_reboot();
@@ -176,6 +181,7 @@ int EE_bluetooth_inquiry(inquiry_result_t * dest);
 
 /**
  * Acquires the mutual exclusion on the BT resource.
+ * @return 1 if everything worked fine.
  */
  
 void EE_bluetooth_acquire();

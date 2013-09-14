@@ -12,6 +12,7 @@
  * The number of data that can be requested
  * to the Elm327.
  */
+
 #define VEHICLE_DATA_SIZE		5
 
 /**
@@ -44,6 +45,7 @@
  */
 
 #define VEHICLE_DATA_FUEL		0x16
+
 
 /**
  * The struct of vehicle data.
