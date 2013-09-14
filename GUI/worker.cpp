@@ -130,7 +130,7 @@ int Worker::connection()
     usleep(2000000);
     constructDatagram(&dg, REQUEST, CONNECT_TO, 1, &btDev);
     sendDatagram(serial, &dg);
-    usleep(3000000);
+    usleep(7000000);
 
     // FLEX: returns connection result
 
