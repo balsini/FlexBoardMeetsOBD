@@ -13,11 +13,25 @@
 #include "LCD.h"
 #include "constants.h"
 
-/*
- * Initialize button's handler
+/**
+ * Checks the buttons status and
+ * returns the signal associated.
  */
+
 Signal getSignals();
+
+/**
+ * Initializes all the four buttons
+ * and sets the buttons handler.
+ */
+
 void buttons_init();
+
+/**
+ * Returns a bitmask containing the
+ * pushed buttons.
+ */
+
 char buttons_get();
 
 #endif /* BUTTONS_H_ */

@@ -13,9 +13,11 @@
 
 #include "LCD.h"
 
-// Inquiry result is a matrix of maximum 9 rows, where
-// each element is like:
-// <BT addr>,<BT name>,<COD>
+/**
+ * Inquiry result is a matrix of maximum 9 rows, where
+ * each element is like:
+ * <BT addr>,<BT name>,<COD>
+ */
 
 typedef struct inquiry_result_t_ {
 	char addr[13];
@@ -23,48 +25,55 @@ typedef struct inquiry_result_t_ {
 	char cod[7];
 } inquiry_result_t;
 
-/*
+/**
  * Initializes the UART to make Bluetooth available.
  * baud defines the UART channel
+ * @param baud Bluetooth UART baud rate.
+ * @param byteformat The UART configuragion for the Bluetooth
+ * communication.
+ * @param mode The UART flow control for the Bluetooth
+ * communication.
  */
 
 int EE_bluetooth_init(EE_UINT32 baud,
 		EE_UINT16 byteformat,
 		EE_UINT16 mode);
 
-/*
+/**
  * Brings Bluetooth module to Master mode
  */
 
 int EE_bluetooth_set_master();
 
-/*
+/**
  * Brings Bluetooth module to Slave mode
  */
 
 int EE_bluetooth_set_slave();
 
-/*
+/**
  * Brings Bluetooth module to Pairing mode
  */
 
 int EE_bluetooth_set_pairing();
 
-/*
+/**
  * Returns 1 if Bluetooth module is alive
  */
 
 int EE_bluetooth_alive();
 
-/*
+/**
  * Connects to the Bluetooth remote device with
- * given address
+ * given address.
+ * @param remote_addr The remote address to which
+ * the connection will be established.
  */
 
 int EE_bluetooth_connect(char * remote_addr);
 
 
-/*
+/**
  * Sets authentication:
  *
  * 0: Open mode. With this mode, the module uses
@@ -97,57 +106,69 @@ int EE_bluetooth_connect(char * remote_addr);
  *   similar to firmware version 4.77.
  *
  * Default value: 1
+ *
+ * @param value The desired authentication type.
  */
 
 int EE_bluetooth_set_authentication(unsigned char value);
 
-/*
- * Sets the Bluetooth module's name
+/**
+ * Sets the Bluetooth module's name.
+ * @param name Bluetooth module name chosen.
  */
 
 int EE_bluetooth_set_name(char * name);
 
-/*
+/**
  * Sets the Bluetooth module's PIN value
  * for remote device authentication.
  * Default value: "1234"
+ * @param pin Bluetooth module pin chosen.
  */
 
 int EE_bluetooth_set_pin(char * pin);
-/*
- * Sends a string via Bluetooth
+
+/**
+ * Sends a string via Bluetooth.
+ * @param string The string to be sent.
  */
 
 void EE_bluetooth_sendS(char * string);
 
-/*
- * Receives a char via Bluetooth
+/**
+ * Receives a char via Bluetooth.
  */
 
 unsigned char EE_bluetooth_receive();
 unsigned char EE_bluetooth_receive_no_timeout();
 
-/*
+/**
  * Resets the device.
  * This function is needed to update some device
- * properties, like device name
+ * properties, like device name.
  */
 
 int EE_bluetooth_reboot();
 
-/*
+/**
  * Makes a Bluetooth inquiry, scanning for
  * other devices.
- * Results of the inquiry are stored in
- * dest container
+ * @param dest Results of the inquiry are stored in
+ * this container.
  */
 
 int EE_bluetooth_inquiry(inquiry_result_t * dest);
 
-/*
- * Functions for mutual exclusion on the BT resource
+/**
+ * Acquires mutual exclusion on the BT resource.
  */
+
 void EE_bluetooth_acquire();
+
+/**
+ * Releases mutual exclusion on the BT resource.
+ */
+
 void EE_bluetooth_release();
 
 #endif /* EE_BLUETOOTH_H_ */
