@@ -11,6 +11,12 @@
 /doc/developer/Doxygen/GUI/html
 /doc/developer/Doxygen/GUI/latex
 
+/doc/developer/Doxygen/FLEX-OBD/html
+/doc/developer/Doxygen/FLEX-OBD/latex
+
+/doc/developer/Doxygen/FLEX-OBD-LCD/html
+/doc/developer/Doxygen/FLEX-OBD-LCD/latex
+
 /doc/user/*.aux
 /doc/user/*.log
 /doc/user/*.out
