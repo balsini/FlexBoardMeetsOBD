@@ -20,7 +20,6 @@
 /doc/user/*.aux
 /doc/user/*.log
 /doc/user/*.out
-/doc/user/*.pdf
 /doc/user/*.synctex.gz
 
 /doc/developer/*.aux
