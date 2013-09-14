@@ -10,6 +10,11 @@
 
 #include "constants.h"
 
+/**
+ * The possible states of the state
+ * machine.
+ */
+
 typedef enum mainStatus_ {
 	WELCOME, DEAD,
 
@@ -21,8 +26,25 @@ typedef enum mainStatus_ {
 	BT_INIT, BT_COMMUNICATE
 } mainStatus;
 
+/**
+ * Initializes the state machine.
+ */
+
 void mainFSM_init();
+
+/**
+ * Generates a state transition of the
+ * state machine.
+ * @param dest The new state.
+ */
+
 void mainFSM_tran_(mainStatus dest);
+
+/**
+ * Performs the operations defined in the
+ * actual status of the state machine.
+ */
+
 void mainFSM_dispatch();
 
 #endif /* MAINFSM_H_ */
