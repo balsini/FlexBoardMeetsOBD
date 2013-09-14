@@ -20,7 +20,7 @@
  * Number of authors.
  */
 
-#define ABOUT_AUTHORS_NUM 2
+#define ABOUT_AUTHORS_NUM 1
 
 /**
  * The About class, which creates the About window.

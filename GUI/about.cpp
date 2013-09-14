@@ -23,7 +23,6 @@ About::About(QWidget *parent, Qt::WindowFlags f) :
     aboutAuthorsTitle = new QLabel(tr("Authors"), this);
     aboutAuthorsTitle->setFont(QFont("Fantasy", 20, QFont::Bold));
     aboutAuthors[0] = new QLabel(tr("Alessio Balsini"), this);
-    aboutAuthors[1] = new QLabel(tr("David Librera"), this);
     for (unsigned int i=0; i<ABOUT_AUTHORS_NUM; i++)
         aboutAuthors[i]->setFont(QFont("Monospace", 14));
 
@@ -34,8 +33,8 @@ About::About(QWidget *parent, Qt::WindowFlags f) :
     aboutAuthorsLayout->addSpacing(50);
     aboutAuthorsLayout->addWidget(aboutAuthorsTitle);
     aboutAuthorsLayout->addSpacing(15);
-    aboutAuthorsLayout->addWidget(aboutAuthors[0]);
-    aboutAuthorsLayout->addWidget(aboutAuthors[1]);
+    for (unsigned int i=0; i<ABOUT_AUTHORS_NUM; i++)
+        aboutAuthorsLayout->addWidget(aboutAuthors[i]);
     aboutAuthorsLayout->addSpacing(15);
     aboutAuthorsLayout->addWidget(aboutUniPi);
     aboutAuthorsLayout->addWidget(aboutSSSUP);
