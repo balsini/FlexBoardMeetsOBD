@@ -130,7 +130,21 @@ Inside the \emph{html.zip} file, it is possible to open the \emph{index.html} fi
 
 Inside the \emph{latex.zip} file, it is possible to open the \emph{refman.pdf} file with the preferred pdf document reader.
 
-\section{FLEX-OBD-LCD (standalone)}
+\section{State Machines}
+
+\subsection{Common Module}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=4.7in]{img/FLEX-OBD-LCD_bluetooth}
+  \caption{\textit{Bluetooth}}
+\end{figure}
+
+As the picture shows, the Bluetooth module wakes up and simply replies to the requests.
+
+In case of inquiry request, nondeterministically returns 0 or 3, simulating the cases in which 0 or 3 devices have been discovered during the inquiry.
+
+\subsection{FLEX-OBD-LCD (standalone)}
 
 In this case, the active parts are:
 
@@ -143,25 +157,13 @@ In this case, the active parts are:
 	\item taskUpdateLCD: the task which updates the LCD with the data proveded by the taskReceive task.
 \end{itemize}
 
-Let's analyze the state machines.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=4.7in]{img/FLEX-OBD-LCD_bluetooth}
-  \caption{\textit{Bluetooth}}
-\end{figure}
-
-As the picture shows, the Bluetooth module wakes up and simply replies to the requests.
-
-In case of inquiry request, nondeterministically returns 0 or 3, simulating the cases in which 0 or 3 devices have been discovered during the inquiry.
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=6in]{img/FLEX-OBD-LCD_scheduler}
   \caption{\textit{Scheduler}}
 \end{figure}
 
-The scheduler is not the real scheduler. It simply provides a minimal concurrency management between taskUpdateLCD and taskReceive tasks after their activation.
+The scheduler is not the real scheduler. It simply provides a minimal concurrency management between taskUpdateLCD and taskReceive tasks after their activations.
 
 These tasks are activated by the taskMain.
 
@@ -245,76 +247,88 @@ It checks if the user requested a scroll and shows the data on LCD.
 
 It dies, waiting for next activation to be performed by the scheduler.
 
-\section{FLEX-OBD}
-\section{GUI}
+%------------------------------------------------\\
 
+\subsection{FLEX-OBD and PC GUI}
 
-\begin{align} 
-\begin{split}
-(x+y)^3 	&= (x+y)^2(x+y)\\
-&=(x^2+2xy+y^2)(x+y)\\
-&=(x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3)\\
-&=x^3+3x^2y+3xy^2+y^3
-\end{split}					
-\end{align}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=2.7in]{img/FLEX-PC_PC}
+  \caption{\textit{PC}}
+\end{figure}
 
-Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies
+The PC loops until the user requests to ping the Flex.
 
-%------------------------------------------------
+After the ping, the PC has to request an inquiry scan to the Flex.
 
-\subsection{Heading on level 2 (subsection)}
+Once the inquiry results have been received, the PC can reject them, requesting another inquiry or accept one of them and ask the Flex to establish a connection.
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
-\begin{align}
-A = 
-\begin{bmatrix}
-A_{11} & A_{21} \\
-A_{21} & A_{22}
-\end{bmatrix}
-\end{align}
-Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
+After the Flex confirms that the connection has been succesfully performed, then the PC enters in a loop, receiving and showing vehicle data provided by the Flex.
 
-%------------------------------------------------
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=6in]{img/FLEX-PC_scheduler}
+  \caption{\textit{Scheduler}}
+\end{figure}
 
-\subsubsection{Heading on level 3 (subsubsection)}
+The scheduler is not the real scheduler. It simply provides a minimal concurrency management between taskGet and taskSend tasks after their activations.
 
-\lipsum[3] % Dummy text
+These tasks are activated by the taskMain.
 
-\paragraph{Heading on level 4 (paragraph)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=4in]{img/FLEX-PC_taskSendData}
+  \caption{\textit{taskSendData}}
+\end{figure}
 
-\lipsum[6] % Dummy text
+This task periodically performs the operations described next.
 
-%----------------------------------------------------------------------------------------
-%	PROBLEM 2
-%----------------------------------------------------------------------------------------
+It waits for new vehicle data.
 
-\section{Lists}
+It acquires the mutex associated to the shared vehicle data buffer.
 
-%------------------------------------------------
+It puts the vehicle data buffer contents to local variables.
 
-\subsection{Example of list (3*itemize)}
-\begin{itemize}
-	\item First item in a list 
-		\begin{itemize}
-		\item First item in a list 
-			\begin{itemize}
-			\item First item in a list 
-			\item Second item in a list 
-			\end{itemize}
-		\item Second item in a list 
-		\end{itemize}
-	\item Second item in a list 
-\end{itemize}
+It releases the mutex.
 
-%------------------------------------------------
+It sends the new vehicle data to the PC.
 
-\subsection{Example of list (enumerate)}
-\begin{enumerate}
-\item First item in a list 
-\item Second item in a list 
-\item Third item in a list
-\end{enumerate}
+It dies, waiting for next activation.
 
-%----------------------------------------------------------------------------------------
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=4in]{img/FLEX-PC_taskGetData}
+  \caption{\textit{taskGetData}}
+\end{figure}
+
+First of all this task initializes the Elm327.
+
+After that, periodically performs the operations described next.
+
+It queries the vehicle to receive new data and stores this data locally.
+
+It locks the mutex associated to the shared vehicle data buffer.
+
+It fills the shared vehicle data buffer with the fresh data.
+
+It releases the mutex.
+
+It notifies the taskReceive that new data is available and dies, waiting for next activation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=5in]{img/FLEX-PC_taskMain}
+  \caption{\textit{taskMain}}
+\end{figure}
+
+This task automatically performs the following operations.
+
+It initializes Bluetooth module. If initializzation fails, then this task dies, causing the whole system to become idle. Otherwise, it can wait for the PC ping.
+
+After the PC ping, it waits for the PC to request an inquiry, so it cyclically performs inquiry scans until at least one Bluetooth device is found.
+
+The inquiry results are sent to the PC, which can request another inquiry or can ask to connect to one of the devices discovered during the last inquiry scan.
+
+After the connection, this task initializes and activates the taskGet and taskSend tasks and dies.
 
 \end{document}
