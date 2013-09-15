@@ -25,5 +25,4 @@
 /doc/developer/*.aux
 /doc/developer/*.log
 /doc/developer/*.out
-/doc/developer/*.pdf
 /doc/developer/*.synctex.gz
