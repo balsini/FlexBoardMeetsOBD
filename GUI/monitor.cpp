@@ -144,7 +144,7 @@ void Monitor::setValue(float value)
 
     if (value > maximum)
         maximum = value;
-    else if (value < minimum)
+    if (value < minimum)
         minimum = value;
 
     actualLcd.display(value);
